@@ -1,1 +1,76 @@
-<p>city-list works!</p>
+<h2>Lista Città</h2>
+<p-toast></p-toast>
+
+<div
+  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round mb-4"
+>
+  <span class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <input
+      type="text"
+      pInputText
+      placeholder="Cerca..."
+      [formControl]="searchFilter"
+    />
+  </span>
+  <button
+    pButton
+    pRipple
+    label="Crea nuova città"
+    class="p-button-primary mr-2"
+    (click)="create()"
+  ></button>
+</div>
+
+<p-table
+  #dt
+  [value]="cities"
+  [totalRecords]="totalRecords"
+  [rows]="size"
+  [paginator]="true"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  [lazy]="true"
+  (onLazyLoad)="onChangePage($event)"
+  dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true"
+  class="tman-shadow"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="name">
+        Nome <p-sortIcon field="name"></p-sortIcon>
+      </th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th pSortableColumn="createdAt">
+        Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+      </th>
+      <th></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-city>
+    <tr>
+      <td>{{ city.name }}</td>
+      <td>{{ city.latitude }}</td>
+      <td>{{ city.longitude }}</td>
+      <td>{{ city.createdAt | customDate }}</td>
+      <td>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-pencil"
+          class="p-button-rounded button-ghost mr-2"
+          (click)="update(city)"
+        ></button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button-rounded button-ghost"
+          (click)="deleteProduct(product)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

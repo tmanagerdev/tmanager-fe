@@ -1,5 +1,5 @@
 <nav class="top-bar">
-  <span class="material-symbols-outlined" (click)="toggleBar()"> menu </span>
+  <span class="material-symbols-outlined cursor-pointer" (click)="toggleBar()"> menu </span>
   <div class="flex align-items-center gap-3">
     <i class="fa-regular fa-bell fa-2x"></i>
 
@@ -8,8 +8,7 @@
       <img
         [src]="user.picture"
         alt="Profile picture"
-        class="nav-user-profile rounded-circle"
-        style="width: 75px"
+        class="border-circle h-3rem	w-3rem"
       />
     </ng-container>
   </div>

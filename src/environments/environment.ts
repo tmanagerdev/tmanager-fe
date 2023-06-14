@@ -15,6 +15,7 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
 
 export const environment = {
   production: false,
+  apiUrl: apiUri,
   auth: {
     domain,
     clientId,

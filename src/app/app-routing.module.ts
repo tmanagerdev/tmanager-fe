@@ -32,7 +32,7 @@ const routes: Routes = [
       },
       {
         path: 'city',
-        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
         loadChildren: () =>
           import('./@pages/city/city.module').then((m) => m.CityModule),
       },

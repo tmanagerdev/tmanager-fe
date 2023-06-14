@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import "./scss/base/base.scss";
-@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "./scss/components/buttons.scss";
+@import "./scss/components/tables.scss";
+@import "./scss/components/forms.scss";
 @import "primeng/resources/primeng.css";
-@import "/node_modules/primeflex/primeflex.css"
+@import "/node_modules/primeflex/primeflex.css";
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeicons/primeicons.css";

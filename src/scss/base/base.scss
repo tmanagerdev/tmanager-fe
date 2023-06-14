@@ -1,25 +1,26 @@
 body {
-    min-width: 375px;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    background-color: var(--background);
-  }
-  
-  a {
-    color: var(--primary);
-    text-decoration: none;
-  
-    &:hover {
-      color: var(--primary);
-      text-decoration: underline;
-    }
-  }
+  min-width: 375px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background-color: var(--background);
+  margin: 0;
+}
 
-  .material-symbols-outlined {
-    font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 48
+a {
+  color: var(--primary);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--primary);
+    text-decoration: underline;
   }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 48;
+}
+
+.tman-shadow {
+  box-shadow: #919eab4d 0 0 2px, #919eab1f 0 12px 24px -4px;
+}
