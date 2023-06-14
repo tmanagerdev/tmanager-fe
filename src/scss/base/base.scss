@@ -1,0 +1,25 @@
+body {
+    min-width: 375px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background-color: var(--background);
+  }
+  
+  a {
+    color: var(--primary);
+    text-decoration: none;
+  
+    &:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 48
+  }

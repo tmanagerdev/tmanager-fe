@@ -1,0 +1,16 @@
+<nav class="top-bar">
+  <span class="material-symbols-outlined" (click)="toggleBar()"> menu </span>
+  <div class="flex align-items-center gap-3">
+    <i class="fa-regular fa-bell fa-2x"></i>
+
+    <!-- <app-user-avatar></app-user-avatar> -->
+    <ng-container *ngIf="auth.user$ | async as user">
+      <img
+        [src]="user.picture"
+        alt="Profile picture"
+        class="nav-user-profile rounded-circle"
+        style="width: 75px"
+      />
+    </ng-container>
+  </div>
+</nav>

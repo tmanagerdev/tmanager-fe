@@ -1,0 +1,28 @@
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-left: 256px;
+  transition: all 0.25s;
+  min-height: 100vh;
+
+  .page-content {
+    flex-grow: 1;
+  }
+
+  &.active {
+    padding-left: 96px;
+  }
+}
+
+@media only screen and (max-width: 1179px) {
+  .page-wrapper {
+    padding-left: 96px !important;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+  .page-wrapper {
+    padding-left: 0px !important;
+  }
+}

@@ -1,0 +1,79 @@
+<aside class="sidebar" #sidebar>
+  <div class="sidebar-top">
+    <span class="d-flex align-items-center gap-2">
+      <i class="fa-brands fa-angular fa-2x"></i>
+      <span class="name-app">TManager</span>
+    </span>
+    <span
+      role="button"
+      class="material-symbols-outlined close-button"
+      (click)="closeBar()"
+    >
+      close
+    </span>
+  </div>
+  <div class="sidebar-center">
+    <nav class="nav">
+      <ul class="list-group">
+        <li
+          class="nav-item"
+          [routerLink]="['/', 'city']"
+          [routerLinkActive]="'active'"
+          role="button"
+        >
+          <i class="fa-solid fa-house"></i>
+          <span class="text-route">Città</span>
+        </li>
+        <li
+          class="nav-item"
+          [routerLink]="['/', 'team']"
+          [routerLinkActive]="'active'"
+          role="button"
+        >
+          <i class="fa-solid fa-chart-line"></i>
+          <span class="text-route">Squadre</span>
+        </li>
+        <li
+          class="nav-item"
+          [routerLink]="['/', 'activity']"
+          [routerLinkActive]="'active'"
+          role="button"
+        >
+          <i class="fa-solid fa-comment"></i>
+          <span class="text-route">Servizi</span>
+        </li>
+        <li
+          class="nav-item"
+          [routerLink]="['/', 'calendar']"
+          [routerLinkActive]="'active'"
+          role="button"
+        >
+          <i class="fa-solid fa-gear"></i>
+          <span class="text-route">Calendari</span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="switch-theme">
+      <ng-container *ngIf="getTheme() === 'light'">
+        <i
+          class="fa-solid fa-moon fa-2x"
+          role="button"
+          (click)="setTheme(false)"
+        ></i>
+      </ng-container>
+      <ng-container *ngIf="getTheme() === 'dark'">
+        <i
+          class="fa-solid fa-lightbulb fa-2x"
+          role="button"
+          (click)="setTheme(true)"
+        ></i>
+      </ng-container>
+      <!-- <span class="switcher">
+          <app-toggle-switch [control]="themeControl"></app-toggle-switch>
+        </span> -->
+    </div>
+    <span>0.0.1</span>
+  </div>
+</aside>
