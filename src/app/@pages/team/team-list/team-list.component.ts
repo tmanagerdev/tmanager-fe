@@ -119,8 +119,6 @@ export class TeamListComponent {
       )
       .subscribe();
 
-    this.loadTeams();
-
     this.searchFilter.valueChanges
       .pipe(
         debounceTime(500),

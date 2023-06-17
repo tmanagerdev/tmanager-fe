@@ -1,0 +1,50 @@
+<div class="w-screen h-screen flex flex-column md:flex-row">
+  <div class="max-h-12rem md:max-h-screen flex-1 h-screen right-side"></div>
+  <div
+    class="flex-1 h-screen flex flex-column justify-content-center align-items-center"
+  >
+    <div class="flex flex-column">
+      <img
+        src="../../../../assets/images/logo.png"
+        alt="logo"
+        class="w-18rem md:w-25rem"
+      />
+      <form
+        class="flex flex-column"
+        [formGroup]="signInForm"
+        (ngSubmit)="onSignIn()"
+      >
+        <h2>Benvenuto in TManager!</h2>
+        <p>La piattaforma per il mondo del calcio.</p>
+        <div class="flex flex-column gap-2 mt-4">
+          <label class="font-semibold">Email</label>
+          <span class="p-input-icon-left">
+            <i class="pi pi-envelope"></i>
+            <input pInputText type="email" formControlName="email" />
+          </span>
+          <app-control-errors controlName="email"></app-control-errors>
+        </div>
+        <div class="flex flex-column gap-2 mt-4">
+          <label class="font-semibold">Password</label>
+          <span class="p-input-icon-left">
+            <i class="pi pi-lock"></i>
+            <input pInputText type="password" formControlName="password" />
+          </span>
+          <app-control-errors controlName="password"></app-control-errors>
+        </div>
+        <div class="flex mt-2 justify-content-end">
+          <p-button
+            label="Password dimenticata?"
+            styleClass="p-button-link p-0"
+          ></p-button>
+        </div>
+        <!-- <ng-container *ngIf="credentialError">
+          <div>User or password are incorrect!</div>
+        </ng-container> -->
+        <div class="flex justify-content-center mt-4">
+          <p-button class="w-full" type="submit" label="Login"></p-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

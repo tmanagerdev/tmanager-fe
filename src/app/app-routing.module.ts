@@ -1,9 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AuthGuard } from '@auth0/auth0-angular';
 import { LayoutComponent } from './@ui/layout/layout.component';
+import { AuthGuard } from './@core/guards/auth.guard';
+import { AutoLoginGuard } from './@core/guards/auto-login.guard';
 
 const routes: Routes = [
+  {
+    path: 'auth',
+    canLoad: [AutoLoginGuard],
+    loadChildren: () =>
+      import('./@pages/auth/auth.module').then((m) => m.AuthModule),
+  },
   {
     path: '',
     component: LayoutComponent,

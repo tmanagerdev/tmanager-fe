@@ -1,16 +1,17 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
-import { environment as env } from '../environments/environment';
 import { LayoutComponent } from './@ui/layout/layout.component';
 import { FooterComponent } from './@ui/footer/footer.component';
 import { SidebarComponent } from './@ui/sidebar/sidebar.component';
 import { TopbarComponent } from './@ui/topbar/topbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { AuthInterceptor } from './@core/interceptors/auth.interceptor';
+import { appInit } from './app-init';
+import { AuthService } from './@core/services/auth.service';
+import { UserAvatarComponent } from './@shared/user-avatar/user-avatar.component';
 
 @NgModule({
   declarations: [
@@ -25,17 +26,18 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    AuthModule.forRoot({
-      ...env.auth,
-      httpInterceptor: {
-        ...env.httpInterceptor,
-      },
-    }),
+    UserAvatarComponent,
   ],
   providers: [
     {
+      provide: APP_INITIALIZER,
+      useFactory: appInit,
+      multi: true,
+      deps: [AuthService],
+    },
+    {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthHttpInterceptor,
+      useClass: AuthInterceptor,
       multi: true,
     },
   ],

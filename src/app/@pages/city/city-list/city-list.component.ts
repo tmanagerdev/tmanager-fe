@@ -58,8 +58,6 @@ export class CityListComponent implements OnInit {
       )
       .subscribe();
 
-    this.loadCities();
-
     this.searchFilter.valueChanges
       .pipe(
         debounceTime(500),

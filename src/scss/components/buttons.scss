@@ -1,14 +1,22 @@
 .button-ghost {
-    background: transparent;
-    color: var(--text-color);
-    border: none;
+  background: transparent;
+  color: var(--text-color);
+  border: none;
 
-    &:hover {
-        background: var(--surface-400) !important;
-    }
+  &:hover {
+    background: var(--surface-400) !important;
+  }
 }
 
 .p-button-label {
-    font-weight: 500 !important;
-    font-size: 14px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+.p-button.p-component {
+  width: 100% !important;
+}
+
+.p-button.p-button-icon-only {
+  width: 3rem !important;
 }

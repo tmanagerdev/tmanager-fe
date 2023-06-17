@@ -1,0 +1,10 @@
+<div
+  class="w-3rem h-3rem border-circle avatar cursor-pointer font-bold"
+  (click)="menu.toggle($event)"
+>
+  <ng-container *ngIf="user">
+    {{ user.firstName[0] + user.lastName[0] }}
+  </ng-container>
+</div>
+
+<p-menu #menu [model]="items" [popup]="true"></p-menu>

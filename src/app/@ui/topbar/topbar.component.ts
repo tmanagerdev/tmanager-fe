@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
 import { NavigationService } from 'src/app/@core/services/navigation.service';
 
 @Component({
@@ -13,10 +12,7 @@ export class TopbarComponent implements OnInit {
     { key: 'EN', value: 'en', flag: '🇬🇧' },
   ];
   currentLang: string = 'IT';
-  constructor(
-    private navigationService: NavigationService,
-    public auth: AuthService
-  ) {}
+  constructor(private navigationService: NavigationService) {}
 
   ngOnInit(): void {}
 

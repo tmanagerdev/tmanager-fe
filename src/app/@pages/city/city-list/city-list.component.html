@@ -1,4 +1,4 @@
-<h2>Lista Città</h2>
+<h2 class="mb-2">Lista Città</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
@@ -14,13 +14,15 @@
       [formControl]="searchFilter"
     />
   </span>
-  <button
-    pButton
-    pRipple
-    label="Crea nuova città"
-    class="p-button-primary mr-2"
-    (click)="create()"
-  ></button>
+  <div>
+    <button
+      pButton
+      pRipple
+      label="Crea nuova città"
+      class="p-button-primary mr-2"
+      (click)="create()"
+    ></button>
+  </div>
 </div>
 
 <p-table

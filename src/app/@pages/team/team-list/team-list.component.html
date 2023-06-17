@@ -1,4 +1,4 @@
-<h2>Lista Squadre</h2>
+<h2 class="mb-2">Lista Squadre</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
@@ -57,13 +57,15 @@
     ></p-button>
   </div>
 
-  <button
-    pButton
-    pRipple
-    label="Crea nuova squadra"
-    class="p-button-primary mr-2"
-    (click)="create()"
-  ></button>
+  <div>
+    <button
+      pButton
+      pRipple
+      label="Crea nuova squadra"
+      class="p-button-primary mr-2"
+      (click)="create()"
+    ></button>
+  </div>
 </div>
 
 <p-table

@@ -5,3 +5,11 @@
 .p-dropdown.p-component {
   width: 100% !important;
 }
+
+.p-inputtext.p-component {
+  width: 100% !important;
+}
+
+.ng-invalid.ng-touched {
+  border-color: var(--red-500);
+}

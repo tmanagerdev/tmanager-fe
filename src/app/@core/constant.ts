@@ -1,0 +1,1 @@
+export const KEY_STORAGE_USER = 'TMANAGER_CURRENT_USER';

@@ -1,6 +1,6 @@
 body {
   min-width: 375px;
-  font-family: "Inter", sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 14px;
   color: var(--text);
   background-color: var(--background);
@@ -15,6 +15,16 @@ a {
     color: var(--primary);
     text-decoration: underline;
   }
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
 }
 
 .material-symbols-outlined {
