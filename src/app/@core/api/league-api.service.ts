@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class CityApiService {
+export class LeagueApiService {
   constructor(private httpClient: HttpClient) {}
 
   findAll({
@@ -16,7 +16,7 @@ export class CityApiService {
     sortField = '',
     sortOrder = 1,
   }: any): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/cities`, {
+    return this.httpClient.get(`${environment.apiUrl}/leagues`, {
       params: {
         page,
         take,
@@ -26,19 +26,19 @@ export class CityApiService {
     });
   }
 
-  findOne(cityId: string): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/cities/${cityId}`);
+  findOne(leagueId: string): Observable<any> {
+    return this.httpClient.get(`${environment.apiUrl}/leagues/${leagueId}`);
   }
 
-  create(city: any): Observable<any> {
-    return this.httpClient.post(`${environment.apiUrl}/cities`, city);
+  create(league: any): Observable<any> {
+    return this.httpClient.post(`${environment.apiUrl}/leagues`, league);
   }
 
-  update(id: string, city: any): Observable<any> {
-    return this.httpClient.put(`${environment.apiUrl}/cities/${id}`, city);
+  update(id: string, league: any): Observable<any> {
+    return this.httpClient.put(`${environment.apiUrl}/leagues/${id}`, league);
   }
 
   delete(id: string): Observable<any> {
-    return this.httpClient.delete(`${environment.apiUrl}/cities/${id}`);
+    return this.httpClient.delete(`${environment.apiUrl}/leagues/${id}`);
   }
 }

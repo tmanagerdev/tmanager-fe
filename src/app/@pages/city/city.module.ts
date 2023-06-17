@@ -11,6 +11,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { KeyFilterModule } from 'primeng/keyfilter';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
@@ -33,6 +34,7 @@ import { CityModalComponent } from './city-modal/city-modal.component';
     ReactiveFormsModule,
     DynamicDialogModule,
     KeyFilterModule,
+    ConfirmDialogModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

@@ -6,16 +6,7 @@ import {
   MessageService,
 } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import {
-  Subject,
-  debounce,
-  debounceTime,
-  map,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { CityModalComponent } from '../city-modal/city-modal.component';
 
@@ -25,12 +16,7 @@ import { CityModalComponent } from '../city-modal/city-modal.component';
   styleUrls: ['./city-list.component.scss'],
 })
 export class CityListComponent implements OnInit {
-  productDialog: boolean = false;
   cities: any[] = [];
-  product: any;
-  selectedProducts: any[] = [];
-  submitted: boolean = false;
-  statuses: any[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 50;
@@ -114,7 +100,7 @@ export class CityListComponent implements OnInit {
       header: 'Crea nuova città',
       width: '450px',
       contentStyle: { overflow: 'auto' },
-      baseZIndex: 10000,
+      baseZIndex: 10001,
     });
 
     this.ref.onClose.subscribe((city: any) => {
@@ -142,7 +128,7 @@ export class CityListComponent implements OnInit {
       header: `Aggiorna ${city.name}`,
       width: '450px',
       contentStyle: { overflow: 'auto' },
-      baseZIndex: 10000,
+      baseZIndex: 10001,
       data: {
         city,
       },
@@ -168,36 +154,27 @@ export class CityListComponent implements OnInit {
     });
   }
 
-  deleteProduct(product: any) {
-    // this.confirmationService.confirm({
-    //   message: 'Are you sure you want to delete ' + product.name + '?',
-    //   header: 'Confirm',
-    //   icon: 'pi pi-exclamation-triangle',
-    //   accept: () => {
-    //     this.products = this.products.filter((val) => val.id !== product.id);
-    //     this.product = {};
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Successful',
-    //       detail: 'Product Deleted',
-    //       life: 3000,
-    //     });
-    //   },
-    // });
-  }
-
-  hideDialog() {
-    this.productDialog = false;
-    this.submitted = false;
-  }
-
-  saveProduct() {
-    this.submitted = true;
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Successful',
-      detail: 'Product Updated',
-      life: 3000,
+  remove(city: any) {
+    this.confirmationService.confirm({
+      message: 'Sei sicuro di voler eliminare questa città?',
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.cityApiService
+          .delete(city.id)
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadCities();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Città eliminata',
+                detail: city.name,
+              });
+            })
+          )
+          .subscribe();
+      },
     });
   }
 }

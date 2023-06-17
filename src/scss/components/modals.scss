@@ -1,0 +1,12 @@
+.p-dialog-mask.p-component-overlay.p-dialog-mask-scrollblocker {
+  z-index: 11000 !important;
+
+  .p-confirm-dialog-reject.p-button {
+    background: #64748b;
+    border: 1px solid #64748b;
+    &:hover {
+      background: #475569;
+      border-color: #475569;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 <h2>Lista Città</h2>
 <p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
 <div
   class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round mb-4"
@@ -46,7 +47,7 @@
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
-      <th></th>
+      <th>Azioni</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-city>
@@ -68,7 +69,7 @@
           pRipple
           icon="pi pi-trash"
           class="p-button-rounded button-ghost"
-          (click)="deleteProduct(product)"
+          (click)="remove(city)"
         ></button>
       </td>
     </tr>

@@ -10,7 +10,7 @@ const routes: Routes = [
     children: [
       {
         path: 'activity',
-        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () =>
           import('./@pages/activity/activity.module').then(
             (m) => m.ActivityModule
@@ -18,7 +18,7 @@ const routes: Routes = [
       },
       {
         path: 'calendar',
-        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () =>
           import('./@pages/calendar/calendar.module').then(
             (m) => m.CalendarModule
@@ -26,26 +26,26 @@ const routes: Routes = [
       },
       {
         path: 'cart',
-        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () =>
           import('./@pages/cart/cart.module').then((m) => m.CartModule),
       },
       {
         path: 'city',
-        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () =>
           import('./@pages/city/city.module').then((m) => m.CityModule),
       },
 
       {
         path: 'team',
-        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () =>
           import('./@pages/team/team.module').then((m) => m.TeamModule),
       },
       {
         path: 'user',
-        canLoad: [AuthGuard],
+        canActivate: [AuthGuard],
         loadChildren: () =>
           import('./@pages/user/user.module').then((m) => m.UserModule),
       },
