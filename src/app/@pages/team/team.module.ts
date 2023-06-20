@@ -16,6 +16,7 @@ import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @NgModule({
   declarations: [TeamListComponent],
@@ -36,6 +37,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     ConfirmDialogModule,
     OverlayPanelModule,
     AutoCompleteModule,
+    SkeletonModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

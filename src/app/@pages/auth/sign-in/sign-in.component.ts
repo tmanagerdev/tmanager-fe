@@ -18,6 +18,7 @@ export class SignInComponent {
     password: new FormControl('', Validators.required),
   });
   credentialError: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private authApiService: AuthApiService,
@@ -35,12 +36,14 @@ export class SignInComponent {
 
   onSignIn() {
     if (this.signInForm.valid) {
+      this.loading = true;
       const user = { ...this.signInForm.value };
       this.authApiService
         .signIn(user)
         .pipe(
           take(1),
           tap((data) => {
+            this.loading = true;
             this.authService.setCurrentUser(data);
             this.router.navigate(['/']);
           })
@@ -49,5 +52,9 @@ export class SignInComponent {
     } else {
       markFormAsTouched(this.signInForm);
     }
+  }
+
+  onForgotPassword() {
+    this.router.navigate(['auth', 'recovery-password']);
   }
 }

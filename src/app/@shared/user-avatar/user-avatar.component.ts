@@ -24,7 +24,7 @@ export class UserAvatarComponent {
       icon: 'pi pi-sign-out',
       command: () => {
         this.authService.signOut();
-        this.router.navigate(['/auth']);
+        this.router.navigate(['/auth', '/sign-in']);
       },
     },
   ];

@@ -39,7 +39,7 @@ export class SidebarComponent implements OnInit {
 
     this.menu = [
       {
-        label: 'Area personale',
+        label: '',
         items: [
           {
             label: 'Prossimi eventi',
@@ -62,14 +62,14 @@ export class SidebarComponent implements OnInit {
             routerLink: ['/', 'city'],
           },
           {
+            label: 'Campionati',
+            icon: 'table_rows',
+            routerLink: ['/', 'league'],
+          },
+          {
             label: 'Squadre',
             icon: 'sports_soccer',
             routerLink: ['/', 'team'],
-          },
-          {
-            label: 'Servizi',
-            icon: 'local_mall',
-            routerLink: ['/', 'activity'],
           },
           {
             label: 'Calendari',
@@ -80,6 +80,11 @@ export class SidebarComponent implements OnInit {
             label: 'Utenti',
             icon: 'group',
             routerLink: ['/', 'user'],
+          },
+          {
+            label: 'Servizi',
+            icon: 'local_mall',
+            routerLink: ['/', 'activity'],
           },
           {
             label: 'Prenotazioni',

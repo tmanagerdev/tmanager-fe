@@ -28,6 +28,7 @@ export class TeamListComponent {
   size: number = 50;
   filter: string = '';
   sort: any = null;
+  loading: boolean = false;
 
   searchFilter = new FormControl('');
   cityFilter = new UntypedFormControl(null);
@@ -83,6 +84,7 @@ export class TeamListComponent {
         tap(({ data, total }) => {
           this.teams = [...data];
           this.totalRecords = total;
+          this.loading = false;
         })
       )
       .subscribe();
@@ -136,6 +138,8 @@ export class TeamListComponent {
   }
 
   loadTeams() {
+    this.loading = true;
+    this.teams = [];
     this.teams$.next();
   }
 

@@ -13,3 +13,9 @@
 .ng-invalid.ng-touched {
   border-color: var(--red-500);
 }
+
+.full-width {
+  .p-autocomplete.p-component {
+    width: 100% !important;
+  }
+}

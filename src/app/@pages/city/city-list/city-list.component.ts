@@ -6,7 +6,15 @@ import {
   MessageService,
 } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
+import {
+  Subject,
+  debounceTime,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+  timeout,
+} from 'rxjs';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { CityModalComponent } from '../city-modal/city-modal.component';
 
@@ -22,6 +30,7 @@ export class CityListComponent implements OnInit {
   size: number = 50;
   filter: string = '';
   sort: any = null;
+  loading: boolean = false;
 
   searchFilter = new FormControl('');
 
@@ -54,6 +63,7 @@ export class CityListComponent implements OnInit {
         tap(({ data, total }) => {
           this.cities = [...data];
           this.totalRecords = total;
+          this.loading = false;
         })
       )
       .subscribe();
@@ -75,6 +85,8 @@ export class CityListComponent implements OnInit {
   }
 
   loadCities() {
+    this.loading = true;
+    this.cities = [];
     this.cities$.next();
   }
 

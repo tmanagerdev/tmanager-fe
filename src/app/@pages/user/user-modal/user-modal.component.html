@@ -1,0 +1,81 @@
+<form
+  [formGroup]="userForm"
+  class="flex flex-column gap-3"
+  (ngSubmit)="onSave()"
+>
+  <h3>Anagrafica Utente</h3>
+  <div class="flex gap-2">
+    <div class="flex flex-50 flex-column gap-2">
+      <label>Email</label>
+      <input pInputText placeholder="Email" formControlName="email" />
+    </div>
+    <div class="flex flex-50 flex-column gap-2">
+      <label>Ruolo</label>
+      <p-dropdown
+        [options]="roles"
+        formControlName="role"
+        optionLabel="label"
+      ></p-dropdown>
+    </div>
+  </div>
+  <div class="flex gap-2">
+    <div class="flex flex-50 flex-column gap-2">
+      <label>Nome</label>
+      <input pInputText placeholder="Nome" formControlName="firstName" />
+    </div>
+    <div class="flex flex-50 flex-column gap-2">
+      <label>Cognome</label>
+      <input pInputText placeholder="Cognome" formControlName="lastName" />
+    </div>
+  </div>
+  <p-divider></p-divider>
+  <h3>Squadre utente</h3>
+  <div class="flex flex-column gap-2">
+    <label>Aggiungi squadra</label>
+    <p-autoComplete
+      [formControl]="teamFilter"
+      [suggestions]="teams"
+      (completeMethod)="onFilterTeam($event)"
+      (onSelect)="onSelectTeam($event)"
+      field="name"
+      class="full-width"
+    ></p-autoComplete>
+    <small id="username-help"
+      >Inserisci il nome della squadra che vuoi aggiungere a questo
+      utente</small
+    >
+  </div>
+  <div class="flex align-items-center gap-2 flex-wrap">
+    <ng-container
+      *ngIf="teamsArrayValue && teamsArrayValue.length; else noTeams"
+    >
+      <ng-container *ngFor="let team of teamsArrayValue; let i = index">
+        <p-chip
+          [label]="team.name"
+          [removable]="true"
+          (onRemove)="onRemoveTeam(i)"
+        ></p-chip>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Salva"
+      [disabled]="!userForm.valid"
+    ></button>
+  </div>
+</form>
+
+<ng-template #noTeams>
+  <p class="text-sm">Questo utente non ha ancora nessuna squadra associata</p>
+</ng-template>

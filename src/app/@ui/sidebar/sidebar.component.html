@@ -2,7 +2,16 @@
   <div class="sidebar-top">
     <span class="d-flex align-items-center gap-2">
       <i class="fa-brands fa-angular fa-2x"></i>
-      <span class="name-app">TManager</span>
+      <span class="name-app">
+        <img src="../../../assets/images/logo.png" alt="logo" height="70" />
+      </span>
+      <span class="name-app-reduced">
+        <img
+          src="../../../assets/images/logo-reduced.png"
+          alt="logo"
+          height="70"
+        />
+      </span>
     </span>
     <span
       role="button"
@@ -16,7 +25,7 @@
     <nav class="nav">
       <ul class="list-group m-0 px-3">
         <ng-container *ngFor="let m of menu">
-          <p class="font-semibold">{{ m.label }}</p>
+          <p class="font-semibold my-3 uppercase">{{ m.label }}</p>
           <li
             *ngFor="let item of m.items"
             class="nav-item cursor-pointer"

@@ -81,6 +81,7 @@
   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
   [showCurrentPageReport]="true"
   class="tman-shadow"
+  [loading]="loading"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -117,6 +118,40 @@
           (click)="remove(team)"
         ></button>
       </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
     </tr>
   </ng-template>
 </p-table>

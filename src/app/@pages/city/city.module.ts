@@ -12,11 +12,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CityModalComponent } from './city-modal/city-modal.component';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @NgModule({
   declarations: [CityListComponent, CityModalComponent],
@@ -35,6 +35,7 @@ import { CityModalComponent } from './city-modal/city-modal.component';
     DynamicDialogModule,
     KeyFilterModule,
     ConfirmDialogModule,
+    SkeletonModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

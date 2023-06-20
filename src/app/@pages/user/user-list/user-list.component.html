@@ -1,1 +1,107 @@
-<p>user-list works!</p>
+<h2 class="mb-2">Lista Utenti</h2>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<div
+  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round mb-4"
+>
+  <span class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <input
+      type="text"
+      pInputText
+      placeholder="Cerca..."
+      [formControl]="searchFilter"
+    />
+  </span>
+  <div>
+    <button
+      pButton
+      pRipple
+      label="Crea nuovo utente"
+      class="p-button-primary mr-2"
+      (click)="create()"
+    ></button>
+  </div>
+</div>
+
+<p-table
+  #dt
+  [value]="dataList"
+  [totalRecords]="totalRecords"
+  [rows]="size"
+  [paginator]="true"
+  [tableStyle]="{ 'min-width': '75rem' }"
+  [lazy]="true"
+  (onLazyLoad)="onChangePage($event)"
+  dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true"
+  [loading]="loading"
+  class="tman-shadow"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="email">
+        Email <p-sortIcon field="email"></p-sortIcon>
+      </th>
+      <th pSortableColumn="firstName">
+        First name<p-sortIcon field="firstName"></p-sortIcon>
+      </th>
+      <th pSortableColumn="lastName">
+        Last name<p-sortIcon field="lastName"></p-sortIcon>
+      </th>
+      <th pSortableColumn="role">Role<p-sortIcon field="role"></p-sortIcon></th>
+      <th>Squadre</th>
+      <th>Stato</th>
+      <th pSortableColumn="createdAt">
+        Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+      </th>
+      <th>Azioni</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-user>
+    <tr>
+      <td>{{ user.email }}</td>
+      <td>{{ user.firstName }}</td>
+      <td>{{ user.lastName }}</td>
+      <td>{{ user.role }}</td>
+      <td>
+        <ng-container *ngIf="user.teams && user.teams.length; else noTeams">
+          <ng-container *ngFor="let team of user.teams; let i = index">
+            <p-chip [label]="team.team.name"></p-chip>
+          </ng-container>
+        </ng-container>
+      </td>
+      <td>{{ user.enabled }}</td>
+      <td>{{ user.createdAt | customDate }}</td>
+      <td>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-pencil"
+          class="p-button-rounded button-ghost mr-2"
+          (click)="update(user)"
+        ></button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button-rounded button-ghost"
+          (click)="remove(user)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <ng-container *ngFor="let row of rowsArray">
+      <tr>
+        <ng-container *ngFor="let cell of cellsArray">
+          <td><p-skeleton></p-skeleton></td>
+        </ng-container>
+      </tr>
+    </ng-container>
+  </ng-template>
+</p-table>
+
+<ng-template #noTeams> Nessuna squadra </ng-template>

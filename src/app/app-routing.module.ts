@@ -43,7 +43,12 @@ const routes: Routes = [
         loadChildren: () =>
           import('./@pages/city/city.module').then((m) => m.CityModule),
       },
-
+      {
+        path: 'league',
+        canActivate: [AuthGuard],
+        loadChildren: () =>
+          import('./@pages/league/league.module').then((m) => m.LeagueModule),
+      },
       {
         path: 'team',
         canActivate: [AuthGuard],

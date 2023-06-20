@@ -16,6 +16,13 @@ export class AuthApiService {
     );
   }
 
+  checkToken(token: any): Observable<any> {
+    return this.httpClient.post(
+      `${environment.apiUrl}/auth/check-token`,
+      token
+    );
+  }
+
   recoveryPassword(recoveryData: any): Observable<any> {
     return this.httpClient.post(
       `${environment.apiUrl}/auth/recovery-password`,
