@@ -1,0 +1,78 @@
+<h2 class="mb-2">Elenco prossimi eventi</h2>
+
+<div
+  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round mb-4"
+>
+  <p-multiSelect
+    [options]="currentUser.teams"
+    [formControl]="teamsFilter"
+    optionLabel="name"
+    placeholder="Filtra per squadra"
+  ></p-multiSelect>
+
+  <div>
+    <button
+      pButton
+      pRipple
+      label="Applica filtri"
+      class="p-button-primary mr-2"
+      (click)="onApplyFilters()"
+    ></button>
+  </div>
+</div>
+
+<p-dataView
+  #dv
+  [value]="events"
+  [rows]="5"
+  [paginator]="true"
+  [totalRecords]="totalRecords"
+  [lazy]="true"
+  (onLazyLoad)="onChangePage($event)"
+>
+  <ng-template let-event pTemplate="listItem">
+    <div class="col-12">
+      <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+        <div
+          class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
+        >
+          <div
+            class="flex flex-column align-items-center sm:align-items-start gap-3"
+          >
+            <p class="text-xl font-bold text-900">
+              {{ event.home.name }} vs {{ event.away.name }}
+            </p>
+            <div class="flex align-items-center gap-3">
+              <span class="flex align-items-center gap-2">
+                <span class="material-symbols-outlined"> table_rows </span>
+                <span
+                  ><span class="font-semibold">{{ event.calendar.name }}</span>
+                  {{ event.day }}° giornata</span
+                >
+              </span>
+            </div>
+            <div class="flex align-items-center gap-3">
+              <span class="flex align-items-center gap-2">
+                <span class="material-symbols-outlined"> calendar_today </span>
+                <span class="font-semibold">{{ event.date | customDate }}</span>
+              </span>
+            </div>
+          </div>
+          <div
+            class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
+          >
+            <p-button
+              icon="pi pi-arrow-circle-right"
+              [label]="
+                hasCart(event) ? 'Visualizza trasferta' : 'Organizza trasferta'
+              "
+              class="md:align-self-end mb-2 p-button-rounded"
+              [styleClass]="hasCart(event) ? 'p-button-secondary' : ''"
+              (click)="openCart(event)"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-dataView>

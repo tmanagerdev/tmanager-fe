@@ -7,7 +7,10 @@ import { DatePipe } from '@angular/common';
 })
 export class CustomDatePipe extends DatePipe implements PipeTransform {
   override transform(value: any, args?: any): any {
-    //return super.transform(value, 'dd/MM/yyyy HH:mm:ss');
-    return super.transform(value, 'dd/MM/yyyy');
+    return args
+      ? args === 'showHours'
+        ? super.transform(value, 'dd/MM/yyyy HH:mm')
+        : super.transform(value, 'dd/MM/yyyy')
+      : super.transform(value, 'dd/MM/yyyy');
   }
 }

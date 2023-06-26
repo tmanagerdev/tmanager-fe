@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -12,6 +12,10 @@ import { AuthInterceptor } from './@core/interceptors/auth.interceptor';
 import { appInit } from './app-init';
 import { AuthService } from './@core/services/auth.service';
 import { UserAvatarComponent } from './@shared/user-avatar/user-avatar.component';
+import { registerLocaleData } from '@angular/common';
+import localeIt from '@angular/common/locales/it';
+
+registerLocaleData(localeIt);
 
 @NgModule({
   declarations: [
@@ -39,6 +43,10 @@ import { UserAvatarComponent } from './@shared/user-avatar/user-avatar.component
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
+    },
+    {
+      provide: LOCALE_ID,
+      useValue: 'it',
     },
   ],
   bootstrap: [AppComponent],

@@ -20,12 +20,13 @@ export class AuthService {
   initializeUser() {
     const user = localStorage.getItem(KEY_STORAGE_USER);
     if (user) {
+      console.log(user);
       this.setCurrentUser(JSON.parse(user));
     }
   }
 
   setCurrentUser(data: any) {
-    console.log('facciamo il next??', data);
+    console.log('current user', data);
     this._currentUser$.next(data);
     this._currentUser = data;
     localStorage.setItem(KEY_STORAGE_USER, JSON.stringify(data));

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './@ui/layout/layout.component';
 import { AuthGuard } from './@core/guards/auth.guard';
 import { AutoLoginGuard } from './@core/guards/auto-login.guard';
+import { AdminGuard } from './@core/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -17,7 +18,7 @@ const routes: Routes = [
     children: [
       {
         path: 'activity',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/activity/activity.module').then(
             (m) => m.ActivityModule
@@ -25,7 +26,7 @@ const routes: Routes = [
       },
       {
         path: 'calendar',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/calendar/calendar.module').then(
             (m) => m.CalendarModule
@@ -33,37 +34,45 @@ const routes: Routes = [
       },
       {
         path: 'cart',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/cart/cart.module').then((m) => m.CartModule),
       },
       {
         path: 'city',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/city/city.module').then((m) => m.CityModule),
       },
       {
         path: 'league',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/league/league.module').then((m) => m.LeagueModule),
       },
       {
-        path: 'team',
+        path: 'personal',
         canActivate: [AuthGuard],
+        loadChildren: () =>
+          import('./@pages/personal/personal.module').then(
+            (m) => m.PersonalModule
+          ),
+      },
+      {
+        path: 'team',
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/team/team.module').then((m) => m.TeamModule),
       },
       {
         path: 'user',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
           import('./@pages/user/user.module').then((m) => m.UserModule),
       },
       {
         path: '',
-        redirectTo: 'city',
+        redirectTo: 'personal',
         pathMatch: 'full',
       },
     ],

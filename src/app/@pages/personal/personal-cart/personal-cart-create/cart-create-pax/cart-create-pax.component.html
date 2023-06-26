@@ -1,0 +1,54 @@
+<ng-container *ngIf="event">
+  <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
+    <p>{{ event.calendar.name }} - {{ event.day }}° giornata</p>
+    <p class="font-semibold text-lg my-2">
+      {{ event.home.name }} - {{ event.away.name }}
+    </p>
+    <p class="text-sm">Indica il numero dei partecipanti alla trasferta</p>
+    <p-divider></p-divider>
+    <div
+      class="flex justify-content-between align-items-center"
+      [formGroup]="paxForm"
+    >
+      <div class="flex flex-column w-16rem">
+        <div class="flex flex-column gap-2">
+          <label class="font-semibold">Giocatori</label>
+          <p-inputNumber
+            inputId="integeronly"
+            formControlName="players"
+          ></p-inputNumber>
+          <app-control-errors controlName="players"></app-control-errors>
+        </div>
+        <div class="flex flex-column gap-2 mt-4">
+          <label class="font-semibold">Staff</label>
+          <p-inputNumber
+            inputId="integeronly"
+            formControlName="staffs"
+          ></p-inputNumber>
+          <app-control-errors controlName="staffs"></app-control-errors>
+        </div>
+        <div class="flex flex-column gap-2 mt-4">
+          <label class="font-semibold">Dirigenti</label>
+          <p-inputNumber
+            inputId="integeronly"
+            formControlName="managers"
+          ></p-inputNumber>
+          <app-control-errors controlName="managers"></app-control-errors>
+        </div>
+      </div>
+      <div class="flex flex-1 flex-column align-items-center">
+        <p class="text-lg">Tot</p>
+        <p class="text-5xl font-bold">{{ totalPax }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="w-full flex justify-content-between mb-3">
+    <div></div>
+    <p-button
+      label="Avanti"
+      (onClick)="onNextStep()"
+      icon="pi pi-angle-right"
+      iconPos="right"
+    ></p-button>
+  </div>
+</ng-container>

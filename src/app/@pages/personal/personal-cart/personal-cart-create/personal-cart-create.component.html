@@ -1,0 +1,34 @@
+<h2>Organizza nuova trasferta</h2>
+<div class="my-5">
+  <p-steps
+    [model]="items"
+    [activeIndex]="activeIndex"
+    [readonly]="true"
+  ></p-steps>
+  <div class="py-5">
+    <ng-container [ngSwitch]="activeIndex">
+      <ng-container *ngSwitchCase="0">
+        <app-cart-create-pax
+          [activeIndex]="activeIndex"
+          [paxForm]="paxForm"
+          [event]="event"
+          (nextStep)="onNextStep()"
+        ></app-cart-create-pax>
+      </ng-container>
+      <ng-container *ngSwitchCase="1">
+        <app-cart-create-accomodations
+          [activeIndex]="activeIndex"
+          [accomodationForm]="accomodationForm"
+          (nextStep)="onNextStep()"
+          (prevStep)="onPrevStep()"
+        ></app-cart-create-accomodations>
+      </ng-container>
+      <ng-container *ngSwitchCase="2">
+        <app-cart-create-road></app-cart-create-road>
+      </ng-container>
+      <ng-container *ngSwitchCase="3">
+        <app-cart-create-activity></app-cart-create-activity>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

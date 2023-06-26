@@ -25,18 +25,20 @@
     <nav class="nav">
       <ul class="list-group m-0 px-3">
         <ng-container *ngFor="let m of menu">
-          <p class="font-semibold my-3 uppercase">{{ m.label }}</p>
-          <li
-            *ngFor="let item of m.items"
-            class="nav-item cursor-pointer"
-            [routerLink]="item.routerLink"
-            [routerLinkActive]="'active'"
-          >
-            <span class="material-symbols-outlined">
-              {{ item.icon }}
-            </span>
-            <span class="text-route">{{ item.label }}</span>
-          </li>
+          <ng-container *ngIf="user && m.permissions?.includes(user.role)">
+            <p class="font-semibold my-3 uppercase">{{ m.label }}</p>
+            <li
+              *ngFor="let item of m.items"
+              class="nav-item cursor-pointer"
+              [routerLink]="item.routerLink"
+              [routerLinkActive]="'active'"
+            >
+              <span class="material-symbols-outlined">
+                {{ item.icon }}
+              </span>
+              <span class="text-route">{{ item.label }}</span>
+            </li>
+          </ng-container>
         </ng-container>
       </ul>
     </nav>
