@@ -30,3 +30,11 @@ export const paxForm: FormGroup = new FormGroup({
   staffs: new FormControl(null, [Validators.required]),
   managers: new FormControl(null, [Validators.required]),
 });
+
+export const accomodationForm: FormGroup = new FormGroup({
+  rooms: new FormArray<any>([]),
+});
+
+export const roadForm: FormGroup = new FormGroup({
+  roads: new FormArray<any>([]),
+});

@@ -1,3 +1,45 @@
+<div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
+  <p>Seleziona l'hotel per questa trasferta</p>
+  <p class="font-semibold text-lg my-2">Hotel disponibili</p>
+  <div class="flex flex-wrap gap-2">
+    <ng-container *ngFor="let h of hotels">
+      <div
+        class="flex flex-column border-1 border-round border-300 px-3 py-2 cursor-pointer"
+        [ngClass]="{
+          'border-primary': selectedHotel && selectedHotel.id === h.id
+        }"
+        (click)="onSelectHotel(h)"
+      >
+        <p class="font-semibold">{{ h.name }}</p>
+      </div>
+    </ng-container>
+  </div>
+  <p-divider></p-divider>
+  <div class="py-3">
+    <ng-container *ngIf="selectedHotel; else noHotelSelected">
+      <div class="flex flex-column" [formGroup]="accomodationForm">
+        <ng-container formArrayName="rooms">
+          <ng-container *ngFor="let r of rooms.controls; let i = index">
+            <div class="flex justify-content-between my-2" [formGroupName]="i">
+              <p class="w-3 font-semibold">{{ rooms.value[i].name }}</p>
+              <p class="w-3">
+                {{ rooms.value[i].price | currency : "EUR" : "symbol" }}
+              </p>
+              <p-inputNumber
+                inputId="integeronly"
+                formControlName="quantity"
+              ></p-inputNumber>
+              <app-control-errors
+                formControlName="quantity"
+              ></app-control-errors>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
 <div class="w-full flex justify-content-between mb-3">
   <p-button
     label="Indietro"
@@ -10,5 +52,10 @@
     (onClick)="onNextStep()"
     icon="pi pi-angle-right"
     iconPos="right"
+    [disabled]="!accomodationForm.valid"
   ></p-button>
 </div>
+
+<ng-template #noHotelSelected>
+  <p class="text-sm text-center">Seleziona un hotel per prenotare le camere</p>
+</ng-template>

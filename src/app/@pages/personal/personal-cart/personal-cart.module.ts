@@ -18,6 +18,8 @@ import { ControlErrorsComponent } from 'src/app/@shared/control-errors/control-e
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { CalendarModule } from 'primeng/calendar';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     FormsModule,
     ReactiveFormsModule,
     InputNumberModule,
+    CalendarModule,
+    DropdownModule,
   ],
 })
 export class PersonalCartModule {}

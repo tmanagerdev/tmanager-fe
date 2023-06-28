@@ -19,12 +19,19 @@
         <app-cart-create-accomodations
           [activeIndex]="activeIndex"
           [accomodationForm]="accomodationForm"
+          [event]="event"
           (nextStep)="onNextStep()"
           (prevStep)="onPrevStep()"
         ></app-cart-create-accomodations>
       </ng-container>
       <ng-container *ngSwitchCase="2">
-        <app-cart-create-road></app-cart-create-road>
+        <app-cart-create-road
+          [activeIndex]="activeIndex"
+          [roadForm]="roadForm"
+          [event]="event"
+          (nextStep)="onNextStep()"
+          (prevStep)="onPrevStep()"
+        ></app-cart-create-road>
       </ng-container>
       <ng-container *ngSwitchCase="3">
         <app-cart-create-activity></app-cart-create-activity>

@@ -1,1 +1,112 @@
-<p>cart-create-road works!</p>
+<div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
+  <div class="flex justify-content-between">
+    <div class="flex flex-column">
+      <p>Seleziona le tratte della trasferta</p>
+      <p class="font-semibold text-lg my-2">Autonoleggio e tratte</p>
+    </div>
+    <p-button
+      (onClick)="onAddRoad()"
+      icon="pi pi-plus"
+      iconPos="right"
+    ></p-button>
+  </div>
+  <p-divider></p-divider>
+  <ng-container *ngIf="roads.value && roads.value.length; else noRoads">
+    <div class="flex flex-wrap gap-2"></div>
+  </ng-container>
+  <div class="flex justify-content-center"></div>
+
+  <div class="flex flex-column" [formGroup]="roadForm">
+    <ng-container formArrayName="roads">
+      <ng-container *ngFor="let r of roads.controls; let i = index">
+        <div class="flex flex-column my-2" [formGroupName]="i">
+          <p class="mb-2">#{{ i }}</p>
+          <p class="font-semibold my-2">Info</p>
+          <div class="formgrid grid">
+            <div class="field col">
+              <label for="firstname2">Luogo di partenza</label>
+              <input pInputText type="text" formControlName="from" />
+            </div>
+            <div class="field col">
+              <label for="lastname2">Luogo di arrivo</label>
+              <input pInputText type="text" formControlName="to" />
+            </div>
+          </div>
+          <div class="formgrid grid">
+            <div class="field col">
+              <label for="firstname2">Data di arrivo</label>
+              <p-calendar
+                dateFormat="dd/mm/yy"
+                formControlName="startDate"
+                [showTime]="true"
+                [inline]="true"
+              ></p-calendar>
+            </div>
+          </div>
+          <p class="font-semibold my-2">Trasporto</p>
+          <ng-container formArrayName="veichles">
+            <ng-container
+              *ngFor="
+                let v of roads.controls[i].get('veichles').controls;
+                let iv = index
+              "
+            >
+              <div class="flex flex-column my-2" [formGroupName]="iv">
+                <div class="formgroup-inline flex align-items-center">
+                  <div class="field flex flex-column gap-2">
+                    <label>Quantità</label>
+                    <p-inputNumber
+                      inputId="integeronly"
+                      formControlName="quantity"
+                      class="w-5rem"
+                    ></p-inputNumber>
+                  </div>
+                  <div class="field flex flex-column gap-2">
+                    <label>Veicolo</label>
+                    <p-dropdown
+                      formControlName="veichle"
+                      [options]="veichles"
+                      optionLabel="name"
+                    ></p-dropdown>
+                  </div>
+                  <p-button
+                    (onClick)="onAddVeichle(i)"
+                    label="Nuova tratta"
+                    styleClass="p-button-text"
+                  ></p-button>
+                  <p-button
+                    *ngIf="iv !== 0"
+                    (onClick)="onRemoveVeichle(i, iv)"
+                    label="Elimina"
+                    styleClass="p-button-text p-button-danger"
+                  ></p-button>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+        <p-divider></p-divider>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<div class="w-full flex justify-content-between mb-3">
+  <p-button
+    label="Indietro"
+    (onClick)="onPrevStep()"
+    icon="pi pi-angle-left"
+    styleClass="p-button-secondary"
+  ></p-button>
+  <p-button
+    label="Avanti"
+    (onClick)="onNextStep()"
+    icon="pi pi-angle-right"
+    iconPos="right"
+    [disabled]="!roadForm.valid"
+  ></p-button>
+</div>
+
+<ng-template #noRoads>
+  <p class="text-sm text-center py-4">Nessuna tratta trovata</p>
+</ng-template>

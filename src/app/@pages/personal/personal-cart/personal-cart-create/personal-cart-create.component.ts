@@ -1,5 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { cartForm, paxForm } from '../personal-cart.utils';
+import {
+  accomodationForm,
+  cartForm,
+  paxForm,
+  roadForm,
+} from '../personal-cart.utils';
 import { FormArray, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
@@ -29,13 +34,14 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Attività',
     },
   ];
-  activeIndex: number = 0;
+  activeIndex: number = 2;
   currentUser: any;
   event: any;
 
   cartForm: FormGroup = cartForm;
   paxForm: FormGroup = paxForm;
-  accomodationForm: FormGroup = paxForm;
+  accomodationForm: FormGroup = accomodationForm;
+  roadForm: FormGroup = roadForm;
 
   event$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -87,14 +93,15 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   }
 
   onPrevStep() {
-    console.log('siamo qui??');
     this.activeIndex--;
   }
 
   onNextStep() {
     if (this.activeIndex < 3) {
       this.activeIndex++;
-      console.log('FORM VALUE', this.cartForm.value);
+      console.log('PAXFORM VALUE', this.paxForm.value);
+      console.log('ACCOMODATIONFORM VALUE', this.accomodationForm.value);
+      console.log('ROADFORM VALUE', this.roadForm.value);
     } else {
       console.log('CREAZIONE CART');
     }
