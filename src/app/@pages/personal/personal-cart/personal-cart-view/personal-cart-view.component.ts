@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 
 @Component({
@@ -51,10 +52,26 @@ export class PersonalCartViewComponent {
     return this.cart?.activities;
   }
 
+  get total() {
+    const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
+      return acc + room.room.price * room.quantity * 100;
+    }, 0);
+    const totalActivity = this.activities.reduce((acc: any, activity: any) => {
+      return acc + activity.activity.price * 100;
+    }, 0);
+
+    console.log(totalAccomodation);
+    console.log(totalActivity);
+
+    return totalAccomodation / 100 + totalActivity / 100;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private cartApiService: CartApiService
+    private cartApiService: CartApiService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {
     this.cartId = this.route.snapshot.params['id'];
 
@@ -84,5 +101,28 @@ export class PersonalCartViewComponent {
     this.router.navigate(['personal', 'carts', 'edit', this.cart.id]);
   }
 
-  complete() {}
+  complete() {
+    this.confirmationService.confirm({
+      message:
+        'Una volta confermata la trasferta non potrà più essere modificata e verrà inviata una mail al nostro staff. Si intende procedere?',
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.cartApiService
+          .update(this.cart.id, { isCompleted: true })
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadCart();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Trasferta confermata',
+                detail: 'Verrà inviata una mail di notifica al nostro staff',
+              });
+            })
+          )
+          .subscribe();
+      },
+    });
+  }
 }

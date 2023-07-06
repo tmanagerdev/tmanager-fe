@@ -14,6 +14,7 @@ import { AuthService } from './@core/services/auth.service';
 import { UserAvatarComponent } from './@shared/user-avatar/user-avatar.component';
 import { registerLocaleData } from '@angular/common';
 import localeIt from '@angular/common/locales/it';
+import { ImageUploaderComponent } from './@shared/image-uploader/image-uploader.component';
 
 registerLocaleData(localeIt);
 

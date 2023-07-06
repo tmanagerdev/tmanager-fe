@@ -1,0 +1,23 @@
+<div
+  (click)="onTriggerUpload()"
+  class="image-uploader cursor-pointer"
+  [style.backgroundImage]="'url(' + getBg() + ')'"
+>
+  <ng-container *ngIf="control">
+    <button
+      pButton
+      pRipple
+      type="button"
+      icon="pi pi-times"
+      class="p-button-rounded p-button-text p-button-secondary"
+      (click)="onRemoveImage($event)"
+    ></button>
+  </ng-container>
+</div>
+<input
+  #fileUploader
+  hidden
+  class="form-control"
+  type="file"
+  (change)="onChange($event)"
+/>

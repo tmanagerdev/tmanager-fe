@@ -7,11 +7,11 @@ import {
 } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
-import { CityModalComponent } from '../../city/city-modal/city-modal.component';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { TeamModalComponent } from '../team-modal/team-modal.component';
 
 @Component({
   selector: 'app-team-list',
@@ -167,7 +167,7 @@ export class TeamListComponent {
   }
 
   create() {
-    this.ref = this.dialogService.open(CityModalComponent, {
+    this.ref = this.dialogService.open(TeamModalComponent, {
       header: 'Crea nuova squadra',
       width: '450px',
       contentStyle: { overflow: 'auto' },
@@ -209,7 +209,7 @@ export class TeamListComponent {
   }
 
   update(team: any) {
-    this.ref = this.dialogService.open(CityModalComponent, {
+    this.ref = this.dialogService.open(TeamModalComponent, {
       header: `Aggiorna ${team.name}`,
       width: '450px',
       contentStyle: { overflow: 'auto' },
@@ -229,7 +229,7 @@ export class TeamListComponent {
               this.loadTeams();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Città aggiornata',
+                summary: 'Squadra aggiornata',
                 detail: newTeam.name,
               });
             })

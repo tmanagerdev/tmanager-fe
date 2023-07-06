@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PersonalCartListComponent } from './personal-cart-list/personal-cart-list.component';
-import { PersonalCartEditComponent } from './personal-cart-edit/personal-cart-edit.component';
 import { PersonalCartRoutingModule } from './personal-cart-routing.module';
 import { PersonalCartViewComponent } from './personal-cart-view/personal-cart-view.component';
 import { CustomDatePipe } from '../../../@core/pipes/custom-date.pipe';
@@ -27,14 +26,15 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MessagesModule } from 'primeng/messages';
 import { ModalRoadComponent } from './personal-cart-create/cart-create-road/modal-road/modal-road.component';
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { PersonalCartCrateConfirmModalComponent } from './personal-cart-create/personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
   declarations: [
     PersonalCartListComponent,
-    PersonalCartEditComponent,
     PersonalCartViewComponent,
     PersonalCartCreateComponent,
     CartCreatePaxComponent,
@@ -66,7 +66,9 @@ import { PersonalCartCrateConfirmModalComponent } from './personal-cart-create/p
     MessagesModule,
     DynamicDialogModule,
     ToastModule,
+    ConfirmDialogModule,
+    TagModule,
   ],
-  providers: [DialogService, MessageService],
+  providers: [DialogService, MessageService, ConfirmationService],
 })
 export class PersonalCartModule {}

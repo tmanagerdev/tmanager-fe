@@ -17,9 +17,12 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { SkeletonModule } from 'primeng/skeleton';
+import { TeamModalComponent } from './team-modal/team-modal.component';
+import { ImageUploaderComponent } from '../../@shared/image-uploader/image-uploader.component';
 
 @NgModule({
-  declarations: [TeamListComponent],
+  declarations: [TeamListComponent, TeamModalComponent],
+  providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
     TeamRoutingModule,
@@ -38,7 +41,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     OverlayPanelModule,
     AutoCompleteModule,
     SkeletonModule,
+    ImageUploaderComponent,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class TeamModule {}

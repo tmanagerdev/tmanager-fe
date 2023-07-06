@@ -1,0 +1,54 @@
+<form
+  [formGroup]="teamForm"
+  class="flex flex-column gap-3"
+  (ngSubmit)="onSave()"
+>
+  <div class="flex flex-column gap-2">
+    <label>Nome</label>
+    <input pInputText placeholder="Nome" formControlName="name" />
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Città</label>
+    <p-autoComplete
+      formControlName="city"
+      [suggestions]="cities"
+      (completeMethod)="onFilterCity($event)"
+      [dropdown]="true"
+      field="name"
+      placeholder="Seleziona la città"
+    ></p-autoComplete>
+  </div>
+
+  <div class="flex flex-column gap-2">
+    <label>Campionato</label>
+    <p-autoComplete
+      formControlName="league"
+      [suggestions]="leagues"
+      (completeMethod)="onFilterLeague($event)"
+      [dropdown]="true"
+      field="name"
+      placeholder="Seleziona il campionato"
+    ></p-autoComplete>
+  </div>
+
+  <div class="flex flex-column gap-2">
+    <label>Logo</label>
+    <app-image-uploader [control]="teamForm.get('logo')"></app-image-uploader>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Salva"
+      [disabled]="!teamForm.valid"
+    ></button>
+  </div>
+</form>

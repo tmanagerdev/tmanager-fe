@@ -1,0 +1,19 @@
+:host {
+  width: 100%;
+  .image-uploader {
+    height: 250px;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    background-color: var(--surface-c);
+    background-position: center;
+    background-size: cover;
+    position: relative;
+  }
+
+  button {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+  }
+}
