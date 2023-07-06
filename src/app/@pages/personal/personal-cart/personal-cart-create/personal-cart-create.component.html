@@ -1,41 +1,67 @@
-<h2>Organizza nuova trasferta</h2>
-<div class="my-5">
-  <p-steps
-    [model]="items"
-    [activeIndex]="activeIndex"
-    [readonly]="true"
-  ></p-steps>
-  <div class="py-5">
-    <ng-container [ngSwitch]="activeIndex">
-      <ng-container *ngSwitchCase="0">
-        <app-cart-create-pax
-          [activeIndex]="activeIndex"
-          [paxForm]="paxForm"
-          [event]="event"
-          (nextStep)="onNextStep()"
-        ></app-cart-create-pax>
+<p-toast></p-toast>
+
+<h2>{{ isEdit ? "Aggiorna trasferta" : "Organizza nuova trasferta" }}</h2>
+<ng-container *ngIf="event">
+  <div class="my-3">
+    <p>{{ event.calendar.name }} - {{ event.day }}° giornata</p>
+    <p class="mb-4">
+      <span class="font-semibold text-lg">
+        {{ event.home.name }} - {{ event.away.name }}
+      </span>
+      del {{ event.date | customDate }}
+    </p>
+    <p-steps
+      [model]="items"
+      [activeIndex]="activeIndex"
+      [readonly]="true"
+    ></p-steps>
+    <div class="py-5">
+      <ng-container [ngSwitch]="activeIndex">
+        <ng-container *ngSwitchCase="0">
+          <app-cart-create-pax
+            [activeIndex]="activeIndex"
+            [paxForm]="paxForm"
+            [event]="event"
+            (nextStep)="onNextStep()"
+          ></app-cart-create-pax>
+        </ng-container>
+        <ng-container *ngSwitchCase="1">
+          <app-cart-create-accomodations
+            [isEdit]="isEdit"
+            [activeIndex]="activeIndex"
+            [accomodationForm]="accomodationForm"
+            [event]="event"
+            (nextStep)="onNextStep()"
+            (prevStep)="onPrevStep()"
+          ></app-cart-create-accomodations>
+        </ng-container>
+        <ng-container *ngSwitchCase="2">
+          <app-cart-create-road
+            [activeIndex]="activeIndex"
+            [roadForm]="roadForm"
+            [event]="event"
+            (nextStep)="onNextStep()"
+            (prevStep)="onPrevStep()"
+          ></app-cart-create-road>
+        </ng-container>
+        <ng-container *ngSwitchCase="3">
+          <app-cart-create-activity
+            [event]="event"
+            [activeIndex]="activeIndex"
+            [activityForm]="activityForm"
+            (nextStep)="onNextStep()"
+            (prevStep)="onPrevStep()"
+          ></app-cart-create-activity>
+        </ng-container>
+        <ng-container *ngSwitchCase="4">
+          <app-recap
+            [cartForm]="cartForm"
+            [activeIndex]="activeIndex"
+            (nextStep)="onSaveCart()"
+            (prevStep)="onPrevStep()"
+          ></app-recap>
+        </ng-container>
       </ng-container>
-      <ng-container *ngSwitchCase="1">
-        <app-cart-create-accomodations
-          [activeIndex]="activeIndex"
-          [accomodationForm]="accomodationForm"
-          [event]="event"
-          (nextStep)="onNextStep()"
-          (prevStep)="onPrevStep()"
-        ></app-cart-create-accomodations>
-      </ng-container>
-      <ng-container *ngSwitchCase="2">
-        <app-cart-create-road
-          [activeIndex]="activeIndex"
-          [roadForm]="roadForm"
-          [event]="event"
-          (nextStep)="onNextStep()"
-          (prevStep)="onPrevStep()"
-        ></app-cart-create-road>
-      </ng-container>
-      <ng-container *ngSwitchCase="3">
-        <app-cart-create-activity></app-cart-create-activity>
-      </ng-container>
-    </ng-container>
+    </div>
   </div>
-</div>
+</ng-container>

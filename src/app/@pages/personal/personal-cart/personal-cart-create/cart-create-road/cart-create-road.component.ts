@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, map, switchMap, takeUntil, tap } from 'rxjs';
 import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { ModalRoadComponent } from './modal-road/modal-road.component';
 
 @Component({
   selector: 'app-cart-create-road',
@@ -10,13 +12,14 @@ import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
 })
 export class CartCreateRoadComponent implements OnInit {
   veichles: any = [];
+  ref!: DynamicDialogRef;
 
   @Input() activeIndex: number = 0;
   @Input() event: any;
   @Input() roadForm: FormGroup = new FormGroup({});
 
-  @Output() nextStep: EventEmitter<number> = new EventEmitter();
-  @Output() prevStep: EventEmitter<number> = new EventEmitter();
+  @Output() nextStep: EventEmitter<void> = new EventEmitter();
+  @Output() prevStep: EventEmitter<void> = new EventEmitter();
 
   veichle$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -25,7 +28,10 @@ export class CartCreateRoadComponent implements OnInit {
     return this.roadForm.get('roads') as FormArray;
   }
 
-  constructor(private veichleApiService: VeichleApiService) {
+  constructor(
+    private veichleApiService: VeichleApiService,
+    private dialogService: DialogService
+  ) {
     this.veichle$
       .pipe(
         takeUntil(this.unsubscribe$),
@@ -50,21 +56,60 @@ export class CartCreateRoadComponent implements OnInit {
   }
 
   onNextStep() {
-    console.log(this.roads.value);
-    //this.nextStep.emit(this.activeIndex);
+    this.nextStep.emit();
   }
 
   onPrevStep() {
-    this.prevStep.emit(this.activeIndex);
+    this.prevStep.emit();
+  }
+
+  onUpdateRoad(indexRoads: number) {
+    const roadToUpdate = this.roads.at(indexRoads) as FormGroup;
+    console.log('roadToUpdate', roadToUpdate.value);
+
+    this.ref = this.dialogService.open(ModalRoadComponent, {
+      header: 'Aggiorna tratta',
+      width: '700px',
+      height: '700px',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10001,
+      data: {
+        roadForm: roadToUpdate,
+        isEdit: true,
+        index: indexRoads + 1,
+        veichlesList: this.veichles,
+      },
+    });
+
+    this.ref.onClose.subscribe((road: FormGroup) => {
+      console.log('road', road);
+      // if (road) {
+      //   this.roads.push(road);
+      // }
+    });
+  }
+
+  onDeleteRoad(indexRoads: number) {
+    this.roads.removeAt(indexRoads);
   }
 
   onAddRoad() {
+    const startDate = new Date(this.event.date);
+    const endDate = new Date(this.event.date);
+    startDate.setDate(startDate.getDate() - 1);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setDate(endDate.getDate() - 1);
+    endDate.setHours(0, 0, 0, 0);
+
     const newRoad = new FormGroup({
       from: new FormControl(null),
       to: new FormControl(null),
-      startDate: new FormControl(null),
+      startDate: new FormControl(startDate),
+      endDate: new FormControl(endDate),
       veichles: new FormArray([]),
     });
+
+    console.log('new Road', newRoad.value);
 
     const newVeichle = new FormGroup({
       veichle: new FormControl(null),
@@ -73,20 +118,25 @@ export class CartCreateRoadComponent implements OnInit {
 
     (newRoad.get('veichles') as FormArray)?.push(newVeichle);
 
-    this.roads.push(newRoad);
-  }
-
-  onAddVeichle(indexRoads: number) {
-    const veichle = this.roads.at(indexRoads).get('veichles') as FormArray;
-    const newVeichle = new FormGroup({
-      veichle: new FormControl(null),
-      quantity: new FormControl(null),
+    this.ref = this.dialogService.open(ModalRoadComponent, {
+      header: 'Aggiungi nuova tratta',
+      width: '700px',
+      height: '700px',
+      contentStyle: { overflow: 'auto' },
+      baseZIndex: 10001,
+      data: {
+        isEdit: false,
+        roadForm: newRoad,
+        index: this.roads.length + 1,
+        veichlesList: this.veichles,
+      },
     });
-    veichle.push(newVeichle);
-  }
 
-  onRemoveVeichle(indexRoads: number, indexVeichle: number) {
-    const veichle = this.roads.at(indexRoads).get('veichles') as FormArray;
-    veichle.removeAt(indexVeichle);
+    this.ref.onClose.subscribe((road: FormGroup) => {
+      console.log('road', road);
+      if (road) {
+        this.roads.push(road);
+      }
+    });
   }
 }

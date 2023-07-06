@@ -11,7 +11,7 @@ export class CartCreatePaxComponent {
   @Input() event: any;
   @Input() paxForm: FormGroup = new FormGroup({});
 
-  @Output() nextStep: EventEmitter<number> = new EventEmitter();
+  @Output() nextStep: EventEmitter<void> = new EventEmitter();
 
   get totalPax() {
     const players = this.paxForm.get('players')?.value ?? 0;
@@ -23,6 +23,6 @@ export class CartCreatePaxComponent {
   constructor() {}
 
   onNextStep() {
-    this.nextStep.emit(this.activeIndex);
+    this.nextStep.emit();
   }
 }

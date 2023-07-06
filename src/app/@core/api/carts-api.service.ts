@@ -42,11 +42,11 @@ export class CartApiService {
     return this.httpClient.post(`${environment.apiUrl}/carts`, city);
   }
 
-  update(id: string, city: any): Observable<any> {
+  update(id: number, city: any): Observable<any> {
     return this.httpClient.put(`${environment.apiUrl}/carts/${id}`, city);
   }
 
-  delete(id: string): Observable<any> {
+  delete(id: number): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/carts/${id}`);
   }
 }

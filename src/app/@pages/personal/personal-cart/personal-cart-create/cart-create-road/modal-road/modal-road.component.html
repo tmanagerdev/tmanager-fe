@@ -1,0 +1,108 @@
+<div class="flex flex-column h-full">
+  <div class="flex flex-column flex-1" [formGroup]="roadForm">
+    <div class="flex flex-column my-2">
+      <p class="mb-2">#{{ index }}</p>
+      <p class="font-semibold my-2">Info</p>
+      <div class="formgrid grid">
+        <div class="field col">
+          <label>Luogo di partenza</label>
+          <input pInputText type="text" formControlName="from" />
+        </div>
+        <div class="field col">
+          <label>Luogo di arrivo</label>
+          <input pInputText type="text" formControlName="to" />
+        </div>
+      </div>
+      <div class="formgrid grid">
+        <div class="field col">
+          <label>Data di partenza</label>
+          <div class="flex gap-2">
+            <p-calendar
+              dateFormat="dd/mm/yy"
+              formControlName="startDate"
+              class="flex-1"
+            ></p-calendar>
+            <p-calendar
+              dateFormat="hh:MM"
+              formControlName="startDate"
+              [timeOnly]="true"
+              class="w-5rem flex justify-content-center"
+            ></p-calendar>
+          </div>
+        </div>
+        <div class="field col">
+          <label>Data di arrivo</label>
+          <div class="flex gap-2">
+            <p-calendar
+              dateFormat="dd/mm/yy"
+              formControlName="endDate"
+              class="flex-1"
+            ></p-calendar>
+            <p-calendar
+              dateFormat="hh:MM"
+              formControlName="endDate"
+              [timeOnly]="true"
+              class="w-5rem flex justify-content-center"
+            ></p-calendar>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <p class="font-semibold my-2">Mezzi di trasporto</p>
+        <p-button
+          (onClick)="onAddVeichle()"
+          label="Aggiungi"
+          styleClass="p-button-text"
+        ></p-button>
+      </div>
+
+      <ng-container formArrayName="veichles">
+        <ng-container *ngFor="let v of veichles.controls; let i = index">
+          <div class="flex flex-column my-2" [formGroupName]="i">
+            <div class="formgroup-inline flex align-items-center">
+              <div class="field flex flex-column gap-2">
+                <label>Quantità</label>
+                <p-inputNumber
+                  inputId="integeronly"
+                  formControlName="quantity"
+                  class="w-5rem"
+                ></p-inputNumber>
+              </div>
+              <div class="field flex flex-column gap-2">
+                <label>Veicolo</label>
+                <p-dropdown
+                  formControlName="veichle"
+                  [options]="veichlesList"
+                  optionLabel="name"
+                  class="w-15rem"
+                  placeholder="Seleziona veicolo"
+                ></p-dropdown>
+              </div>
+              <p-button
+                (onClick)="onRemoveVeichle(i)"
+                label="Elimina"
+                styleClass="p-button-text p-button-danger"
+              ></p-button>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      [label]="isEdit ? 'Aggiorna' : 'Aggiungi'"
+      (click)="onSave()"
+    ></button>
+  </div>
+</div>

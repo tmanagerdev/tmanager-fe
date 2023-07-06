@@ -1,0 +1,32 @@
+<div class="mb-5">
+  <p>
+    Se confermi la trasferta questa <strong>non sarà più modificabile</strong> e
+    verrà inviata una mail al nostro staff di riepilogo.
+  </p>
+  <p class="mt-2">
+    Se intendi aspettare per poter modificare i dati della trasferta in futuro
+    salvala come bozza.
+  </p>
+</div>
+<div class="flex justify-content-end gap-2 dialog-buttons">
+  <button
+    pButton
+    type="button"
+    label="Annulla"
+    class="p-button-secondary"
+    (click)="onClose('cancel')"
+  ></button>
+  <button
+    pButton
+    type="submit"
+    label="Salva come bozza"
+    (click)="onClose('notConfirm')"
+  ></button>
+  <button
+    pButton
+    type="submit"
+    label="Conferma"
+    class="p-button-success"
+    (click)="onClose('confirm')"
+  ></button>
+</div>

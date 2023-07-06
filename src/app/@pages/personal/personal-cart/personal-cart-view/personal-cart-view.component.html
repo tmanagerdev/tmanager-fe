@@ -1,8 +1,9 @@
+<p-toast></p-toast>
 <ng-container *ngIf="cart">
   <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
     <div class="flex justify-content-between">
       <div class="flex flex-column">
-        <h2>Trasferta {{ city.name }}</h2>
+        <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
       </div>
       <div class="flex flex-column align-items-end">
@@ -10,6 +11,30 @@
         <p>{{ awayTeam.name }}</p>
       </div>
     </div>
+    <p-divider></p-divider>
+    <div class="flex justify-content-end dialog-buttons">
+      <ng-container *ngIf="!cart.isCompleted; else isCompleted">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-outlined mr-2"
+          label="Modifica"
+          (click)="update()"
+        ></button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-check"
+          class="p-button-rounded p-button-outlined p-button-success"
+          label="Conferma"
+          (click)="complete()"
+        ></button>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
     <div class="flex flex-column mt-5">
       <p class="font-semibold mb-2">Partecipanti</p>
       <p>Calciatori: {{ cart.players }}</p>
@@ -52,9 +77,10 @@
       <p class="font-semibold mb-2">Autonoleggio</p>
       <ng-container *ngFor="let r of roads">
         <div class="mb-2">
-          <p class="mb-1">
-            Da {{ r.from }} a {{ r.to }} -
-            {{ r.startDate | customDate : "showHours" }}
+          <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
+          <p class="mb-1 text-sm">
+            {{ r.startDate | customDate : "showHours" }} -
+            {{ r.endDate | customDate : "showHours" }}
           </p>
           <ng-container *ngFor="let v of r.veichles">
             <div class="px-2">{{ v.quantity }}x {{ v.veichle.name }}</div>
@@ -88,3 +114,7 @@
     </div>
   </div>
 </ng-container>
+
+<ng-template #isCompleted>
+  <p>Trasferta confermata il {{ cart.completedAt | customDate }}</p>
+</ng-template>

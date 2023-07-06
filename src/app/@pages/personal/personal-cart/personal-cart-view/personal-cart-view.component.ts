@@ -79,4 +79,10 @@ export class PersonalCartViewComponent {
   loadCart() {
     this.cart$.next();
   }
+
+  update() {
+    this.router.navigate(['personal', 'carts', 'edit', this.cart.id]);
+  }
+
+  complete() {}
 }

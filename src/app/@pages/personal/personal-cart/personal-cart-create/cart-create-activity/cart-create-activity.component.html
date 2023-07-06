@@ -1,1 +1,82 @@
-<p>cart-create-activity works!</p>
+<div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
+  <p>Seleziona le attività per questa trasferta</p>
+  <p class="font-semibold text-lg my-2">Attività disponibili</p>
+  <div class="py-3">
+    <div class="pb-3">
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          type="text"
+          pInputText
+          placeholder="Cerca..."
+          [formControl]="searchFilter"
+        />
+      </span>
+    </div>
+    <p-dataView
+      #dv
+      [value]="activities"
+      [rows]="size"
+      [paginator]="true"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onLazyLoad)="onChangePage($event)"
+    >
+      <ng-template let-activity pTemplate="listItem">
+        <div class="col-12 sm:col-6 lg:col-12 xl:col-4 p-2 border-none">
+          <div
+            class="p-4 border-1 surface-card border-round flex flex-column h-full"
+            [ngClass]="
+              checkIfSelected(activity.id) ? 'border-primary' : 'surface-border'
+            "
+          >
+            <div class="flex justify-content-between flex-1">
+              <div class="flex flex-column">
+                <p class="font-semibold text-xl">{{ activity.name }}</p>
+                <p class="my-2">
+                  {{ activity.price | currency : "EUR" : "symbol" }}
+                </p>
+                <p class="text-sm">{{ activity.description }}</p>
+              </div>
+              <span
+                *ngIf="checkIfSelected(activity.id)"
+                class="material-symbols-outlined check-icon"
+              >
+                check_circle
+              </span>
+            </div>
+
+            <div class="flex justify-content-end">
+              <p-button
+                *ngIf="!checkIfSelected(activity.id)"
+                (onClick)="onSelectActivity(activity)"
+                label="Seleziona"
+                styleClass="p-button-text"
+              ></p-button>
+              <p-button
+                *ngIf="checkIfSelected(activity.id)"
+                (onClick)="onSelectActivity(activity)"
+                label="Rimuovi"
+                styleClass="p-button-text p-button-secondary"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-dataView>
+  </div>
+  <div class="w-full flex justify-content-between mb-3">
+    <p-button
+      label="Indietro"
+      (onClick)="onPrevStep()"
+      icon="pi pi-angle-left"
+      styleClass="p-button-secondary"
+    ></p-button>
+    <p-button
+      label="Avanti"
+      (onClick)="onNextStep()"
+      icon="pi pi-angle-right"
+      iconPos="right"
+    ></p-button>
+  </div>
+</div>

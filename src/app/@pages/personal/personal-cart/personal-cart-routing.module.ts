@@ -17,16 +17,20 @@ const routes: Routes = [
   {
     path: 'new/:id',
     component: PersonalCartCreateComponent,
+    data: {
+      isEdit: false,
+    },
+  },
+  {
+    path: 'edit/:id',
+    component: PersonalCartCreateComponent,
+    data: {
+      isEdit: true,
+    },
   },
   {
     path: ':id',
     component: PersonalCartViewComponent,
-    children: [
-      {
-        path: 'edit',
-        component: PersonalCartEditComponent,
-      },
-    ],
   },
 ];
 

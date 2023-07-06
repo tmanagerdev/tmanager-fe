@@ -1,23 +1,48 @@
-<div class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4">
+<div
+  class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4"
+  [formGroup]="accomodationForm"
+>
+  <p>Seleziona la data di inizio e fine del tuo pernottamento</p>
+  <p class="font-semibold text-lg my-2">Data</p>
+  <div class="flex gap-2">
+    <div class="flex flex-column flex-wrap gap-2">
+      <label>Data di inizio</label>
+      <p-calendar
+        dateFormat="dd/mm/yy"
+        formControlName="startDate"
+      ></p-calendar>
+    </div>
+    <div class="flex flex-column flex-wrap gap-2">
+      <label>Data di fine</label>
+      <p-calendar dateFormat="dd/mm/yy" formControlName="endDate"></p-calendar>
+    </div>
+  </div>
+  <p-divider></p-divider>
   <p>Seleziona l'hotel per questa trasferta</p>
   <p class="font-semibold text-lg my-2">Hotel disponibili</p>
   <div class="flex flex-wrap gap-2">
     <ng-container *ngFor="let h of hotels">
       <div
-        class="flex flex-column border-1 border-round border-300 px-3 py-2 cursor-pointer"
+        class="flex border-1 border-round border-300 px-3 py-2 cursor-pointer align-items-center gap-2"
         [ngClass]="{
           'border-primary': selectedHotel && selectedHotel.id === h.id
         }"
         (click)="onSelectHotel(h)"
       >
         <p class="font-semibold">{{ h.name }}</p>
+        <span
+          *ngIf="selectedHotel && selectedHotel.id === h.id"
+          class="material-symbols-outlined check-icon"
+        >
+          check_circle
+        </span>
       </div>
     </ng-container>
   </div>
   <p-divider></p-divider>
   <div class="py-3">
     <ng-container *ngIf="selectedHotel; else noHotelSelected">
-      <div class="flex flex-column" [formGroup]="accomodationForm">
+      <div class="flex flex-column">
         <ng-container formArrayName="rooms">
           <ng-container *ngFor="let r of rooms.controls; let i = index">
             <div class="flex justify-content-between my-2" [formGroupName]="i">
@@ -29,9 +54,7 @@
                 inputId="integeronly"
                 formControlName="quantity"
               ></p-inputNumber>
-              <app-control-errors
-                formControlName="quantity"
-              ></app-control-errors>
+              <app-control-errors controlName="quantity"></app-control-errors>
             </div>
           </ng-container>
         </ng-container>

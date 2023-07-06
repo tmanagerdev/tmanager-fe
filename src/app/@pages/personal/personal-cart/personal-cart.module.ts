@@ -20,6 +20,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataViewModule } from 'primeng/dataview';
+import { RecapSharedComponent } from './personal-cart-create/recap-shared/recap-shared.component';
+import { RecapComponent } from './personal-cart-create/recap/recap.component';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { MessagesModule } from 'primeng/messages';
+import { ModalRoadComponent } from './personal-cart-create/cart-create-road/modal-road/modal-road.component';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { PersonalCartCrateConfirmModalComponent } from './personal-cart-create/personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +41,10 @@ import { DropdownModule } from 'primeng/dropdown';
     CartCreateAccomodationsComponent,
     CartCreateRoadComponent,
     CartCreateActivityComponent,
+    RecapSharedComponent,
+    RecapComponent,
+    ModalRoadComponent,
+    PersonalCartCrateConfirmModalComponent,
   ],
   imports: [
     CommonModule,
@@ -47,6 +61,12 @@ import { DropdownModule } from 'primeng/dropdown';
     InputNumberModule,
     CalendarModule,
     DropdownModule,
+    DataViewModule,
+    InputTextareaModule,
+    MessagesModule,
+    DynamicDialogModule,
+    ToastModule,
   ],
+  providers: [DialogService, MessageService],
 })
 export class PersonalCartModule {}

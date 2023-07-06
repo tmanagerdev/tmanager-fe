@@ -1,40 +1,102 @@
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-
-export const cartForm: FormGroup = new FormGroup({
-  team: new FormGroup({
-    id: new FormControl(null),
-    name: new FormControl(null),
-  }),
-  event: new FormGroup({
-    id: new FormControl(null),
-    away: new FormGroup({
-      id: new FormControl(null),
-      name: new FormControl(null),
-    }),
-    home: new FormGroup({
-      id: new FormControl(null),
-      name: new FormControl(null),
-    }),
-  }),
-  isCompleted: new FormControl(null),
-  players: new FormControl(null),
-  staffs: new FormControl(null),
-  managers: new FormControl(null),
-  activities: new FormArray([]),
-  rooms: new FormArray([]),
-  roads: new FormArray([]),
-});
-
-export const paxForm: FormGroup = new FormGroup({
-  players: new FormControl(null, [Validators.required]),
-  staffs: new FormControl(null, [Validators.required]),
-  managers: new FormControl(null, [Validators.required]),
-});
-
-export const accomodationForm: FormGroup = new FormGroup({
-  rooms: new FormArray<any>([]),
-});
-
-export const roadForm: FormGroup = new FormGroup({
-  roads: new FormArray<any>([]),
-});
+export const test = {
+  team: {
+    id: 3,
+    name: 'FC Inter',
+  },
+  event: {
+    id: 5,
+    date: '2023-09-24T20:45:00.000Z',
+    away: {
+      id: 3,
+      name: 'FC Inter',
+    },
+    home: {
+      id: 1,
+      name: 'AS Roma',
+      city: {
+        id: 2,
+        name: 'Roma',
+      },
+    },
+  },
+  startDate: '2023-09-23T20:45:00.000Z',
+  endDate: '2023-09-25T20:45:00.000Z',
+  isCompleted: null,
+  players: 1,
+  staffs: 1,
+  managers: 1,
+  activities: [
+    {
+      id: 7,
+      name: 'Attività su Roma 2',
+      description: 'Descrizione attività',
+      price: '299.99',
+      note: 'Scrivo questa nota per roma 2',
+    },
+    {
+      id: 8,
+      name: 'Attività su Roma 3',
+      description: 'Descrizione attività',
+      price: '399.99',
+      note: 'Roma 3 si svolte il mercoledì',
+    },
+  ],
+  rooms: [
+    {
+      id: 14,
+      name: 'Singola',
+      price: '170',
+      quantity: 1,
+      hotelId: 4,
+      hotelName: 'Hotel 2 Roma',
+    },
+    {
+      id: 15,
+      name: 'Doppia',
+      price: '250.56',
+      quantity: 1,
+      hotelId: 4,
+      hotelName: 'Hotel 2 Roma',
+    },
+  ],
+  roads: [
+    {
+      id: null,
+      endDate: '2023-09-22T22:00:00.000Z',
+      startDate: '2023-09-22T22:00:00.000Z',
+      from: 'Areoporto',
+      to: 'Hotel',
+      hotel: null,
+      veichles: [
+        {
+          quantity: 1,
+          veichle: {
+            id: 1,
+            createdAt: '2023-06-24T10:09:28.750Z',
+            updatedAt: '2023-06-24T10:09:28.750Z',
+            name: 'Pullman',
+          },
+        },
+      ],
+    },
+    {
+      id: null,
+      endDate: '2023-09-22T22:00:00.000Z',
+      startDate: '2023-09-22T22:00:00.000Z',
+      from: 'Hotel',
+      to: 'Stadio',
+      hotel: null,
+      veichles: [
+        {
+          quantity: 1,
+          veichle: {
+            id: 1,
+            createdAt: '2023-06-24T10:09:28.750Z',
+            updatedAt: '2023-06-24T10:09:28.750Z',
+            name: 'Pullman',
+          },
+        },
+      ],
+    },
+  ],
+};

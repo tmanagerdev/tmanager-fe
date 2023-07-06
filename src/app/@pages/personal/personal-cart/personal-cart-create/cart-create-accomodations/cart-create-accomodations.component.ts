@@ -21,15 +21,27 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   hotels: any = [];
   selectedHotel: any = null;
 
+  @Input() accomodationForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
+  @Input() isEdit: boolean = false;
   @Input() set event(event: any) {
     this._event = event;
     this.loadHotels();
-  }
-  @Input() accomodationForm: FormGroup = new FormGroup({});
 
-  @Output() nextStep: EventEmitter<number> = new EventEmitter();
-  @Output() prevStep: EventEmitter<number> = new EventEmitter();
+    if (!this.isEdit) {
+      const startDate = new Date(event.date);
+      const endDate = new Date(event.date);
+      startDate.setDate(startDate.getDate() - 1);
+      endDate.setDate(endDate.getDate() + 1);
+      this.accomodationForm.patchValue({
+        startDate,
+        endDate,
+      });
+    }
+  }
+
+  @Output() nextStep: EventEmitter<void> = new EventEmitter();
+  @Output() prevStep: EventEmitter<void> = new EventEmitter();
 
   hotel$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -46,11 +58,38 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
           this.hotelApiService.findAll({
             take: 200,
             page: 1,
-            city: this._event.home.cityId,
+            city: this._event.home.city.id,
           })
         ),
         map((data) => data.data),
-        tap((hotels) => (this.hotels = [...hotels]))
+        tap((hotels) => (this.hotels = [...hotels])),
+        tap(() => {
+          if (this.isEdit) {
+            console.log('cerco hotel');
+            const hotelId = this.accomodationForm.value.hotel.id;
+            const hotel = this.hotels.find((h: any) => h.id === hotelId);
+            if (hotel) {
+              this.selectedHotel = { ...hotel };
+              this.selectedHotel.rooms.forEach((room: any) => {
+                const alreadyExists = this.rooms.value.find(
+                  (r: any) => r.id === room.id
+                );
+                if (!alreadyExists) {
+                  this.rooms.push(
+                    new FormGroup({
+                      id: new FormControl(room.id),
+                      name: new FormControl(room.name),
+                      price: new FormControl(room.price),
+                      quantity: new FormControl(null),
+                      hotelId: new FormControl(this.selectedHotel.id),
+                      hotelName: new FormControl(this.selectedHotel.name),
+                    })
+                  );
+                }
+              });
+            }
+          }
+        })
       )
       .subscribe();
   }
@@ -74,17 +113,19 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
           name: new FormControl(room.name),
           price: new FormControl(room.price),
           quantity: new FormControl(null),
+          hotelId: new FormControl(this.selectedHotel.id),
+          hotelName: new FormControl(this.selectedHotel.name),
         })
       );
     });
   }
 
   onNextStep() {
-    this.nextStep.emit(this.activeIndex);
+    this.nextStep.emit();
   }
 
   onPrevStep() {
-    this.prevStep.emit(this.activeIndex);
+    this.prevStep.emit();
   }
 
   onSelectHotel(hotel: any) {

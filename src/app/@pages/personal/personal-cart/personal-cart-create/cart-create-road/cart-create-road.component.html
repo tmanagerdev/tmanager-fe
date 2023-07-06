@@ -8,87 +8,43 @@
       (onClick)="onAddRoad()"
       icon="pi pi-plus"
       iconPos="right"
+      styleClass="p-button-rounded"
     ></p-button>
   </div>
   <p-divider></p-divider>
   <ng-container *ngIf="roads.value && roads.value.length; else noRoads">
-    <div class="flex flex-wrap gap-2"></div>
-  </ng-container>
-  <div class="flex justify-content-center"></div>
-
-  <div class="flex flex-column" [formGroup]="roadForm">
-    <ng-container formArrayName="roads">
-      <ng-container *ngFor="let r of roads.controls; let i = index">
-        <div class="flex flex-column my-2" [formGroupName]="i">
-          <p class="mb-2">#{{ i }}</p>
-          <p class="font-semibold my-2">Info</p>
-          <div class="formgrid grid">
-            <div class="field col">
-              <label for="firstname2">Luogo di partenza</label>
-              <input pInputText type="text" formControlName="from" />
-            </div>
-            <div class="field col">
-              <label for="lastname2">Luogo di arrivo</label>
-              <input pInputText type="text" formControlName="to" />
-            </div>
-          </div>
-          <div class="formgrid grid">
-            <div class="field col">
-              <label for="firstname2">Data di arrivo</label>
-              <p-calendar
-                dateFormat="dd/mm/yy"
-                formControlName="startDate"
-                [showTime]="true"
-                [inline]="true"
-              ></p-calendar>
-            </div>
-          </div>
-          <p class="font-semibold my-2">Trasporto</p>
-          <ng-container formArrayName="veichles">
-            <ng-container
-              *ngFor="
-                let v of roads.controls[i].get('veichles').controls;
-                let iv = index
-              "
-            >
-              <div class="flex flex-column my-2" [formGroupName]="iv">
-                <div class="formgroup-inline flex align-items-center">
-                  <div class="field flex flex-column gap-2">
-                    <label>Quantità</label>
-                    <p-inputNumber
-                      inputId="integeronly"
-                      formControlName="quantity"
-                      class="w-5rem"
-                    ></p-inputNumber>
-                  </div>
-                  <div class="field flex flex-column gap-2">
-                    <label>Veicolo</label>
-                    <p-dropdown
-                      formControlName="veichle"
-                      [options]="veichles"
-                      optionLabel="name"
-                    ></p-dropdown>
-                  </div>
-                  <p-button
-                    (onClick)="onAddVeichle(i)"
-                    label="Nuova tratta"
-                    styleClass="p-button-text"
-                  ></p-button>
-                  <p-button
-                    *ngIf="iv !== 0"
-                    (onClick)="onRemoveVeichle(i, iv)"
-                    label="Elimina"
-                    styleClass="p-button-text p-button-danger"
-                  ></p-button>
-                </div>
-              </div>
-            </ng-container>
+    <ng-container *ngFor="let r of roads.value; let i = index">
+      <div class="flex justify-content-between mb-2">
+        <div>
+          <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
+          <p class="mb-1">
+            {{ r.startDate | customDate : "showHours" }} -
+            {{ r.startDate | customDate : "showHours" }}
+          </p>
+          <ng-container *ngFor="let v of r.veichles">
+            <div class="px-2">{{ v.quantity }}x {{ v.veichle.name }}</div>
           </ng-container>
         </div>
-        <p-divider></p-divider>
-      </ng-container>
+        <div class="flex gap-2">
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-outlined mr-2"
+            (click)="onUpdateRoad(i)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-outlined p-button-danger"
+            (click)="onDeleteRoad(i)"
+          ></button>
+        </div>
+      </div>
+      <p-divider *ngIf="i < roads.value.length - 1"></p-divider>
     </ng-container>
-  </div>
+  </ng-container>
 </div>
 
 <div class="w-full flex justify-content-between mb-3">
