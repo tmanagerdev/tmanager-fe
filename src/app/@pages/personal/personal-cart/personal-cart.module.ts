@@ -31,6 +31,7 @@ import { ToastModule } from 'primeng/toast';
 import { PersonalCartCrateConfirmModalComponent } from './personal-cart-create/personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
+import { TeamLogoComponent } from '../../../@shared/team-logo/team-logo.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { TagModule } from 'primeng/tag';
     ModalRoadComponent,
     PersonalCartCrateConfirmModalComponent,
   ],
+  providers: [DialogService, MessageService, ConfirmationService],
   imports: [
     CommonModule,
     PersonalCartRoutingModule,
@@ -68,7 +70,7 @@ import { TagModule } from 'primeng/tag';
     ToastModule,
     ConfirmDialogModule,
     TagModule,
+    TeamLogoComponent,
   ],
-  providers: [DialogService, MessageService, ConfirmationService],
 })
 export class PersonalCartModule {}

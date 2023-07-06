@@ -98,7 +98,12 @@
   </ng-template>
   <ng-template pTemplate="body" let-team>
     <tr>
-      <td>{{ team.name }}</td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="team"></app-team-logo>
+          {{ team.name }}
+        </div>
+      </td>
       <td>{{ team.league ? team.league.name : "--" }}</td>
       <td>{{ team.city ? team.city.name : "--" }}</td>
       <td>{{ team.createdAt | customDate }}</td>

@@ -19,6 +19,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TeamModalComponent } from './team-modal/team-modal.component';
 import { ImageUploaderComponent } from '../../@shared/image-uploader/image-uploader.component';
+import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
 
 @NgModule({
   declarations: [TeamListComponent, TeamModalComponent],
@@ -42,6 +43,7 @@ import { ImageUploaderComponent } from '../../@shared/image-uploader/image-uploa
     AutoCompleteModule,
     SkeletonModule,
     ImageUploaderComponent,
+    TeamLogoComponent,
   ],
 })
 export class TeamModule {}

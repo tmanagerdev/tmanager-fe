@@ -17,7 +17,7 @@ export class PersonalCartViewComponent {
   unsubscribe$: Subject<void> = new Subject();
 
   get awayTeam() {
-    return this.cart?.team;
+    return this.cart?.event.away;
   }
 
   get homeTeam() {

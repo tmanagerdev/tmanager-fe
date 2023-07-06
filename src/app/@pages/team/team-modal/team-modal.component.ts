@@ -20,7 +20,7 @@ export class TeamModalComponent {
     name: new FormControl('', Validators.required),
     league: new FormControl(null),
     city: new FormControl(null),
-    logo: new FormControl(null),
+    logoUrl: new FormControl(null),
   });
 
   leagues$: Subject<string> = new Subject();
@@ -79,7 +79,7 @@ export class TeamModalComponent {
         name: team.name,
         city: team.city.id,
         league: team.league.id,
-        logo: team.logo,
+        logo: team.logoUrl,
       });
     }
   }

@@ -39,9 +39,18 @@
           <div
             class="flex flex-column align-items-center sm:align-items-start gap-3"
           >
-            <p class="text-xl font-bold text-900">
-              {{ event.home.name }} vs {{ event.away.name }}
-            </p>
+            <div class="flex align-items-center gap-2">
+              <app-team-logo [team]="event.home"></app-team-logo>
+              <p class="text-xl text-900">
+                {{ event.home.name }}
+              </p>
+              -
+              <p class="text-xl text-900">
+                {{ event.away.name }}
+              </p>
+              <app-team-logo [team]="event.away"></app-team-logo>
+            </div>
+
             <div class="flex align-items-center gap-3">
               <span class="flex align-items-center gap-2">
                 <span class="material-symbols-outlined"> table_rows </span>

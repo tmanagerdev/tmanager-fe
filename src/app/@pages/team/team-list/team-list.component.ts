@@ -221,6 +221,8 @@ export class TeamListComponent {
 
     this.ref.onClose.subscribe((newTeam: any) => {
       if (newTeam) {
+        this.teams = [];
+        this.loading = true;
         this.teamApiService
           .update(team.id, newTeam)
           .pipe(

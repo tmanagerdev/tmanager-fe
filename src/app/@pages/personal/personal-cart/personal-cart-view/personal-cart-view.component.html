@@ -8,8 +8,7 @@
         <p>del {{ eventDate | customDate }}</p>
       </div>
       <div class="flex flex-column align-items-end">
-        <h3>Squadra</h3>
-        <p>{{ awayTeam.name }}</p>
+        <app-team-logo [team]="awayTeam"></app-team-logo>
       </div>
     </div>
     <p-divider></p-divider>
