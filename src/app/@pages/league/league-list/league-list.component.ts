@@ -101,7 +101,7 @@ export class LeagueListComponent {
     this.ref = this.dialogService.open(LeagueModalComponent, {
       header: 'Crea nuovo campionato',
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
     });
 
@@ -129,7 +129,7 @@ export class LeagueListComponent {
     this.ref = this.dialogService.open(LeagueModalComponent, {
       header: `Aggiorna ${league.name}`,
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         league,

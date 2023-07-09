@@ -71,7 +71,7 @@ export class CartCreateRoadComponent implements OnInit {
       header: 'Aggiorna tratta',
       width: '700px',
       height: '700px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         roadForm: roadToUpdate,
@@ -122,7 +122,7 @@ export class CartCreateRoadComponent implements OnInit {
       header: 'Aggiungi nuova tratta',
       width: '700px',
       height: '700px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         isEdit: false,

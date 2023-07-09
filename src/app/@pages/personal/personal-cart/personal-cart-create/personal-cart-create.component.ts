@@ -217,7 +217,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     this.ref = this.dialogService.open(PersonalCartCrateConfirmModalComponent, {
       header: this.isEdit ? 'Aggiornamento trasferta' : 'Creazione trasferta',
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
     });
 

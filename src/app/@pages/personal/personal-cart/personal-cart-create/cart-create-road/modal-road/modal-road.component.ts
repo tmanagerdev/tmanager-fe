@@ -14,6 +14,8 @@ export class ModalRoadComponent {
     startDate: new FormControl(null),
     endDate: new FormControl(null),
     veichles: new FormArray([]),
+    startDateHour: new FormControl(null),
+    endDateHour: new FormControl(null),
   });
   isEdit: boolean = false;
   index: number = 0;
@@ -37,7 +39,18 @@ export class ModalRoadComponent {
   }
 
   onSave() {
-    this.ref.close(this.roadForm);
+    const road = this.roadForm.value;
+    const startDateHour = new Date(road.startDateHour).getHours();
+    const startDateMinute = new Date(road.startDateHour).getMinutes();
+    const startDate = new Date(road.startDate);
+    const endDateHour = new Date(road.endDateHour).getHours();
+    const endDateMinute = new Date(road.endDateHour).getMinutes();
+    const endDate = new Date(road.endDate);
+    this.ref.close({
+      ...road,
+      startDate,
+      endDate,
+    });
   }
   onAddVeichle() {
     const newVeichle = new FormGroup({

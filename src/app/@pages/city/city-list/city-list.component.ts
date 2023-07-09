@@ -109,7 +109,7 @@ export class CityListComponent implements OnInit {
     this.ref = this.dialogService.open(CityModalComponent, {
       header: 'Crea nuova città',
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
     });
 
@@ -137,7 +137,7 @@ export class CityListComponent implements OnInit {
     this.ref = this.dialogService.open(CityModalComponent, {
       header: `Aggiorna ${city.name}`,
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         city,

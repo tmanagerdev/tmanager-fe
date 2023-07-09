@@ -38,7 +38,7 @@ export class UserListComponent extends EntityListComponent {
     this.ref = this.dialogService.open(UserModalComponent, {
       header: `Crea nuovo utente`,
       width: '600px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {},
     });
@@ -67,7 +67,7 @@ export class UserListComponent extends EntityListComponent {
     this.ref = this.dialogService.open(UserModalComponent, {
       header: `Aggiorna ${user.email}`,
       width: '600px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         user,

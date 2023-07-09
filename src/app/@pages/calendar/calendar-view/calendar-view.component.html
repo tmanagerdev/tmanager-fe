@@ -1,0 +1,75 @@
+<ng-container *ngIf="calendar">
+  <h2 class="mb-2">Calendario {{ calendar.name }}</h2>
+  <p-toast></p-toast>
+  <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+  <div
+    class="flex justify-content-end w-full tman-shadow px-5 py-3 border-round mb-4 dialog-buttons"
+  >
+    <p-selectButton
+      [options]="viewOptions"
+      [formControl]="viewControl"
+      optionLabel="label"
+      optionValue="value"
+    ></p-selectButton>
+  </div>
+
+  <p-tabView
+    [(activeIndex)]="activeDay"
+    (activeIndexChange)="onNewTab($event)"
+    [scrollable]="true"
+  >
+    <ng-container *ngFor="let day of totalDays">
+      <p-tabPanel [header]="day + 1 + '°'">
+        <div class="flex justify-content-end mb-3">
+          <p-button label="Aggiungi partita" (click)="create()"></p-button>
+        </div>
+        <ng-container *ngIf="activeGames && activeGames.length; else noGames">
+          <ng-container *ngFor="let g of activeGames">
+            <div
+              class="flex flex-column justify-content-center align-items-center"
+            >
+              <div
+                class="flex justify-content-between gap-2 align-items-center game"
+              >
+                <app-team-logo [team]="g.home"></app-team-logo>
+                <div class="flex flex-column gap-2">
+                  <div class="flex flex-1 gap-2 justify-content-center">
+                    <p class="text-xl text-900">
+                      {{ g.home.name }}
+                    </p>
+                    -
+                    <p class="text-xl text-900">
+                      {{ g.away.name }}
+                    </p>
+                  </div>
+                  <div class="flex flex-1 justify-content-center">
+                    <p>{{ g.date | customDate : "showHours" }}</p>
+                  </div>
+                </div>
+                <app-team-logo [team]="g.away"></app-team-logo>
+              </div>
+              <div class="flex align-items-center gap-2 mt-3">
+                <p-button
+                  label="Modifica"
+                  styleClass="p-button-text"
+                  (click)="update(g)"
+                ></p-button>
+                <p-button
+                  label="Elimina"
+                  styleClass="p-button-danger p-button-text"
+                  (click)="remove(g)"
+                ></p-button>
+              </div>
+            </div>
+            <p-divider></p-divider>
+          </ng-container>
+        </ng-container>
+      </p-tabPanel>
+    </ng-container>
+  </p-tabView>
+</ng-container>
+
+<ng-template #noGames>
+  <p>Nessuna partita in questa giornata</p>
+</ng-template>

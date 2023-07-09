@@ -170,7 +170,7 @@ export class TeamListComponent {
     this.ref = this.dialogService.open(TeamModalComponent, {
       header: 'Crea nuova squadra',
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
     });
 
@@ -212,7 +212,7 @@ export class TeamListComponent {
     this.ref = this.dialogService.open(TeamModalComponent, {
       header: `Aggiorna ${team.name}`,
       width: '450px',
-      contentStyle: { overflow: 'auto' },
+      contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         team,

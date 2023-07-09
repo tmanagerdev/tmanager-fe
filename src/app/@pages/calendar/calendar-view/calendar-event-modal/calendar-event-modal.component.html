@@ -1,0 +1,60 @@
+<form
+  [formGroup]="eventForm"
+  class="flex flex-column gap-3"
+  (ngSubmit)="onSave()"
+>
+  <div class="flex flex-column gap-2">
+    <label>Squadra di casa</label>
+    <p-autoComplete
+      formControlName="home"
+      [suggestions]="teams"
+      (completeMethod)="onFilterTeam($event)"
+      [dropdown]="true"
+      field="name"
+      placeholder="Seleziona la squadra di casa"
+    ></p-autoComplete>
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Squadra in trasferta</label>
+    <p-autoComplete
+      formControlName="away"
+      [suggestions]="teams"
+      (completeMethod)="onFilterTeam($event)"
+      [dropdown]="true"
+      field="name"
+      placeholder="Seleziona la squadra in trasferta"
+    ></p-autoComplete>
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Data inizio partita</label>
+    <div class="flex gap-2">
+      <p-calendar
+        dateFormat="dd/mm/yy"
+        formControlName="date"
+        class="flex-1"
+      ></p-calendar>
+      <p-calendar
+        dateFormat="hh:MM"
+        formControlName="hour"
+        [timeOnly]="true"
+        class="w-5rem flex justify-content-center"
+      ></p-calendar>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons mt-4">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Salva"
+      [disabled]="!eventForm.valid"
+    ></button>
+  </div>
+</form>
