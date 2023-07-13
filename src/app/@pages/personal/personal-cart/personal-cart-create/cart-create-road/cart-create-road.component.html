@@ -19,10 +19,12 @@
           <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
           <p class="mb-1">
             {{ r.startDate | customDate : "showHours" }} -
-            {{ r.startDate | customDate : "showHours" }}
+            {{ r.endDate | customDate : "showHours" }}
           </p>
           <ng-container *ngFor="let v of r.veichles">
-            <div class="px-2">{{ v.quantity }}x {{ v.veichle.name }}</div>
+            <div *ngIf="v && v.quantity && v.veichle" class="px-2">
+              {{ v.quantity }}x {{ v.veichle.name }}
+            </div>
           </ng-container>
         </div>
         <div class="flex gap-2">

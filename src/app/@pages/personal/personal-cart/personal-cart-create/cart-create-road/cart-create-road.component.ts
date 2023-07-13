@@ -24,7 +24,7 @@ export class CartCreateRoadComponent implements OnInit {
   veichle$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
 
-  get roads(): any {
+  get roads(): FormArray {
     return this.roadForm.get('roads') as FormArray;
   }
 
@@ -65,7 +65,6 @@ export class CartCreateRoadComponent implements OnInit {
 
   onUpdateRoad(indexRoads: number) {
     const roadToUpdate = this.roads.at(indexRoads) as FormGroup;
-    console.log('roadToUpdate', roadToUpdate.value);
 
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiorna tratta',
@@ -82,10 +81,9 @@ export class CartCreateRoadComponent implements OnInit {
     });
 
     this.ref.onClose.subscribe((road: FormGroup) => {
-      console.log('road', road);
-      // if (road) {
-      //   this.roads.push(road);
-      // }
+      if (road) {
+        this.roads.at(indexRoads).setValue({ ...road.value });
+      }
     });
   }
 
@@ -106,6 +104,8 @@ export class CartCreateRoadComponent implements OnInit {
       to: new FormControl(null),
       startDate: new FormControl(startDate),
       endDate: new FormControl(endDate),
+      startDateHour: new FormControl(startDate),
+      endDateHour: new FormControl(endDate),
       veichles: new FormArray([]),
     });
 

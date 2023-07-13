@@ -31,7 +31,6 @@ export class ModalRoadComponent {
     if (this.config.data) {
       const { roadForm, veichlesList, index, isEdit } = this.config.data;
       this.roadForm = roadForm;
-      this.roadForm = roadForm;
       this.veichlesList = veichlesList;
       this.index = index;
       this.isEdit = isEdit;
@@ -46,12 +45,13 @@ export class ModalRoadComponent {
     const endDateHour = new Date(road.endDateHour).getHours();
     const endDateMinute = new Date(road.endDateHour).getMinutes();
     const endDate = new Date(road.endDate);
-    this.ref.close({
-      ...road,
-      startDate,
-      endDate,
-    });
+    startDate.setHours(startDateHour, startDateMinute);
+    endDate.setHours(endDateHour, endDateMinute);
+    console.log('endDate', endDate);
+    this.roadForm.patchValue({ startDate, endDate });
+    this.ref.close(this.roadForm);
   }
+
   onAddVeichle() {
     const newVeichle = new FormGroup({
       veichle: new FormControl(null),
