@@ -1,37 +1,108 @@
 import { Component } from '@angular/core';
-import { MessageService, ConfirmationService } from 'primeng/api';
+import {
+  MessageService,
+  ConfirmationService,
+  LazyLoadEvent,
+} from 'primeng/api';
 import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
-import { tap, take } from 'rxjs';
+import { tap, take, Subject, debounceTime, takeUntil, switchMap } from 'rxjs';
 import { UserApiService } from 'src/app/@core/api/user-api.service';
 import { UserModalComponent } from '../user-modal/user-modal.component';
-import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
 })
-export class UserListComponent extends EntityListComponent {
+export class UserListComponent {
+  users: any[] = [];
+  totalRecords: number = 0;
+  page: number = 0;
+  size: number = 10;
+  filter: string = '';
+  sort: any = null;
+  loading: boolean = false;
+
+  searchFilter = new FormControl('');
+
+  users$: Subject<void> = new Subject();
+  destroy$: Subject<void> = new Subject();
+
   ref!: DynamicDialogRef;
+
+  get rowsArray(): number[] {
+    return Array(4);
+  }
+
+  get cellsArray(): number[] {
+    return Array(8);
+  }
 
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private userApiService: UserApiService,
     public dialogService: DialogService
-  ) {
-    super();
+  ) {}
 
-    super.apiFetch$ = this.userApiService.findAll({
-      page: this.page + 1,
-      take: this.size,
-      ...(this.filter ? { email: this.filter } : {}),
-      ...(this.sort && this.sort.field
-        ? { sortField: this.sort.field, sortOrder: this.sort.order }
-        : {}),
-    });
+  ngOnInit() {
+    this.users$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() =>
+          this.userApiService.findAll({
+            page: this.page + 1,
+            take: this.size,
+            ...(this.filter ? { email: this.filter } : {}),
+            ...(this.sort && this.sort.field
+              ? { sortField: this.sort.field, sortOrder: this.sort.order }
+              : {}),
+          })
+        ),
+        tap(({ data, total }) => {
+          this.users = [...data];
+          this.totalRecords = total;
+          this.loading = false;
+        })
+      )
+      .subscribe();
 
-    super.cellsNumber = 8;
+    this.searchFilter.valueChanges
+      .pipe(
+        debounceTime(500),
+        tap((val) => {
+          this.filter = val || '';
+          this.loadUsers();
+        })
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadUsers() {
+    this.loading = true;
+    this.users = [];
+    this.users$.next();
+  }
+
+  onChangePage(event: LazyLoadEvent) {
+    this.page = event.first! / event.rows! || 0;
+
+    if (event.sortField) {
+      this.sort = {
+        field: event.sortField,
+        order: event.sortOrder,
+      };
+    } else {
+      this.sort = null;
+    }
+
+    this.loadUsers();
   }
 
   create() {
@@ -50,7 +121,7 @@ export class UserListComponent extends EntityListComponent {
           .pipe(
             take(1),
             tap((data) => {
-              this.loadData();
+              this.loadUsers();
               this.messageService.add({
                 severity: 'success',
                 summary: 'Utente creato',
@@ -81,7 +152,7 @@ export class UserListComponent extends EntityListComponent {
           .pipe(
             take(1),
             tap((data) => {
-              this.loadData();
+              this.loadUsers();
               this.messageService.add({
                 severity: 'success',
                 summary: 'Utente aggiornato',
@@ -105,7 +176,7 @@ export class UserListComponent extends EntityListComponent {
           .pipe(
             take(1),
             tap(() => {
-              this.loadData();
+              this.loadUsers();
               this.messageService.add({
                 severity: 'success',
                 summary: 'Utente eliminato',

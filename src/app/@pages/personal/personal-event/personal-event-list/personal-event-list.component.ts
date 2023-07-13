@@ -14,7 +14,7 @@ export class PersonalEventListComponent implements OnInit, OnDestroy {
   events: any = [];
   totalRecords: number = 0;
   page: number = 0;
-  size: number = 50;
+  size: number = 10;
   filter: string = '';
   sort: any = null;
   loading: boolean = false;

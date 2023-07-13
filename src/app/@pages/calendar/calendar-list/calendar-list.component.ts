@@ -1,19 +1,44 @@
 import { Component } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import {
+  ConfirmationService,
+  LazyLoadEvent,
+  MessageService,
+} from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CalendarApiService } from 'src/app/@core/api/calendar-api.service';
-import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
 import { CalendarModalComponent } from '../calendar-modal/calendar-modal.component';
-import { take, tap } from 'rxjs';
+import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-calendar-list',
   templateUrl: './calendar-list.component.html',
   styleUrls: ['./calendar-list.component.scss'],
 })
-export class CalendarListComponent extends EntityListComponent {
+export class CalendarListComponent {
+  calendars: any[] = [];
+  totalRecords: number = 0;
+  page: number = 0;
+  size: number = 10;
+  filter: string = '';
+  sort: any = null;
+  loading: boolean = false;
+
+  searchFilter = new FormControl('');
+
+  calendars$: Subject<void> = new Subject();
+  destroy$: Subject<void> = new Subject();
+
   ref!: DynamicDialogRef;
+
+  get rowsArray(): number[] {
+    return Array(4);
+  }
+
+  get cellsArray(): number[] {
+    return Array(5);
+  }
 
   constructor(
     private messageService: MessageService,
@@ -21,19 +46,65 @@ export class CalendarListComponent extends EntityListComponent {
     private calendarApiService: CalendarApiService,
     public dialogService: DialogService,
     private router: Router
-  ) {
-    super();
+  ) {}
 
-    super.apiFetch$ = this.calendarApiService.findAll({
-      page: this.page + 1,
-      take: this.size,
-      ...(this.filter ? { name: this.filter } : {}),
-      ...(this.sort && this.sort.field
-        ? { sortField: this.sort.field, sortOrder: this.sort.order }
-        : {}),
-    });
+  ngOnInit() {
+    this.calendars$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() =>
+          this.calendarApiService.findAll({
+            page: this.page + 1,
+            take: this.size,
+            ...(this.filter ? { name: this.filter } : {}),
+            ...(this.sort && this.sort.field
+              ? { sortField: this.sort.field, sortOrder: this.sort.order }
+              : {}),
+          })
+        ),
+        tap(({ data, total }) => {
+          this.calendars = [...data];
+          this.totalRecords = total;
+          this.loading = false;
+        })
+      )
+      .subscribe();
 
-    super.cellsNumber = 8;
+    this.searchFilter.valueChanges
+      .pipe(
+        debounceTime(500),
+        tap((val) => {
+          this.filter = val || '';
+          this.loadCalendars();
+        })
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadCalendars() {
+    this.loading = true;
+    this.calendars = [];
+    this.calendars$.next();
+  }
+
+  onChangePage(event: LazyLoadEvent) {
+    this.page = event.first! / event.rows! || 0;
+
+    if (event.sortField) {
+      this.sort = {
+        field: event.sortField,
+        order: event.sortOrder,
+      };
+    } else {
+      this.sort = null;
+    }
+
+    this.loadCalendars();
   }
 
   create() {
@@ -51,7 +122,7 @@ export class CalendarListComponent extends EntityListComponent {
           .pipe(
             take(1),
             tap((data) => {
-              this.loadData();
+              this.loadCalendars();
               this.messageService.add({
                 severity: 'success',
                 summary: 'Calendario creato',
@@ -82,7 +153,7 @@ export class CalendarListComponent extends EntityListComponent {
           .pipe(
             take(1),
             tap((data) => {
-              this.loadData();
+              this.loadCalendars();
               this.messageService.add({
                 severity: 'success',
                 summary: 'Calendario aggiornato',
@@ -106,7 +177,7 @@ export class CalendarListComponent extends EntityListComponent {
           .pipe(
             take(1),
             tap(() => {
-              this.loadData();
+              this.loadCalendars();
               this.messageService.add({
                 severity: 'success',
                 summary: 'Calendario eliminato',

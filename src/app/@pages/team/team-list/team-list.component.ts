@@ -25,7 +25,7 @@ export class TeamListComponent {
 
   totalRecords: number = 0;
   page: number = 0;
-  size: number = 50;
+  size: number = 10;
   filter: string = '';
   sort: any = null;
   loading: boolean = false;
@@ -152,7 +152,7 @@ export class TeamListComponent {
   }
 
   onChangePage(event: LazyLoadEvent) {
-    this.page = event.first || 0;
+    this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {

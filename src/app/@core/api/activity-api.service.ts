@@ -19,6 +19,7 @@ export class ActivityApiService {
     sortField = '',
     sortOrder = 1,
   }: any): Observable<any> {
+    console.log('findAll', page, take);
     return this.httpClient.get(`${environment.apiUrl}/activities`, {
       params: {
         page,

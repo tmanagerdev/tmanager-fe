@@ -78,7 +78,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
   }
 
   onChangePage(event: LazyLoadEvent) {
-    this.page = event.first || 0;
+    this.page = (event.first || 0) / (event.rows || 1) || 0;
 
     if (event.sortField) {
       this.sort = {

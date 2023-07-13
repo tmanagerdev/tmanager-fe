@@ -15,6 +15,8 @@ import { UserAvatarComponent } from './@shared/user-avatar/user-avatar.component
 import { registerLocaleData } from '@angular/common';
 import localeIt from '@angular/common/locales/it';
 import { ImageUploaderComponent } from './@shared/image-uploader/image-uploader.component';
+import { HotelListComponent } from './@pages/hotel/hotel-list/hotel-list.component';
+import { HotelModalComponent } from './@pages/hotel/hotel-modal/hotel-modal.component';
 
 registerLocaleData(localeIt);
 
@@ -25,6 +27,8 @@ registerLocaleData(localeIt);
     FooterComponent,
     SidebarComponent,
     TopbarComponent,
+    HotelListComponent,
+    HotelModalComponent,
   ],
   imports: [
     BrowserModule,

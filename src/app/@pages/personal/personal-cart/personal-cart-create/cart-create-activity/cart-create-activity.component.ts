@@ -117,7 +117,7 @@ export class CartCreateActivityComponent {
   }
 
   onChangePage(event: any) {
-    this.page = event.first / event.rows || 0;
+    this.page = event.first! / event.rows! || 0;
 
     if (this._event) {
       this.loadActivities();

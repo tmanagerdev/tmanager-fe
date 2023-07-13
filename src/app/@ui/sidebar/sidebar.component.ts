@@ -92,9 +92,14 @@ export class SidebarComponent implements OnInit {
             routerLink: ['/', 'user'],
           },
           {
-            label: 'Servizi',
+            label: 'Attività',
             icon: 'local_mall',
             routerLink: ['/', 'activity'],
+          },
+          {
+            label: 'Hotel',
+            icon: 'hotel',
+            routerLink: ['/', 'hotel'],
           },
           {
             label: 'Prenotazioni',

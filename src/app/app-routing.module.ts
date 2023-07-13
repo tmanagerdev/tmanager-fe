@@ -45,6 +45,12 @@ const routes: Routes = [
           import('./@pages/city/city.module').then((m) => m.CityModule),
       },
       {
+        path: 'hotel',
+        canActivate: [AuthGuard, AdminGuard],
+        loadChildren: () =>
+          import('./@pages/hotel/hotel.module').then((m) => m.HotelModule),
+      },
+      {
         path: 'league',
         canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>
