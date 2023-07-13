@@ -97,7 +97,6 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   }
 
   loadGames() {
-    console.log('loading games');
     this.activeGames = this.calendar.calendarEvents.filter(
       (ce: any) => ce.day === this.activeDay + 1
     );
@@ -153,7 +152,6 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   }
 
   update(event: any) {
-    console.log('event', event);
     this.ref = this.dialogService.open(CalendarEventModalComponent, {
       header: `Aggiorna partita`,
       width: '450px',

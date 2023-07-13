@@ -34,6 +34,30 @@ export class ModalRoadComponent {
       this.veichlesList = veichlesList;
       this.index = index;
       this.isEdit = isEdit;
+
+      if (this.isEdit) {
+        const road = this.roadForm.value;
+        const startDateHour = new Date(road.startDate);
+        const endDateHour = new Date(road.endDate);
+        startDateHour.setHours(
+          new Date(road.startDate).getHours(),
+          new Date(road.startDate).getMinutes()
+        );
+        endDateHour.setHours(
+          new Date(road.endDate).getHours(),
+          new Date(road.endDate).getMinutes()
+        );
+
+        console.log('patch startDateHour', startDateHour);
+        this.roadForm.addControl(
+          'startDateHour',
+          new FormControl(startDateHour)
+        );
+
+        this.roadForm.addControl('endDateHour', new FormControl(endDateHour));
+
+        console.log('after patch', this.roadForm.value);
+      }
     }
   }
 
@@ -47,7 +71,6 @@ export class ModalRoadComponent {
     const endDate = new Date(road.endDate);
     startDate.setHours(startDateHour, startDateMinute);
     endDate.setHours(endDateHour, endDateMinute);
-    console.log('endDate', endDate);
     this.roadForm.patchValue({ startDate, endDate });
     this.ref.close(this.roadForm);
   }

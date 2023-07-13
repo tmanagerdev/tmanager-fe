@@ -212,7 +212,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
 
   onSaveCart() {
     const cart = { ...this.cartForm.value };
-    console.log('create new cart', cart);
 
     this.ref = this.dialogService.open(PersonalCartCrateConfirmModalComponent, {
       header: this.isEdit ? 'Aggiornamento trasferta' : 'Creazione trasferta',
@@ -307,9 +306,12 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           price: new FormControl(a.activity.price),
           note: new FormControl(a.note),
         });
+        console.log('add activity', activity.value);
         actvitiyActivities.push(activity);
       }
     }
+
+    console.log('after patch cart', this.cartForm.value);
   }
 
   /**
@@ -416,6 +418,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
 
     clearFormArray(this.cartForm.get('activities') as FormArray);
     for (const a of activiyActivities.value) {
+      console.log('a', a);
       const cartActivities = this.cartForm.get('activities') as FormArray;
 
       cartActivities.push(

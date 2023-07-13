@@ -66,6 +66,10 @@ export class CartCreateRoadComponent implements OnInit {
   onUpdateRoad(indexRoads: number) {
     const roadToUpdate = this.roads.at(indexRoads) as FormGroup;
 
+    console.log('roadToUpdate', roadToUpdate);
+
+    console.log('veichleList', this.veichles);
+
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiorna tratta',
       width: '700px',

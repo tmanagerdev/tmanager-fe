@@ -60,9 +60,6 @@ export class PersonalCartViewComponent {
       return acc + activity.activity.price * 100;
     }, 0);
 
-    console.log(totalAccomodation);
-    console.log(totalActivity);
-
     return totalAccomodation / 100 + totalActivity / 100;
   }
 

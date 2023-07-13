@@ -38,7 +38,7 @@
       <p-divider></p-divider>
       <div class="flex flex-column mt-1">
         <p class="font-semibold mb-2">Camere</p>
-        <p-table [value]="rooms" [tableStyle]="{ 'min-width': '50rem' }">
+        <p-table [value]="rooms">
           <ng-template pTemplate="header">
             <tr>
               <th>Tipologia</th>
@@ -96,6 +96,7 @@
                       pInputTextarea
                       formControlName="note"
                     ></textarea>
+                    {{ activities.at(i).value | json }}
                   </div>
                 </div>
               </div>

@@ -96,16 +96,18 @@ export class CartCreateActivityComponent {
   }
 
   onNextStep() {
+    const oldActivities = [...this.activitiesArray.value];
     clearFormArray(this.activitiesArray);
-    console.log('loop selected', this.selectedActivities.length);
     for (const a of this.selectedActivities) {
+      const oldNote =
+        oldActivities.find((act: any) => act.id === a.id).note ?? '';
       this.activitiesArray.push(
         new FormGroup({
           id: new FormControl(a.id),
           name: new FormControl(a.name),
           description: new FormControl(a.description),
           price: new FormControl(a.price),
-          note: new FormControl(''),
+          note: new FormControl(oldNote ? oldNote : ''),
         })
       );
     }
