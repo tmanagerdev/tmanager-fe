@@ -1,1 +1,124 @@
-<p>cart-list works!</p>
+<h2 class="mb-2">Lista Trasferte</h2>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+<div
+  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+>
+  <div class="flex align-items-center gap-3">
+    <div class="w-full flex flex-column gap-2">
+      <label>Squadra</label>
+      <p-autoComplete
+        [formControl]="teamFilter"
+        [suggestions]="teams"
+        (completeMethod)="onFilterTeam($event)"
+        field="name"
+      ></p-autoComplete>
+    </div>
+    <div class="w-full flex flex-column gap-2">
+      <label>Utente</label>
+      <p-autoComplete
+        [formControl]="userFilter"
+        [suggestions]="users"
+        (completeMethod)="onFilterUser($event)"
+        field="email"
+      ></p-autoComplete>
+    </div>
+    <div class="w-full flex flex-column gap-2">
+      <label>Confermata</label>
+      <p-inputSwitch [formControl]="completeFilter"></p-inputSwitch>
+    </div>
+  </div>
+  <div>
+    <div class="w-full flex justify-content-edn gap-2 mt-4">
+      <p-button
+        label="Reset"
+        styleClass="p-button-secondary p-button-text"
+        (click)="resetFilters()"
+      ></p-button>
+      <p-button
+        label="Applica filtri"
+        styleClass="p-button-text"
+        (click)="applyFilters()"
+      ></p-button>
+    </div>
+  </div>
+</div>
+
+<p-table
+  #dt
+  [value]="carts"
+  [totalRecords]="totalRecords"
+  [rows]="size"
+  [paginator]="true"
+  [lazy]="true"
+  (onLazyLoad)="onChangePage($event)"
+  dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true"
+  [loading]="loading"
+  class="tman-shadow"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Campionato</th>
+      <th>Giornata</th>
+      <th>Casa</th>
+      <th>Ospiti</th>
+      <th>Data inizio</th>
+      <th>Data fine</th>
+      <th>Creata da</th>
+      <th>Confermata</th>
+      <th pSortableColumn="createdAt">
+        Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+      </th>
+      <th>Azioni</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-cart>
+    <tr>
+      <td>{{ cart.event.calendar.name }}</td>
+      <td>{{ cart.event.day }}°</td>
+      <td>{{ cart.event.home.name }}</td>
+      <td>{{ cart.event.away.name }}</td>
+      <td>{{ cart.startDate | customDate }}</td>
+      <td>{{ cart.endDate | customDate }}</td>
+      <td>{{ cart.user.email }}</td>
+      <td>{{ cart.isCompleted }}</td>
+      <td>{{ cart.createdAt | customDate }}</td>
+      <td>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-outlined mr-2"
+          (click)="update(cart)"
+        ></button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-eye"
+          class="p-button-rounded p-button-outlined mr-2"
+          (click)="detail(cart)"
+        ></button>
+        <button
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button-rounded p-button-outlined p-button-danger"
+          (click)="remove(cart)"
+        ></button>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <ng-container *ngFor="let row of rowsArray">
+      <tr>
+        <ng-container *ngFor="let cell of cellsArray">
+          <td><p-skeleton></p-skeleton></td>
+        </ng-container>
+      </tr>
+    </ng-container>
+  </ng-template>
+</p-table>
+
+<ng-template #noTeams> Nessuna squadra </ng-template>

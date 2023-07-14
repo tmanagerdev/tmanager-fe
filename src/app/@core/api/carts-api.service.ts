@@ -12,11 +12,9 @@ export class CartApiService {
   findAll({
     page,
     take,
-    day,
-    date,
-    type,
     team,
-    calendar,
+    user,
+    complete,
     sortField = '',
     sortOrder = 1,
   }: any): Observable<any> {
@@ -25,6 +23,8 @@ export class CartApiService {
         page,
         take,
         ...(team ? { team } : null),
+        ...(user ? { user } : null),
+        ...(complete ? { complete } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     });

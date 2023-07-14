@@ -51,12 +51,12 @@ export class SidebarComponent implements OnInit {
         permissions: ['USER'],
         items: [
           {
-            label: 'Prossimi eventi',
+            label: 'Prossime partite',
             icon: 'event_upcoming',
             routerLink: ['/', 'personal', 'events'],
           },
           {
-            label: 'Prenotazioni',
+            label: 'Mie trasferte',
             icon: 'shopping_cart',
             routerLink: ['/', 'personal', 'carts'],
           },
@@ -102,7 +102,7 @@ export class SidebarComponent implements OnInit {
             routerLink: ['/', 'hotel'],
           },
           {
-            label: 'Prenotazioni',
+            label: 'Trasferte',
             icon: 'data_check',
             routerLink: ['/', 'cart'],
           },
