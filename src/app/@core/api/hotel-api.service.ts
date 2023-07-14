@@ -28,7 +28,7 @@ export class HotelApiService {
     });
   }
 
-  findOne(hotelId: string): Observable<any> {
+  findOne(hotelId: number): Observable<any> {
     return this.httpClient.get(`${environment.apiUrl}/hotels/${hotelId}`);
   }
 
@@ -42,5 +42,25 @@ export class HotelApiService {
 
   delete(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/hotels/${id}`);
+  }
+
+  createRoom(hotelId: number, room: any): Observable<any> {
+    return this.httpClient.put(
+      `${environment.apiUrl}/hotels/${hotelId}/add`,
+      room
+    );
+  }
+
+  updateRoom(hotelId: number, roomId: any, room: any): Observable<any> {
+    return this.httpClient.put(
+      `${environment.apiUrl}/hotels/${hotelId}/update/${roomId}`,
+      room
+    );
+  }
+
+  deleteRoom(hotelId: number, roomId: any): Observable<any> {
+    return this.httpClient.delete(
+      `${environment.apiUrl}/hotels/${hotelId}/delete/${roomId}`
+    );
   }
 }

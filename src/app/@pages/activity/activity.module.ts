@@ -23,6 +23,7 @@ import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [ActivityListComponent, ActivityModalComponent],
@@ -49,6 +50,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
     EntityListComponent,
     CalendarModule,
     InputNumberModule,
+    OverlayPanelModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

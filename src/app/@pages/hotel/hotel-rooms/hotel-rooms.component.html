@@ -1,0 +1,80 @@
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<ng-container *ngIf="hotel">
+  <h2 class="mb-2">Rooms: {{ hotel.name }}</h2>
+  <p>di {{ hotel.city.name }}</p>
+
+  <div
+    class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+  >
+    <span></span>
+    <div>
+      <button
+        pButton
+        pRipple
+        label="Crea nuova stanza"
+        class="p-button-primary mr-2"
+        (click)="create()"
+      ></button>
+    </div>
+  </div>
+
+  <p-table
+    #dt
+    [value]="hotel.rooms"
+    [totalRecords]="totalRecords"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+    [loading]="loading"
+    class="tman-shadow"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">
+          Tipologia <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th pSortableColumn="city">
+          Prezzo<p-sortIcon field="city"></p-sortIcon>
+        </th>
+        <th pSortableColumn="createdAt">
+          Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+        </th>
+        <th>Azioni</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-room>
+      <tr>
+        <td>{{ room.name }}</td>
+        <td>{{ room.price | currency : "EUR" : "symbol" }}</td>
+        <td>{{ room.createdAt | customDate }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-outlined mr-2"
+            (click)="update(room)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-outlined p-button-danger"
+            (click)="remove(room)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <ng-container *ngFor="let row of rowsArray">
+        <tr>
+          <ng-container *ngFor="let cell of cellsArray">
+            <td><p-skeleton></p-skeleton></td>
+          </ng-container>
+        </tr>
+      </ng-container>
+    </ng-template>
+  </p-table>
+</ng-container>

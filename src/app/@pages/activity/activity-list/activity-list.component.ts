@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import {
   ConfirmationService,
   LazyLoadEvent,
@@ -8,7 +8,9 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
 import { ActivityModalComponent } from '../activity-modal/activity-modal.component';
 import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { FormControl, UntypedFormControl } from '@angular/forms';
+import { CityApiService } from 'src/app/@core/api/city-api.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-activity-list',
@@ -17,19 +19,25 @@ import { FormControl } from '@angular/forms';
 })
 export class ActivityListComponent {
   activities: any[] = [];
+  cities: any[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
   sort: any = null;
   loading: boolean = false;
+  filterActive: boolean = false;
 
   searchFilter = new FormControl('');
+  cityFilter = new UntypedFormControl('');
 
+  cities$: Subject<string> = new Subject();
   activities$: Subject<void> = new Subject();
   destroy$: Subject<void> = new Subject();
 
   ref!: DynamicDialogRef;
+
+  @ViewChild('filters') filtersPopup!: OverlayPanel;
 
   get rowsArray(): number[] {
     return Array(4);
@@ -39,10 +47,19 @@ export class ActivityListComponent {
     return Array(8);
   }
 
+  get cityFilterId() {
+    return this.cityFilter.value ? this.cityFilter.value.id : null;
+  }
+
+  get filterIcon(): string {
+    return this.filterActive ? 'pi pi-filter-fill' : 'pi pi-filter';
+  }
+
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private activityApiService: ActivityApiService,
+    private cityApiService: CityApiService,
     public dialogService: DialogService
   ) {}
 
@@ -55,6 +72,7 @@ export class ActivityListComponent {
             page: this.page + 1,
             take: this.size,
             ...(this.filter ? { name: this.filter } : {}),
+            ...(this.cityFilterId ? { city: this.cityFilterId } : {}),
             ...(this.sort && this.sort.field
               ? { sortField: this.sort.field, sortOrder: this.sort.order }
               : {}),
@@ -74,6 +92,22 @@ export class ActivityListComponent {
         tap((val) => {
           this.filter = val || '';
           this.loadActivities();
+        })
+      )
+      .subscribe();
+
+    this.cities$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((name) =>
+          this.cityApiService.findAll({
+            page: 1,
+            take: 50,
+            ...(name ? { name } : {}),
+          })
+        ),
+        tap(({ data }) => {
+          this.cities = [...data];
         })
       )
       .subscribe();
@@ -190,5 +224,26 @@ export class ActivityListComponent {
           .subscribe();
       },
     });
+  }
+
+  applyFilters() {
+    this.filterActive = true;
+    this.filtersPopup.hide();
+    this.loadActivities();
+  }
+
+  resetFilters() {
+    this.filterActive = false;
+    this.cityFilter.setValue(null);
+    this.filtersPopup.hide();
+    this.loadActivities();
+  }
+
+  onFilterCity({ query }: any) {
+    this.loadFilteredCities(query);
+  }
+
+  loadFilteredCities(name: string) {
+    this.cities$.next(name);
   }
 }

@@ -90,7 +90,10 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     this.loadCalendar();
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   loadCalendar(): void {
     this.calendar$.next();

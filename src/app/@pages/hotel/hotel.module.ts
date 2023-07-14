@@ -21,9 +21,18 @@ import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
 import { HotelListComponent } from './hotel-list/hotel-list.component';
 import { HotelModalComponent } from './hotel-modal/hotel-modal.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { HotelRoomsComponent } from './hotel-rooms/hotel-rooms.component';
+import { HotelRoomsModalComponent } from './hotel-rooms/hotel-rooms-modal/hotel-rooms-modal.component';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
-  declarations: [HotelListComponent, HotelModalComponent],
+  declarations: [
+    HotelListComponent,
+    HotelModalComponent,
+    HotelRoomsComponent,
+    HotelRoomsModalComponent,
+  ],
   imports: [
     CommonModule,
     HotelRoutingModule,
@@ -45,6 +54,8 @@ import { HotelModalComponent } from './hotel-modal/hotel-modal.component';
     ChipModule,
     DividerModule,
     EntityListComponent,
+    OverlayPanelModule,
+    InputNumberModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

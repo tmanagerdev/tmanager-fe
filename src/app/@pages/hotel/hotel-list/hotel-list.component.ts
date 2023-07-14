@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { FormControl, UntypedFormControl } from '@angular/forms';
 import {
   ConfirmationService,
   LazyLoadEvent,
@@ -9,6 +9,9 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
 import { HotelModalComponent } from '../hotel-modal/hotel-modal.component';
+import { OverlayPanel } from 'primeng/overlaypanel';
+import { CityApiService } from 'src/app/@core/api/city-api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hotel-list',
@@ -17,19 +20,25 @@ import { HotelModalComponent } from '../hotel-modal/hotel-modal.component';
 })
 export class HotelListComponent {
   hotels: any[] = [];
+  cities: any[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
   sort: any = null;
   loading: boolean = false;
+  filterActive: boolean = false;
 
   searchFilter = new FormControl('');
+  cityFilter = new UntypedFormControl('');
 
+  cities$: Subject<string> = new Subject();
   hotels$: Subject<void> = new Subject();
   destroy$: Subject<void> = new Subject();
 
   ref!: DynamicDialogRef;
+
+  @ViewChild('filters') filtersPopup!: OverlayPanel;
 
   get rowsArray(): number[] {
     return Array(4);
@@ -39,10 +48,20 @@ export class HotelListComponent {
     return Array(8);
   }
 
+  get cityFilterId() {
+    return this.cityFilter.value ? this.cityFilter.value.id : null;
+  }
+
+  get filterIcon(): string {
+    return this.filterActive ? 'pi pi-filter-fill' : 'pi pi-filter';
+  }
+
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private hotelApiService: HotelApiService,
+    private cityApiService: CityApiService,
+    private router: Router,
     public dialogService: DialogService
   ) {}
 
@@ -55,6 +74,7 @@ export class HotelListComponent {
             page: this.page + 1,
             take: this.size,
             ...(this.filter ? { name: this.filter } : {}),
+            ...(this.cityFilterId ? { city: this.cityFilterId } : {}),
             ...(this.sort && this.sort.field
               ? { sortField: this.sort.field, sortOrder: this.sort.order }
               : {}),
@@ -74,6 +94,22 @@ export class HotelListComponent {
         tap((val) => {
           this.filter = val || '';
           this.loadHotels();
+        })
+      )
+      .subscribe();
+
+    this.cities$
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap((name) =>
+          this.cityApiService.findAll({
+            page: 1,
+            take: 50,
+            ...(name ? { name } : {}),
+          })
+        ),
+        tap(({ data }) => {
+          this.cities = [...data];
         })
       )
       .subscribe();
@@ -134,21 +170,22 @@ export class HotelListComponent {
     });
   }
 
-  update(activity: any) {
+  update(hotel: any) {
     this.ref = this.dialogService.open(HotelModalComponent, {
-      header: `Aggiorna ${activity.name}`,
+      header: `Aggiorna ${hotel.name}`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
-        activity,
+        isEdit: true,
+        hotel,
       },
     });
 
-    this.ref.onClose.subscribe((newActivity: any) => {
-      if (newActivity) {
+    this.ref.onClose.subscribe((newHotel: any) => {
+      if (newHotel) {
         this.hotelApiService
-          .update(activity.id, newActivity)
+          .update(hotel.id, newHotel)
           .pipe(
             take(1),
             tap((data) => {
@@ -156,7 +193,7 @@ export class HotelListComponent {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Hotel aggiornato',
-                detail: newActivity.name,
+                detail: hotel.name,
               });
             })
           )
@@ -165,14 +202,14 @@ export class HotelListComponent {
     });
   }
 
-  remove(activity: any) {
+  remove(hotel: any) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questo hotel?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.hotelApiService
-          .delete(activity.id)
+          .delete(hotel.id)
           .pipe(
             take(1),
             tap(() => {
@@ -180,12 +217,37 @@ export class HotelListComponent {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Hotel eliminato',
-                detail: activity.name,
+                detail: hotel.name,
               });
             })
           )
           .subscribe();
       },
     });
+  }
+
+  rooms(hotel: any) {
+    this.router.navigate(['hotel', hotel.id]);
+  }
+
+  applyFilters() {
+    this.filterActive = true;
+    this.filtersPopup.hide();
+    this.loadHotels();
+  }
+
+  resetFilters() {
+    this.filterActive = false;
+    this.cityFilter.setValue(null);
+    this.filtersPopup.hide();
+    this.loadHotels();
+  }
+
+  onFilterCity({ query }: any) {
+    this.loadFilteredCities(query);
+  }
+
+  loadFilteredCities(name: string) {
+    this.cities$.next(name);
   }
 }
