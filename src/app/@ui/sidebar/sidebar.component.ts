@@ -48,7 +48,7 @@ export class SidebarComponent implements OnInit {
     this.menu = [
       {
         label: '',
-        permissions: ['ADMIN', 'USER'],
+        permissions: ['USER'],
         items: [
           {
             label: 'Prossimi eventi',
@@ -63,7 +63,7 @@ export class SidebarComponent implements OnInit {
         ],
       },
       {
-        label: 'Admin',
+        label: '',
         permissions: ['ADMIN'],
         items: [
           {

@@ -9,30 +9,26 @@ import { environment } from 'src/environments/environment';
 export class CartApiService {
   constructor(private httpClient: HttpClient) {}
 
-  // findAll({
-  //   page,
-  //   take,
-  //   day,
-  //   date,
-  //   type,
-  //   team,
-  //   calendar,
-  //   sortField = '',
-  //   sortOrder = 1,
-  // }: any): Observable<any> {
-  //   return this.httpClient.get(`${environment.apiUrl}/events`, {
-  //     params: {
-  //       page,
-  //       take,
-  //       ...(day ? { day } : null),
-  //       ...(date ? { date } : null),
-  //       ...(type ? { type } : null),
-  //       ...(team ? { team } : null),
-  //       ...(calendar ? { calendar } : null),
-  //       ...(sortField ? { sortField, sortOrder } : null),
-  //     },
-  //   });
-  // }
+  findAll({
+    page,
+    take,
+    day,
+    date,
+    type,
+    team,
+    calendar,
+    sortField = '',
+    sortOrder = 1,
+  }: any): Observable<any> {
+    return this.httpClient.get(`${environment.apiUrl}/carts`, {
+      params: {
+        page,
+        take,
+        ...(team ? { team } : null),
+        ...(sortField ? { sortField, sortOrder } : null),
+      },
+    });
+  }
 
   findOne(cityId: number): Observable<any> {
     return this.httpClient.get(`${environment.apiUrl}/carts/${cityId}`);

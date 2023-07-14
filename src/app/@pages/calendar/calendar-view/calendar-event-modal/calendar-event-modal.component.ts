@@ -57,6 +57,11 @@ export class CalendarEventModalComponent {
       .subscribe();
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onSave() {
     if (this.eventForm.valid) {
       const event = this.eventForm.value;

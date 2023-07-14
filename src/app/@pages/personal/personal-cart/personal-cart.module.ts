@@ -32,6 +32,7 @@ import { PersonalCartCrateConfirmModalComponent } from './personal-cart-create/p
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
 import { TeamLogoComponent } from '../../../@shared/team-logo/team-logo.component';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { TeamLogoComponent } from '../../../@shared/team-logo/team-logo.componen
     ConfirmDialogModule,
     TagModule,
     TeamLogoComponent,
+    MultiSelectModule,
   ],
 })
 export class PersonalCartModule {}

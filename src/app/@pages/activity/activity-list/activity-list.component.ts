@@ -116,16 +116,17 @@ export class ActivityListComponent {
 
     this.ref.onClose.subscribe((newActivity: any) => {
       if (newActivity) {
+        const { city, ...activityToSave } = newActivity;
         this.activityApiService
-          .create(newActivity)
+          .create({ ...activityToSave, cityId: city.id })
           .pipe(
             take(1),
             tap((data) => {
               this.loadActivities();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Attivitò creata',
-                detail: data.email,
+                summary: 'Attività creata',
+                detail: activityToSave.name,
               });
             })
           )
@@ -142,13 +143,15 @@ export class ActivityListComponent {
       baseZIndex: 10001,
       data: {
         activity,
+        isEdit: true,
       },
     });
 
     this.ref.onClose.subscribe((newActivity: any) => {
       if (newActivity) {
+        const { city, ...activityToSave } = newActivity;
         this.activityApiService
-          .update(activity.id, newActivity)
+          .update(activity.id, { ...activityToSave, cityId: city.id })
           .pipe(
             take(1),
             tap((data) => {
@@ -156,7 +159,7 @@ export class ActivityListComponent {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Attività aggiornata',
-                detail: newActivity.name,
+                detail: activityToSave.name,
               });
             })
           )

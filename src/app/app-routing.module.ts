@@ -4,6 +4,7 @@ import { LayoutComponent } from './@ui/layout/layout.component';
 import { AuthGuard } from './@core/guards/auth.guard';
 import { AutoLoginGuard } from './@core/guards/auto-login.guard';
 import { AdminGuard } from './@core/guards/admin.guard';
+import { PersonalGuard } from './@core/guards/personal.guard';
 
 const routes: Routes = [
   {
@@ -58,7 +59,7 @@ const routes: Routes = [
       },
       {
         path: 'personal',
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, PersonalGuard],
         loadChildren: () =>
           import('./@pages/personal/personal.module').then(
             (m) => m.PersonalModule

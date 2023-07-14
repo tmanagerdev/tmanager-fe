@@ -21,6 +21,8 @@ import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
+import { CalendarModule } from 'primeng/calendar';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
   declarations: [ActivityListComponent, ActivityModalComponent],
@@ -45,6 +47,8 @@ import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.com
     ChipModule,
     DividerModule,
     EntityListComponent,
+    CalendarModule,
+    InputNumberModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

@@ -10,6 +10,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TeamLogoComponent } from '../../../@shared/team-logo/team-logo.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { MessagesModule } from 'primeng/messages';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [PersonalEventListComponent],
@@ -24,6 +31,15 @@ import { TeamLogoComponent } from '../../../@shared/team-logo/team-logo.componen
     ReactiveFormsModule,
     InputTextModule,
     MultiSelectModule,
+    TeamLogoComponent,
+    DropdownModule,
+    DataViewModule,
+    InputTextareaModule,
+    MessagesModule,
+    DynamicDialogModule,
+    ToastModule,
+    ConfirmDialogModule,
+    TagModule,
     TeamLogoComponent,
   ],
 })

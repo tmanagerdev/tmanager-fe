@@ -27,8 +27,6 @@ registerLocaleData(localeIt);
     FooterComponent,
     SidebarComponent,
     TopbarComponent,
-    HotelListComponent,
-    HotelModalComponent,
   ],
   imports: [
     BrowserModule,
