@@ -17,6 +17,7 @@ import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CityModalComponent } from './city-modal/city-modal.component';
 import { SkeletonModule } from 'primeng/skeleton';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [CityListComponent, CityModalComponent],
@@ -36,6 +37,7 @@ import { SkeletonModule } from 'primeng/skeleton';
     KeyFilterModule,
     ConfirmDialogModule,
     SkeletonModule,
+    OverlayPanelModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

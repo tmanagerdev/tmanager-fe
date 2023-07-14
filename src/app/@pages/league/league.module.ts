@@ -16,6 +16,7 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { LeagueModalComponent } from './league-modal/league-modal.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [LeagueListComponent, LeagueModalComponent],
@@ -35,6 +36,7 @@ import { LeagueModalComponent } from './league-modal/league-modal.component';
     KeyFilterModule,
     ConfirmDialogModule,
     SkeletonModule,
+    OverlayPanelModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

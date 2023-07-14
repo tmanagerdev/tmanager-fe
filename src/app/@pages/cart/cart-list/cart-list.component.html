@@ -61,7 +61,6 @@
   <ng-template pTemplate="header">
     <tr>
       <th>Campionato</th>
-      <th>Giornata</th>
       <th>Casa</th>
       <th>Ospiti</th>
       <th>Data inizio</th>
@@ -77,36 +76,50 @@
   <ng-template pTemplate="body" let-cart>
     <tr>
       <td>{{ cart.event.calendar.name }}</td>
-      <td>{{ cart.event.day }}°</td>
       <td>{{ cart.event.home.name }}</td>
       <td>{{ cart.event.away.name }}</td>
       <td>{{ cart.startDate | customDate }}</td>
       <td>{{ cart.endDate | customDate }}</td>
       <td>{{ cart.user.email }}</td>
-      <td>{{ cart.isCompleted }}</td>
+      <td>
+        <span
+          class="chips"
+          [ngClass]="cart.isCompleted ? 'chips-success' : 'chips-warning'"
+        >
+          {{ cart.isCompleted ? "CONFERMATO" : "NON CONFERMATO" }}
+        </span>
+      </td>
       <td>{{ cart.createdAt | customDate }}</td>
       <td>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-outlined mr-2"
-          (click)="update(cart)"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-eye"
-          class="p-button-rounded p-button-outlined mr-2"
-          (click)="detail(cart)"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-trash"
-          class="p-button-rounded p-button-outlined p-button-danger"
-          (click)="remove(cart)"
-        ></button>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          styleClass="p-button-rounded p-button-secondary p-button-text"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <button
+            pButton
+            pRipple
+            label="Visualizza"
+            class="p-button-text"
+            (click)="detail(cart)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Modifica"
+            class="p-button-text"
+            (click)="update(cart)"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            label="Rimuovi"
+            class="p-button-text p-button-danger"
+            (click)="remove(cart)"
+          ></button>
+        </p-overlayPanel>
       </td>
     </tr>
   </ng-template>

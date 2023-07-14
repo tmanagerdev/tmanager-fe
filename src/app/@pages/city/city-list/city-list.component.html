@@ -59,20 +59,27 @@
       <td>{{ city.longitude }}</td>
       <td>{{ city.createdAt | customDate }}</td>
       <td>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-outlined mr-2"
-          (click)="update(city)"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-trash"
-          class="p-button-rounded p-button-outlined p-button-danger"
-          (click)="remove(city)"
-        ></button>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          styleClass="p-button-rounded p-button-secondary p-button-text"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <button
+            pButton
+            pRipple
+            label="Modifica"
+            class="p-button-text"
+            (click)="update(city)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Rimuovi"
+            class="p-button-text p-button-danger"
+            (click)="remove(city)"
+          ></button>
+        </p-overlayPanel>
       </td>
     </tr>
   </ng-template>

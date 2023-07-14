@@ -21,6 +21,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [UserListComponent, UserModalComponent],
@@ -45,6 +46,7 @@ import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.com
     ChipModule,
     DividerModule,
     EntityListComponent,
+    OverlayPanelModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

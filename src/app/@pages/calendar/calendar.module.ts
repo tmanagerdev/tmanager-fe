@@ -28,6 +28,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
 import { CalendarEventModalComponent } from './calendar-view/calendar-event-modal/calendar-event-modal.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { CalendarEventModalComponent } from './calendar-view/calendar-event-moda
     TabViewModule,
     SelectButtonModule,
     TeamLogoComponent,
+    OverlayPanelModule,
   ],
 })
 export class CalendarModule {}

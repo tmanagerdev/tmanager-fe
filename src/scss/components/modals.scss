@@ -21,3 +21,11 @@
     width: auto !important;
   }
 }
+
+.p-overlaypanel:after {
+  content: none !important;
+}
+
+.p-overlaypanel:before {
+  content: none !important;
+}

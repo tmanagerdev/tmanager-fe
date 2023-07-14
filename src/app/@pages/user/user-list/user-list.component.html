@@ -68,27 +68,43 @@
       <td>
         <ng-container *ngIf="user.teams && user.teams.length; else noTeams">
           <ng-container *ngFor="let team of user.teams; let i = index">
-            <p-chip [label]="team.team.name"></p-chip>
+            <span class="chips chips-primary">
+              {{ team.team.name }}
+            </span>
           </ng-container>
         </ng-container>
       </td>
-      <td>{{ user.enabled }}</td>
+      <td>
+        <span
+          class="chips"
+          [ngClass]="user.enabled ? 'chips-success' : 'chips-warning'"
+        >
+          {{ user.enabled ? "ATTIVO" : "NON ATTIVO" }}
+        </span>
+      </td>
       <td>{{ user.createdAt | customDate }}</td>
       <td>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-outlined mr-2"
-          (click)="update(user)"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-trash"
-          class="p-button-rounded p-button-outlined p-button-danger"
-          (click)="remove(user)"
-        ></button>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          styleClass="p-button-rounded p-button-secondary p-button-text"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <button
+            pButton
+            pRipple
+            label="Modifica"
+            class="p-button-text"
+            (click)="update(user)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Rimuovi"
+            class="p-button-text p-button-danger"
+            (click)="remove(user)"
+          ></button>
+        </p-overlayPanel>
       </td>
     </tr>
   </ng-template>
@@ -103,4 +119,6 @@
   </ng-template>
 </p-table>
 
-<ng-template #noTeams> Nessuna squadra </ng-template>
+<ng-template #noTeams>
+  <span class="chips chips-warning"> Nessuna squadra </span>
+</ng-template>

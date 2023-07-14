@@ -168,22 +168,21 @@ export class CartListComponent {
     console.log('confirm cart');
   }
 
-  remove(activity: any) {
+  remove(cart: any) {
     this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questa attività?',
+      message: 'Sei sicuro di voler eliminare questa trasferta?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cartApiService
-          .delete(activity.id)
+          .delete(cart.id)
           .pipe(
             take(1),
             tap(() => {
               this.loadCarts();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Attività eliminata',
-                detail: activity.name,
+                summary: 'Trasferta eliminata',
               });
             })
           )

@@ -1,0 +1,19 @@
+.chips {
+  font-size: 0.75rem;
+  border-radius: var(--border-radius);
+  padding: 4px;
+  font-weight: 600;
+
+  &-success {
+    background-color: var(--green-300);
+    color: var(--green-900);
+  }
+  &-warning {
+    background-color: var(--red-300);
+    color: var(--red-900);
+  }
+  &-primary {
+    background-color: var(--primary-300);
+    color: var(--primary-900);
+  }
+}

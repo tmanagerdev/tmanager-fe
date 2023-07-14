@@ -67,27 +67,34 @@
       <td>{{ calendar.endDate | customDate }}</td>
       <td>{{ calendar.createdAt | customDate }}</td>
       <td>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-outlined mr-2"
-          (click)="update(calendar)"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-eye"
-          class="p-button-rounded p-button-outlined mr-2"
-          (click)="detail(calendar)"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-trash"
-          class="p-button-rounded p-button-outlined p-button-danger"
-          (click)="remove(calendar)"
-        ></button>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          styleClass="p-button-rounded p-button-secondary p-button-text"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <button
+            pButton
+            pRipple
+            label="Modifica"
+            class="p-button-text"
+            (click)="update(calendar)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Partite"
+            class="p-button-text"
+            (click)="detail(calendar)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Rimuovi"
+            class="p-button-text p-button-danger"
+            (click)="detail(calendar)"
+          ></button>
+        </p-overlayPanel>
       </td>
     </tr>
   </ng-template>

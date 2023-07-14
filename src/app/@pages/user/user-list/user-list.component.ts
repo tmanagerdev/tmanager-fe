@@ -23,6 +23,26 @@ export class UserListComponent {
   filter: string = '';
   sort: any = null;
   loading: boolean = false;
+  items = [
+    {
+      items: [
+        {
+          label: 'Update',
+          icon: 'pi pi-refresh',
+          command: (user: any) => {
+            this.update(user);
+          },
+        },
+        {
+          label: 'Delete',
+          icon: 'pi pi-times',
+          command: (user: any) => {
+            this.remove(user);
+          },
+        },
+      ],
+    },
+  ];
 
   searchFilter = new FormControl('');
 
