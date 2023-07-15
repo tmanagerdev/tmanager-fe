@@ -9,14 +9,17 @@
   </div>
   <div class="flex flex-column gap-2">
     <label>Nome</label>
-    <p-autoComplete
+    <p-dropdown
+      [options]="leagues"
       formControlName="league"
-      [suggestions]="leagues"
-      (completeMethod)="onFilterLeague($event)"
-      [dropdown]="true"
-      field="name"
+      optionLabel="name"
+      [filter]="true"
+      [showClear]="true"
       placeholder="Seleziona il campionato"
-    ></p-autoComplete>
+      (onShow)="loadFilteredLeagues('')"
+      (onFilter)="onFilterLeague($event)"
+    >
+    </p-dropdown>
   </div>
   <div class="flex flex-column gap-2">
     <label>Nr. Giornate</label>

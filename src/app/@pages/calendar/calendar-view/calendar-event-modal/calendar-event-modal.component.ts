@@ -84,7 +84,10 @@ export class CalendarEventModalComponent {
     this.teams$.next(name);
   }
 
-  onFilterTeam({ query }: any) {
-    this.loadFilteredTeams(query);
+  onFilterTeam({ filter }: any) {
+    console.log('query', filter);
+    if (filter && filter.length > 2) {
+      this.loadFilteredTeams(filter);
+    }
   }
 }

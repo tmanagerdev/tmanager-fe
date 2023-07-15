@@ -78,6 +78,14 @@ const routes: Routes = [
           import('./@pages/user/user.module').then((m) => m.UserModule),
       },
       {
+        path: 'veichle',
+        canActivate: [AuthGuard, AdminGuard],
+        loadChildren: () =>
+          import('./@pages/veichle/veichle.module').then(
+            (m) => m.VeichleModule
+          ),
+      },
+      {
         path: '',
         redirectTo: 'personal',
         pathMatch: 'full',

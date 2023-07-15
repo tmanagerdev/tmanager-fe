@@ -29,6 +29,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   viewControl: FormControl = new FormControl('all');
 
   calendar$: Subject<void> = new Subject();
+  events$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
 
   constructor(
@@ -52,6 +53,18 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
             .map((d, i) => i);
           this.loadGames();
         })
+      )
+      .subscribe();
+
+    this.events$
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        switchMap(() =>
+          this.calendarApiService.findEvents(this.calendarId, {
+            day: this.activeDay + 1,
+          })
+        ),
+        tap((data) => (this.activeGames = [...data]))
       )
       .subscribe();
 
@@ -100,9 +113,10 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   }
 
   loadGames() {
-    this.activeGames = this.calendar.calendarEvents.filter(
-      (ce: any) => ce.day === this.activeDay + 1
-    );
+    // this.activeGames = this.calendar.calendarEvents.filter(
+    //   (ce: any) => ce.day === this.activeDay + 1
+    // );
+    this.events$.next();
   }
 
   onNewTab(event: number): void {
@@ -114,9 +128,10 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
         break;
     }
     this.activeDay = event;
-    this.activeGames = this.calendar.calendarEvents.filter(
-      (ce: any) => ce.day === this.activeDay + 1
-    );
+    // this.activeGames = this.calendar.calendarEvents.filter(
+    //   (ce: any) => ce.day === this.activeDay + 1
+    // );
+    this.events$.next();
   }
 
   create() {

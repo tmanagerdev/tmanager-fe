@@ -57,22 +57,24 @@ export class UserModalComponent implements OnInit, OnDestroy {
   ) {
     if (this.config.data) {
       this.user = this.config.data.user;
-      this.isEdit = true;
+      this.isEdit = this.config.data.isEdit;
       this.email.disable();
       this.userForm.patchValue(this.user);
-      const role = this.roles.find((r) => r.key === this.user.role);
-      this.userForm.patchValue({ role });
 
-      if (this.user.teams) {
-        console.log('user.teams', this.user.teams);
-        this.user.teams.forEach((t: any) => {
-          this.teamsArray.push(
-            new FormGroup({
-              id: new FormControl(t.team.id),
-              name: new FormControl(t.team.name),
-            })
-          );
-        });
+      if (this.isEdit) {
+        const role = this.roles.find((r) => r.key === this.user.role);
+        this.userForm.patchValue({ role });
+
+        if (this.user.teams) {
+          this.user.teams.forEach((t: any) => {
+            this.teamsArray.push(
+              new FormGroup({
+                id: new FormControl(t.team.id),
+                name: new FormControl(t.team.name),
+              })
+            );
+          });
+        }
       }
     }
   }

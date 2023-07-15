@@ -41,4 +41,12 @@ export class CalendarApiService {
   delete(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/calendars/${id}`);
   }
+
+  findEvents(id: number, { day = 1 }: any): Observable<any> {
+    return this.httpClient.get(`${environment.apiUrl}/calendars/${id}/events`, {
+      params: {
+        ...(day ? { day } : null),
+      },
+    });
+  }
 }

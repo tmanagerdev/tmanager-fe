@@ -243,8 +243,10 @@ export class HotelListComponent {
     this.loadHotels();
   }
 
-  onFilterCity({ query }: any) {
-    this.loadFilteredCities(query);
+  onFilterCity({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredCities(filter);
+    }
   }
 
   loadFilteredCities(name: string) {

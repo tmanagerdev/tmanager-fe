@@ -9,26 +9,32 @@
   </div>
   <div class="flex flex-column gap-2">
     <label>Città</label>
-    <p-autoComplete
+    <p-dropdown
+      [options]="cities"
       formControlName="city"
-      [suggestions]="cities"
-      (completeMethod)="onFilterCity($event)"
-      [dropdown]="true"
-      field="name"
+      optionLabel="name"
+      [filter]="true"
+      [showClear]="true"
       placeholder="Seleziona la città"
-    ></p-autoComplete>
+      (onShow)="loadFilteredCities('')"
+      (onFilter)="onFilterCity($event)"
+    >
+    </p-dropdown>
   </div>
 
   <div class="flex flex-column gap-2">
     <label>Campionato</label>
-    <p-autoComplete
+    <p-dropdown
+      [options]="leagues"
       formControlName="league"
-      [suggestions]="leagues"
-      (completeMethod)="onFilterLeague($event)"
-      [dropdown]="true"
-      field="name"
+      optionLabel="name"
+      [filter]="true"
+      [showClear]="true"
       placeholder="Seleziona il campionato"
-    ></p-autoComplete>
+      (onShow)="loadFilteredLeagues('')"
+      (onFilter)="onFilterLeague($event)"
+    >
+    </p-dropdown>
   </div>
 
   <div class="flex flex-column gap-2">

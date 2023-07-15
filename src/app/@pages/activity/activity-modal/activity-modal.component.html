@@ -24,14 +24,18 @@
   </div>
   <div class="flex flex-column gap-2">
     <label>Città</label>
-    <p-autoComplete
+    <p-dropdown
+      [options]="cities"
       formControlName="city"
-      [suggestions]="cities"
-      (completeMethod)="onFilterCities($event)"
-      [dropdown]="true"
-      field="name"
+      optionLabel="name"
+      [filter]="true"
+      filterBy="name"
+      [showClear]="true"
       placeholder="Seleziona la città"
-    ></p-autoComplete>
+      (onShow)="loadFilteredCities('')"
+      (onFilter)="onFilterCities($event)"
+    >
+    </p-dropdown>
   </div>
   <div class="flex flex-column gap-2">
     <label>Data inizio</label>

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   ConfirmationService,
   LazyLoadEvent,
@@ -67,7 +68,8 @@ export class CartListComponent {
     private cartApiService: CartApiService,
     private userApiService: UserApiService,
     private teamApiService: TeamApiService,
-    public dialogService: DialogService
+    public dialogService: DialogService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -157,11 +159,11 @@ export class CartListComponent {
   }
 
   detail(cart: any) {
-    console.log('open detail cart');
+    this.router.navigate(['cart', cart.id]);
   }
 
   update(cart: any) {
-    console.log('open edit cart');
+    this.router.navigate(['cart', 'edit', cart.id]);
   }
 
   confirm(cart: any) {
@@ -200,19 +202,24 @@ export class CartListComponent {
     this.filterActive = false;
     this.userFilter.setValue(null);
     this.teamFilter.setValue(null);
+    this.completeFilter.setValue(false);
     this.loadCarts();
   }
 
-  onFilterTeam({ query }: any) {
-    this.loadFilteredTeams(query);
+  onFilterTeam({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredTeams(filter);
+    }
   }
 
   loadFilteredTeams(name: string) {
     this.teams$.next(name);
   }
 
-  onFilterUser({ query }: any) {
-    this.loadFilteredUsers(query);
+  onFilterUser({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredUsers(filter);
+    }
   }
 
   loadFilteredUsers(name: string) {

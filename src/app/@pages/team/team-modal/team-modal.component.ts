@@ -18,8 +18,8 @@ export class TeamModalComponent {
 
   teamForm: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
-    league: new FormControl(null),
-    city: new FormControl(null),
+    league: new FormControl(null, Validators.required),
+    city: new FormControl(null, Validators.required),
     logoUrl: new FormControl(null),
   });
 

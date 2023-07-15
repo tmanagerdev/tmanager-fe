@@ -68,7 +68,9 @@ export class HotelModalComponent {
     this.cities$.next(name);
   }
 
-  onFilterCities({ query }: any) {
-    this.loadFilteredCities(query);
+  onFilterCities({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredCities(filter);
+    }
   }
 }

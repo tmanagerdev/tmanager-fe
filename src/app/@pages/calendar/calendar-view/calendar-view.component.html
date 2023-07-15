@@ -24,48 +24,59 @@
         <div class="flex justify-content-end mb-3">
           <p-button label="Aggiungi partita" (click)="create()"></p-button>
         </div>
-        <ng-container *ngIf="activeGames && activeGames.length; else noGames">
-          <ng-container *ngFor="let g of activeGames">
-            <div
-              class="flex flex-column justify-content-center align-items-center"
-            >
-              <div
-                class="flex justify-content-between gap-2 align-items-center game"
-              >
-                <app-team-logo [team]="g.home"></app-team-logo>
-                <div class="flex flex-column gap-2">
-                  <div class="flex flex-1 gap-2 justify-content-center">
-                    <p class="text-xl text-900">
-                      {{ g.home.name }}
-                    </p>
-                    -
-                    <p class="text-xl text-900">
-                      {{ g.away.name }}
-                    </p>
-                  </div>
-                  <div class="flex flex-1 justify-content-center">
-                    <p>{{ g.date | customDate : "showHours" }}</p>
-                  </div>
-                </div>
-                <app-team-logo [team]="g.away"></app-team-logo>
-              </div>
-              <div class="flex align-items-center gap-2 mt-3">
-                <p-button
-                  label="Modifica"
-                  styleClass="p-button-text"
-                  (click)="update(g)"
-                ></p-button>
-                <p-button
-                  label="Elimina"
-                  styleClass="p-button-danger p-button-text"
-                  (click)="remove(g)"
-                ></p-button>
-              </div>
-            </div>
-            <p-divider></p-divider>
-          </ng-container>
-        </ng-container>
       </p-tabPanel>
+    </ng-container>
+    <ng-container *ngIf="activeGames && activeGames.length; else noGames">
+      <p-table [value]="activeGames">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Casa</th>
+            <th>Trasferta</th>
+            <th>Data/Orario</th>
+            <th>Azioni</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-event>
+          <tr>
+            <td>
+              <div class="flex align-items-center gap-2">
+                <app-team-logo [team]="event.home"></app-team-logo>
+                {{ event.home.name }}
+              </div>
+            </td>
+            <td>
+              <div class="flex align-items-center gap-2">
+                <app-team-logo [team]="event.away"></app-team-logo>
+                {{ event.away.name }}
+              </div>
+            </td>
+            <td>{{ event.date | customDate : "showHours" }}</td>
+            <td>
+              <p-button
+                icon="pi pi-ellipsis-v"
+                (click)="op.toggle($event)"
+                styleClass="p-button-rounded p-button-secondary p-button-text"
+              ></p-button>
+              <p-overlayPanel #op [style]="{ width: '160px' }">
+                <button
+                  pButton
+                  pRipple
+                  label="Modifica"
+                  class="p-button-text"
+                  (click)="update(event)"
+                ></button>
+                <button
+                  pButton
+                  pRipple
+                  label="Rimuovi"
+                  class="p-button-text p-button-danger"
+                  (click)="remove(event)"
+                ></button>
+              </p-overlayPanel>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
     </ng-container>
   </p-tabView>
 </ng-container>

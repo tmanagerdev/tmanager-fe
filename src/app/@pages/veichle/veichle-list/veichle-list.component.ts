@@ -1,87 +1,59 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import {
-  MessageService,
   ConfirmationService,
   LazyLoadEvent,
+  MessageService,
 } from 'primeng/api';
-import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
-import { tap, take, Subject, debounceTime, takeUntil, switchMap } from 'rxjs';
-import { UserApiService } from 'src/app/@core/api/user-api.service';
-import { UserModalComponent } from '../user-modal/user-modal.component';
-import { FormControl } from '@angular/forms';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
+import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { VeichleModalComponent } from '../veichle-modal/veichle-modal.component';
 
 @Component({
-  selector: 'app-user-list',
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss'],
+  selector: 'app-veichle-list',
+  templateUrl: './veichle-list.component.html',
+  styleUrls: ['./veichle-list.component.scss'],
 })
-export class UserListComponent {
-  users: any[] = [];
+export class VeichleListComponent {
+  veichles: any[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
   sort: any = null;
   loading: boolean = false;
-  items = [
-    {
-      items: [
-        {
-          label: 'Update',
-          icon: 'pi pi-refresh',
-          command: (user: any) => {
-            this.update(user);
-          },
-        },
-        {
-          label: 'Delete',
-          icon: 'pi pi-times',
-          command: (user: any) => {
-            this.remove(user);
-          },
-        },
-      ],
-    },
-  ];
 
   searchFilter = new FormControl('');
 
-  users$: Subject<void> = new Subject();
+  veichles$: Subject<void> = new Subject();
   destroy$: Subject<void> = new Subject();
 
   ref!: DynamicDialogRef;
 
-  get rowsArray(): number[] {
-    return Array(4);
-  }
-
-  get cellsArray(): number[] {
-    return Array(8);
-  }
-
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private userApiService: UserApiService,
+    private veichleApiService: VeichleApiService,
     public dialogService: DialogService
   ) {}
 
   ngOnInit() {
-    this.users$
+    this.veichles$
       .pipe(
         takeUntil(this.destroy$),
         switchMap(() =>
-          this.userApiService.findAll({
+          this.veichleApiService.findAll({
             page: this.page + 1,
             take: this.size,
-            ...(this.filter ? { email: this.filter } : {}),
+            ...(this.filter ? { name: this.filter } : {}),
             ...(this.sort && this.sort.field
               ? { sortField: this.sort.field, sortOrder: this.sort.order }
               : {}),
           })
         ),
         tap(({ data, total }) => {
-          this.users = [...data];
+          this.veichles = [...data];
           this.totalRecords = total;
           this.loading = false;
         })
@@ -93,7 +65,7 @@ export class UserListComponent {
         debounceTime(500),
         tap((val) => {
           this.filter = val || '';
-          this.loadUsers();
+          this.loadVeichles();
         })
       )
       .subscribe();
@@ -104,10 +76,10 @@ export class UserListComponent {
     this.destroy$.complete();
   }
 
-  loadUsers() {
+  loadVeichles() {
     this.loading = true;
-    this.users = [];
-    this.users$.next();
+    this.veichles = [];
+    this.veichles$.next();
   }
 
   onChangePage(event: LazyLoadEvent) {
@@ -122,88 +94,84 @@ export class UserListComponent {
       this.sort = null;
     }
 
-    this.loadUsers();
+    this.loadVeichles();
   }
 
   create() {
-    this.ref = this.dialogService.open(UserModalComponent, {
-      header: `Crea nuovo utente`,
-      width: '600px',
+    this.ref = this.dialogService.open(VeichleModalComponent, {
+      header: 'Crea nuovo veicolo',
+      width: '450px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
-      data: {
-        isEdit: false,
-      },
     });
 
-    this.ref.onClose.subscribe((newUser: any) => {
-      if (newUser) {
-        this.userApiService
-          .create(newUser)
-          .pipe(
-            take(1),
-            tap((data) => {
-              this.loadUsers();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Utente creato',
-                detail: data.email,
-              });
-            })
-          )
-          .subscribe();
-      }
-    });
-  }
-
-  update(user: any) {
-    this.ref = this.dialogService.open(UserModalComponent, {
-      header: `Aggiorna ${user.email}`,
-      width: '600px',
-      contentStyle: { overflow: 'visible' },
-      baseZIndex: 10001,
-      data: {
-        user,
-        isEdit: true,
-      },
-    });
-
-    this.ref.onClose.subscribe((newUser: any) => {
-      if (newUser) {
-        this.userApiService
-          .update(user.id, newUser)
-          .pipe(
-            take(1),
-            tap((data) => {
-              this.loadUsers();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Utente aggiornato',
-                detail: data.email,
-              });
-            })
-          )
-          .subscribe();
-      }
-    });
-  }
-
-  remove(user: any) {
-    this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questo utente?',
-      header: 'Conferma',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.userApiService
-          .delete(user.id)
+    this.ref.onClose.subscribe((city: any) => {
+      if (city) {
+        this.veichleApiService
+          .create(city)
           .pipe(
             take(1),
             tap(() => {
-              this.loadUsers();
+              this.loadVeichles();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Utente eliminato',
-                detail: user.email,
+                summary: 'Veicolo creato',
+                detail: city.name,
+              });
+            })
+          )
+          .subscribe();
+      }
+    });
+  }
+
+  update(veichle: any) {
+    this.ref = this.dialogService.open(VeichleModalComponent, {
+      header: `Aggiorna ${veichle.name}`,
+      width: '450px',
+      contentStyle: { overflow: 'visible' },
+      baseZIndex: 10001,
+      data: {
+        veichle,
+      },
+    });
+
+    this.ref.onClose.subscribe((newVeichle: any) => {
+      if (newVeichle) {
+        this.veichleApiService
+          .update(veichle.id, newVeichle)
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadVeichles();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Veicolo aggiornato',
+                detail: newVeichle.name,
+              });
+            })
+          )
+          .subscribe();
+      }
+    });
+  }
+
+  remove(newVeichle: any) {
+    this.confirmationService.confirm({
+      message: 'Sei sicuro di voler eliminare questo veicolo?',
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.veichleApiService
+          .delete(newVeichle.id)
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadVeichles();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Veicolo eliminato',
+                detail: newVeichle.name,
               });
             })
           )

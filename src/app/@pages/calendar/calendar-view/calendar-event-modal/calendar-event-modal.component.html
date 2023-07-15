@@ -5,25 +5,33 @@
 >
   <div class="flex flex-column gap-2">
     <label>Squadra di casa</label>
-    <p-autoComplete
+    <p-dropdown
+      [options]="teams"
       formControlName="home"
-      [suggestions]="teams"
-      (completeMethod)="onFilterTeam($event)"
-      [dropdown]="true"
-      field="name"
-      placeholder="Seleziona la squadra di casa"
-    ></p-autoComplete>
+      optionLabel="name"
+      [filter]="true"
+      filterBy="name"
+      [showClear]="true"
+      placeholder="Seleziona la squadra in casa"
+      (onShow)="loadFilteredTeams('')"
+      (onFilter)="onFilterTeam($event)"
+    >
+    </p-dropdown>
   </div>
   <div class="flex flex-column gap-2">
     <label>Squadra in trasferta</label>
-    <p-autoComplete
+    <p-dropdown
+      [options]="teams"
       formControlName="away"
-      [suggestions]="teams"
-      (completeMethod)="onFilterTeam($event)"
-      [dropdown]="true"
-      field="name"
+      optionLabel="name"
+      [filter]="true"
+      filterBy="name"
+      [showClear]="true"
       placeholder="Seleziona la squadra in trasferta"
-    ></p-autoComplete>
+      (onShow)="loadFilteredTeams('')"
+      (onFilter)="onFilterTeam($event)"
+    >
+    </p-dropdown>
   </div>
   <div class="flex flex-column gap-2">
     <label>Data inizio partita</label>

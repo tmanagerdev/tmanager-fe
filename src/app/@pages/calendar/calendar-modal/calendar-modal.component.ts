@@ -71,7 +71,9 @@ export class CalendarModalComponent {
     this.leagues$.next(name);
   }
 
-  onFilterLeague({ query }: any) {
-    this.loadFilteredLeagues(query);
+  onFilterLeague({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredLeagues(filter);
+    }
   }
 }

@@ -76,7 +76,9 @@ export class ActivityModalComponent {
     this.cities$.next(name);
   }
 
-  onFilterCities({ query }: any) {
-    this.loadFilteredCities(query);
+  onFilterCities({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredCities(filter);
+    }
   }
 }

@@ -7,21 +7,31 @@
   <div class="flex align-items-center gap-3">
     <div class="w-full flex flex-column gap-2">
       <label>Squadra</label>
-      <p-autoComplete
+      <p-dropdown
+        [options]="teams"
         [formControl]="teamFilter"
-        [suggestions]="teams"
-        (completeMethod)="onFilterTeam($event)"
-        field="name"
-      ></p-autoComplete>
+        optionLabel="name"
+        [filter]="true"
+        [showClear]="true"
+        placeholder="Filtra per squadra"
+        (onShow)="loadFilteredTeams('')"
+        (onFilter)="onFilterTeam($event)"
+      >
+      </p-dropdown>
     </div>
     <div class="w-full flex flex-column gap-2">
       <label>Utente</label>
-      <p-autoComplete
+      <p-dropdown
+        [options]="users"
         [formControl]="userFilter"
-        [suggestions]="users"
-        (completeMethod)="onFilterUser($event)"
-        field="email"
-      ></p-autoComplete>
+        optionLabel="email"
+        [filter]="true"
+        [showClear]="true"
+        placeholder="Filtra per utente"
+        (onShow)="loadFilteredUsers('')"
+        (onFilter)="onFilterUser($event)"
+      >
+      </p-dropdown>
     </div>
     <div class="w-full flex flex-column gap-2">
       <label>Confermata</label>

@@ -239,8 +239,10 @@ export class ActivityListComponent {
     this.loadActivities();
   }
 
-  onFilterCity({ query }: any) {
-    this.loadFilteredCities(query);
+  onFilterCity({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredCities(filter);
+    }
   }
 
   loadFilteredCities(name: string) {

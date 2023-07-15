@@ -6,12 +6,16 @@
   <ng-template pTemplate="content">
     <div class="w-full flex flex-column gap-2">
       <label>Città</label>
-      <p-autoComplete
+      <p-dropdown
+        [options]="cities"
         [formControl]="cityFilter"
-        [suggestions]="cities"
-        (completeMethod)="onFilterCity($event)"
-        field="name"
-      ></p-autoComplete>
+        optionLabel="name"
+        [filter]="true"
+        [showClear]="true"
+        placeholder="Filtra per città"
+        (onShow)="loadFilteredCities('')"
+        (onFilter)="onFilterCity($event)"
+      ></p-dropdown>
     </div>
     <div class="w-full flex justify-content-edn gap-2 mt-4">
       <p-button

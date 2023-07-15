@@ -20,6 +20,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TeamModalComponent } from './team-modal/team-modal.component';
 import { ImageUploaderComponent } from '../../@shared/image-uploader/image-uploader.component';
 import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [TeamListComponent, TeamModalComponent],
@@ -44,6 +45,7 @@ import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
     SkeletonModule,
     ImageUploaderComponent,
     TeamLogoComponent,
+    DropdownModule,
   ],
 })
 export class TeamModule {}

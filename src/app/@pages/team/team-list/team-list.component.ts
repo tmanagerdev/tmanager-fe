@@ -265,11 +265,15 @@ export class TeamListComponent {
     });
   }
 
-  onFilterCity({ query }: any) {
-    this.loadFilteredCities(query);
+  onFilterCity({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredCities(filter);
+    }
   }
 
-  onFilterLeague({ query }: any) {
-    this.loadFilteredLeagues(query);
+  onFilterLeague({ filter }: any) {
+    if (filter && filter.length > 3) {
+      this.loadFilteredLeagues(filter);
+    }
   }
 }
