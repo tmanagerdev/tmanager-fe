@@ -44,8 +44,8 @@
       <th pSortableColumn="name">
         Nome <p-sortIcon field="name"></p-sortIcon>
       </th>
-      <th>Latitude</th>
-      <th>Longitude</th>
+      <!-- <th>Latitude</th>
+      <th>Longitude</th> -->
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
@@ -55,8 +55,8 @@
   <ng-template pTemplate="body" let-city>
     <tr>
       <td>{{ city.name }}</td>
-      <td>{{ city.latitude }}</td>
-      <td>{{ city.longitude }}</td>
+      <!-- <td>{{ city.latitude }}</td>
+      <td>{{ city.longitude }}</td> -->
       <td>{{ city.createdAt | customDate }}</td>
       <td>
         <p-button

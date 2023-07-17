@@ -40,6 +40,7 @@ export class ActivityModalComponent {
           startDate: new Date(this.activity.startDate),
           endDate: new Date(this.activity.endDate),
         });
+        this.cities.push({ ...this.activity.city });
       }
     }
 

@@ -32,6 +32,7 @@ export class HotelModalComponent {
       this.isEdit = this.config.data.isEdit;
       if (this.isEdit) {
         this.hotelForm.patchValue(this.hotel);
+        this.cities.push({ ...this.hotel.city });
       }
     }
 

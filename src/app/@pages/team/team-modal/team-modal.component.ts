@@ -37,6 +37,8 @@ export class TeamModalComponent {
       this.team = this.config.data.team;
       this.isEdit = true;
       this.teamForm.patchValue(this.team);
+      this.leagues.push({ ...this.team.league });
+      this.cities.push({ ...this.team.city });
     }
 
     this.cities$
@@ -75,12 +77,13 @@ export class TeamModalComponent {
   onSave() {
     if (this.teamForm.valid) {
       const team = { ...this.teamForm.value };
-      this.ref.close({
-        name: team.name,
-        city: team.city.id,
-        league: team.league.id,
-        logo: team.logoUrl,
-      });
+      console.log('team', team);
+      // this.ref.close({
+      //   name: team.name,
+      //   city: team.city.id,
+      //   league: team.league.id,
+      //   logo: team.logoUrl,
+      // });
     }
   }
 

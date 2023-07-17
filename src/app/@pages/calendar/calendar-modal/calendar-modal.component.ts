@@ -38,6 +38,7 @@ export class CalendarModalComponent {
         startDate: new Date(this.calendar.startDate),
         endDate: new Date(this.calendar.endDate),
       });
+      this.leagues.push({ ...this.calendar.league });
     }
 
     this.leagues$
