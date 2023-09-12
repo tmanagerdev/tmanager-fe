@@ -77,13 +77,12 @@ export class TeamModalComponent {
   onSave() {
     if (this.teamForm.valid) {
       const team = { ...this.teamForm.value };
-      console.log('team', team);
-      // this.ref.close({
-      //   name: team.name,
-      //   city: team.city.id,
-      //   league: team.league.id,
-      //   logo: team.logoUrl,
-      // });
+      this.ref.close({
+        name: team.name,
+        city: team.city.id,
+        league: team.league.id,
+        logo: team.logoUrl,
+      });
     }
   }
 
