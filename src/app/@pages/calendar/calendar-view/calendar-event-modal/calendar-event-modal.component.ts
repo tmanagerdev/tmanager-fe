@@ -32,12 +32,13 @@ export class CalendarEventModalComponent {
     if (this.config.data) {
       this.event = this.config.data.event;
       this.isEdit = this.config.data.isEditing;
-
       this.eventForm.patchValue({
         ...this.event,
         date: new Date(this.event.date),
         hour: new Date(this.event.date),
       });
+      this.teams.push({ ...this.event.home });
+      this.teams.push({ ...this.event.away });
     }
 
     this.teams$
