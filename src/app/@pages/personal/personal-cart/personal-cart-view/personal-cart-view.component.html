@@ -74,8 +74,8 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Autonoleggio</p>
-      <ng-container *ngFor="let r of roads">
+      <p class="font-semibold mb-2">Autonoleggio e tratte</p>
+      <ng-container *ngFor="let r of roads; let i = index">
         <div class="mb-2">
           <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
           <p class="mb-1 text-sm">
@@ -84,6 +84,10 @@
           </p>
           <ng-container *ngFor="let v of r.veichles">
             <div class="px-2">{{ v.quantity }}x {{ v.veichle.name }}</div>
+          </ng-container>
+          <p class="my-1">{{ r.price | currency : "EUR" : "symbol" }}</p>
+          <ng-container *ngIf="i !== roads.length - 1">
+            <p-divider></p-divider>
           </ng-container>
         </div>
       </ng-container>

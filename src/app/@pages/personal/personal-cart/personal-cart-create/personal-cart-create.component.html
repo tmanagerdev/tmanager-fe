@@ -13,6 +13,8 @@
       [model]="items"
       [activeIndex]="activeIndex"
       [readonly]="true"
+      [readonly]="false"
+      (activeIndexChange)="onActiveIndexChange($event)"
     ></p-steps>
     <div class="py-5">
       <ng-container [ngSwitch]="activeIndex">
@@ -35,15 +37,6 @@
           ></app-cart-create-accomodations>
         </ng-container>
         <ng-container *ngSwitchCase="2">
-          <app-cart-create-road
-            [activeIndex]="activeIndex"
-            [roadForm]="roadForm"
-            [event]="event"
-            (nextStep)="onNextStep()"
-            (prevStep)="onPrevStep()"
-          ></app-cart-create-road>
-        </ng-container>
-        <ng-container *ngSwitchCase="3">
           <app-cart-create-activity
             [event]="event"
             [activeIndex]="activeIndex"
@@ -51,6 +44,15 @@
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-activity>
+        </ng-container>
+        <ng-container *ngSwitchCase="3">
+          <app-cart-create-road
+            [activeIndex]="activeIndex"
+            [roadForm]="roadForm"
+            [event]="event"
+            (nextStep)="onNextStep()"
+            (prevStep)="onPrevStep()"
+          ></app-cart-create-road>
         </ng-container>
         <ng-container *ngSwitchCase="4">
           <app-recap

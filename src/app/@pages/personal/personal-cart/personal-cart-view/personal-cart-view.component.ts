@@ -59,8 +59,11 @@ export class PersonalCartViewComponent {
     const totalActivity = this.activities.reduce((acc: any, activity: any) => {
       return acc + activity.activity.price * 100;
     }, 0);
+    const totalRoads = this.roads.reduce((acc: any, road: any) => {
+      return acc + road.price * 100;
+    }, 0);
 
-    return totalAccomodation / 100 + totalActivity / 100;
+    return totalAccomodation / 100 + totalActivity / 100 + totalRoads / 100;
   }
 
   constructor(

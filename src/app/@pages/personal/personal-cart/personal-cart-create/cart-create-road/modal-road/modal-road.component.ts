@@ -13,6 +13,7 @@ export class ModalRoadComponent {
     to: new FormControl(null),
     startDate: new FormControl(null),
     endDate: new FormControl(null),
+    price: new FormControl(null),
     veichles: new FormArray([]),
     startDateHour: new FormControl(null),
     endDateHour: new FormControl(null),
@@ -48,15 +49,12 @@ export class ModalRoadComponent {
           new Date(road.endDate).getMinutes()
         );
 
-        console.log('patch startDateHour', startDateHour);
         this.roadForm.addControl(
           'startDateHour',
           new FormControl(startDateHour)
         );
 
         this.roadForm.addControl('endDateHour', new FormControl(endDateHour));
-
-        console.log('after patch', this.roadForm.value);
       }
     }
   }

@@ -16,7 +16,10 @@
     <ng-container *ngFor="let r of roads.value; let i = index">
       <div class="flex justify-content-between mb-2">
         <div>
-          <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
+          <p class="mb-1">
+            Da {{ r.from }} a {{ r.to }} -
+            {{ r.price | currency : "EUR" : "symbol" }}
+          </p>
           <p class="mb-1">
             {{ r.startDate | customDate : "showHours" }} -
             {{ r.endDate | customDate : "showHours" }}

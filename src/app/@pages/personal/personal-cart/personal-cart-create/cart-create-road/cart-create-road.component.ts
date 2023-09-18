@@ -66,10 +66,6 @@ export class CartCreateRoadComponent implements OnInit {
   onUpdateRoad(indexRoads: number) {
     const roadToUpdate = this.roads.at(indexRoads) as FormGroup;
 
-    console.log('roadToUpdate', roadToUpdate);
-
-    console.log('veichleList', this.veichles);
-
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiorna tratta',
       width: '700px',
@@ -108,19 +104,16 @@ export class CartCreateRoadComponent implements OnInit {
       to: new FormControl(null),
       startDate: new FormControl(startDate),
       endDate: new FormControl(endDate),
+      price: new FormControl(null),
       startDateHour: new FormControl(startDate),
       endDateHour: new FormControl(endDate),
       veichles: new FormArray([]),
     });
 
-    console.log('new Road', newRoad.value);
-
     const newVeichle = new FormGroup({
       veichle: new FormControl(null),
       quantity: new FormControl(null),
     });
-
-    (newRoad.get('veichles') as FormArray)?.push(newVeichle);
 
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiungi nuova tratta',
@@ -137,7 +130,6 @@ export class CartCreateRoadComponent implements OnInit {
     });
 
     this.ref.onClose.subscribe((road: FormGroup) => {
-      console.log('road', road);
       if (road) {
         this.roads.push(road);
       }

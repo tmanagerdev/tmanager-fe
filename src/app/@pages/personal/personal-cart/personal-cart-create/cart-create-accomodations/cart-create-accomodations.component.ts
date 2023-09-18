@@ -50,6 +50,10 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     return this.accomodationForm.get('rooms') as FormArray;
   }
 
+  get hotel() {
+    return this.accomodationForm.get('hotel') as FormGroup;
+  }
+
   constructor(private hotelApiService: HotelApiService) {
     this.hotel$
       .pipe(
@@ -65,7 +69,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
         tap((hotels) => (this.hotels = [...hotels])),
         tap(() => {
           if (this.isEdit) {
-            console.log('cerco hotel');
             const hotelId = this.accomodationForm.value.hotel.id;
             const hotel = this.hotels.find((h: any) => h.id === hotelId);
             if (hotel) {
@@ -87,6 +90,10 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
                   );
                 }
               });
+            }
+          } else {
+            if (this.hotel && this.hotel.value) {
+              this.selectedHotel = this.hotel.value;
             }
           }
         })
@@ -118,6 +125,8 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
         })
       );
     });
+
+    this.hotel.patchValue({ ...this.selectedHotel });
   }
 
   onNextStep() {

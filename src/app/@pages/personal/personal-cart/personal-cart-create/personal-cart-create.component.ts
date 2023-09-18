@@ -33,10 +33,10 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Alloggio',
     },
     {
-      label: 'Autonoleggio e tratte',
+      label: 'Attività',
     },
     {
-      label: 'Attività',
+      label: 'Autonoleggio e tratte',
     },
     {
       label: 'Riepilogo',
@@ -78,9 +78,9 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     roads: new FormArray([]),
   });
   paxForm: FormGroup = new FormGroup({
-    players: new FormControl(null, [Validators.required]),
-    staffs: new FormControl(null, [Validators.required]),
-    managers: new FormControl(null, [Validators.required]),
+    players: new FormControl(null),
+    staffs: new FormControl(null),
+    managers: new FormControl(null),
   });
   accomodationForm: FormGroup = new FormGroup({
     hotel: new FormGroup({
@@ -210,6 +210,13 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  onActiveIndexChange(event: number) {
+    this.activeIndex = event;
+    if (this.activeIndex == 4) {
+      this.populateCartForm();
+    }
+  }
+
   onSaveCart() {
     const cart = { ...this.cartForm.value };
 
@@ -274,6 +281,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           id: new FormControl(r.id),
           startDate: new FormControl(new Date(r.startDate)),
           endDate: new FormControl(new Date(r.endDate)),
+          price: new FormControl(r.price),
           from: new FormControl(r.from),
           to: new FormControl(r.to),
           veichles: new FormArray([]),
@@ -393,7 +401,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       const veichles: UntypedFormArray = new UntypedFormArray([]);
 
       if (r.veichles) {
-        console.log('r.veichles', r.veichles);
         for (const v of r.veichles) {
           veichles.push(
             new FormGroup({
@@ -411,6 +418,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           startDate: new FormControl(r.startDate),
           from: new FormControl(r.from),
           to: new FormControl(r.to),
+          price: new FormControl(r.price),
           veichles,
         })
       );

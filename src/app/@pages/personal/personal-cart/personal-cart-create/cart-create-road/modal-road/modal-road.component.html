@@ -47,6 +47,21 @@
           </div>
         </div>
       </div>
+      <div class="formgrid grid">
+        <div class="field col">
+          <label>Prezzo</label>
+          <div class="flex gap-2">
+            <p-inputNumber
+              mode="currency"
+              inputId="currency-italy"
+              formControlName="price"
+              placeholder="Prezzo"
+              currency="EUR"
+              locale="it-IT"
+            ></p-inputNumber>
+          </div>
+        </div>
+      </div>
       <div class="flex gap-2">
         <p class="font-semibold my-2">Mezzi di trasporto</p>
         <p-button
