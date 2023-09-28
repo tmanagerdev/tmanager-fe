@@ -58,7 +58,9 @@ export class UserModalComponent implements OnInit, OnDestroy {
     if (this.config.data) {
       this.user = this.config.data.user;
       this.isEdit = this.config.data.isEdit;
-      this.email.disable();
+      if (this.isEdit) {
+        this.email.disable();
+      }
       this.userForm.patchValue(this.user);
 
       if (this.isEdit) {
