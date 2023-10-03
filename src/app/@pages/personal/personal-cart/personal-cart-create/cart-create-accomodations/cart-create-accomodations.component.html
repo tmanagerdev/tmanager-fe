@@ -42,23 +42,86 @@
   <p-divider></p-divider>
   <div class="py-3">
     <ng-container *ngIf="selectedHotel; else noHotelSelected">
-      <div class="flex flex-column">
-        <ng-container formArrayName="rooms">
-          <ng-container *ngFor="let r of rooms.controls; let i = index">
-            <div class="flex justify-content-between my-2" [formGroupName]="i">
-              <p class="w-3 font-semibold">{{ rooms.value[i].name }}</p>
-              <p class="w-3">
-                {{ rooms.value[i].price | currency : "EUR" : "symbol" }}
-              </p>
-              <p-inputNumber
-                inputId="integeronly"
-                formControlName="quantity"
-              ></p-inputNumber>
-              <app-control-errors controlName="quantity"></app-control-errors>
-            </div>
-          </ng-container>
+      <p class="mb-2">Gestisci le stanze</p>
+      <p-accordion>
+        <ng-container *ngFor="let hotelRoom of selectedHotel.rooms">
+          <p-accordionTab>
+            <ng-template pTemplate="header">
+              <div class="flex align-items-center">
+                <ng-container
+                  *ngFor="let pax of [].constructor(hotelRoom.numPax)"
+                >
+                  <i class="pi pi-user mr-2"></i>
+                </ng-container>
+                <span class="vertical-align-middle mr-2">{{
+                  hotelRoom.name
+                }}</span>
+                <span class="vertical-align-middle font-normal">
+                  ({{ hotelRoom.price | currency : "EUR" : "symbol" }})
+                </span>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="content">
+              <div class="grid">
+                <ng-container
+                  *ngFor="let r of getRooms(hotelRoom); let i = index"
+                >
+                  <div class="col-4 room-item">
+                    <p-panel>
+                      <ng-template pTemplate="header">
+                        <div
+                          class="w-full flex align-items-center justify-content-between"
+                        >
+                          <span class="font-semibold">
+                            {{ "Stanza " + (i + 1) }}
+                          </span>
+                          <i
+                            class="pi pi-ellipsis-v cursor-pointer"
+                            (click)="onToggleMenu(r, menu, $event)"
+                          ></i>
+                        </div>
+                      </ng-template>
+                      <ng-container *ngFor="let p of r.rooming; let ip = index">
+                        <div class="p-2 flex align-items-center room-user">
+                          <span class="mr-2">
+                            <app-tag-role-people
+                              [people]="p"
+                            ></app-tag-role-people>
+                          </span>
+
+                          <ng-container *ngIf="p.people.id">
+                            <p>{{ p.people.name }} {{ p.people.surname }}</p>
+                          </ng-container>
+                          <ng-container *ngIf="!p.people.id">
+                            <p>{{ p.name }} {{ p.surname }}</p>
+                          </ng-container>
+                        </div>
+                      </ng-container>
+                      <div class="p-2 flex justify-content-center">
+                        <p-button
+                          label="Gestisci ospiti"
+                          styleClass="p-button-text"
+                          icon="pi pi-user-edit"
+                          (click)="onAddGuest(r)"
+                        ></p-button>
+                      </div>
+                    </p-panel>
+                  </div>
+                </ng-container>
+                <div class="col-4">
+                  <div
+                    class="h-full flex justify-content-center align-items-center border-dashed border-1 new-room text-primary"
+                    (click)="onAddNewRoom(hotelRoom)"
+                  >
+                    <i class="pi pi-plus-circle mr-2"></i>
+                    <p class="m-0">Aggiungi room</p>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </p-accordionTab>
         </ng-container>
-      </div>
+      </p-accordion>
     </ng-container>
   </div>
 </div>
@@ -82,3 +145,5 @@
 <ng-template #noHotelSelected>
   <p class="text-sm text-center">Seleziona un hotel per prenotare le camere</p>
 </ng-template>
+
+<p-menu #menu [model]="items" [popup]="true"></p-menu>

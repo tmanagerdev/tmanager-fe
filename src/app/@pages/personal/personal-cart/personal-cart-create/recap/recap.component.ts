@@ -41,11 +41,27 @@ export class RecapComponent implements OnInit {
   }
 
   get hotel() {
+    console.log('hotel', this.cartForm?.get('rooms')?.value);
     return this.cartForm?.get('rooms')?.value[0]?.hotelName;
   }
 
   get rooms() {
-    return this.cartForm?.get('rooms')?.value;
+    const rooms = this.cartForm?.get('rooms')?.value;
+    const roomByName = rooms.reduce((group: any, room: any) => {
+      const { name, price } = room;
+      const index = group.findIndex((g: any) => g.name === name);
+      if (index > -1) {
+        group[index].quantity++;
+      } else {
+        group.push({ name, price, quantity: 1 });
+      }
+      // group[name] = group[name] ?? [];
+      // group[name].push(room);
+      return group;
+    }, []);
+    console.log('roomByName', roomByName);
+    return roomByName;
+    //return this.cartForm?.get('rooms')?.value;
   }
 
   get roads() {
@@ -54,6 +70,23 @@ export class RecapComponent implements OnInit {
 
   get activities() {
     return this.cartForm?.get('activities') as FormArray;
+  }
+
+  get total() {
+    const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
+      return acc + room.price * room.quantity * 100;
+    }, 0);
+    const totalActivity = this.activities.value.reduce(
+      (acc: any, activity: any) => {
+        return acc + activity.price * 100;
+      },
+      0
+    );
+    const totalRoads = this.roads.reduce((acc: any, road: any) => {
+      return acc + road.price * 100;
+    }, 0);
+
+    return totalAccomodation / 100 + totalActivity / 100 + totalRoads / 100;
   }
 
   constructor() {}

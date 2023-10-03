@@ -30,7 +30,7 @@ export class TeamApiService {
     });
   }
 
-  findOne(teamId: string): Observable<any> {
+  findOne(teamId: number): Observable<any> {
     return this.httpClient.get(`${environment.apiUrl}/teams/${teamId}`);
   }
 
@@ -44,5 +44,21 @@ export class TeamApiService {
 
   delete(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/teams/${id}`);
+  }
+
+  findPeople(teamId: number): Observable<any> {
+    return this.httpClient.get(`${environment.apiUrl}/teams/${teamId}/people`);
+  }
+
+  createPeople(people: any): Observable<any> {
+    return this.httpClient.post(`${environment.apiUrl}/people`, people);
+  }
+
+  updatePeople(id: string, people: any): Observable<any> {
+    return this.httpClient.put(`${environment.apiUrl}/people/${id}`, people);
+  }
+
+  deletePeople(id: string): Observable<any> {
+    return this.httpClient.delete(`${environment.apiUrl}/people/${id}`);
   }
 }

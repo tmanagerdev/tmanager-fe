@@ -37,11 +37,28 @@ export class PersonalCartViewComponent {
   }
 
   get hotel() {
-    return this.cart?.rooms[0].room.hotel.name;
+    return this.cart?.rooms && this.cart?.rooms.length
+      ? this.cart?.rooms[0].room.hotel.name
+      : '';
   }
 
   get rooms() {
-    return this.cart?.rooms;
+    const rooms = this.cart?.rooms;
+    const roomByName = rooms.reduce((group: any, room: any) => {
+      const { name, price } = room.room;
+      const index = group.findIndex((g: any) => g.name === name);
+      if (index > -1) {
+        group[index].quantity++;
+      } else {
+        group.push({ name, price, quantity: 1 });
+      }
+      // group[name] = group[name] ?? [];
+      // group[name].push(room);
+      return group;
+    }, []);
+    console.log('roomByName', roomByName);
+    return roomByName;
+    //return this.cartForm?.get('rooms')?.value;
   }
 
   get roads() {
@@ -54,7 +71,7 @@ export class PersonalCartViewComponent {
 
   get total() {
     const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
-      return acc + room.room.price * room.quantity * 100;
+      return acc + room.price * room.quantity * 100;
     }, 0);
     const totalActivity = this.activities.reduce((acc: any, activity: any) => {
       return acc + activity.activity.price * 100;

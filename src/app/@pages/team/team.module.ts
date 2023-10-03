@@ -21,9 +21,12 @@ import { TeamModalComponent } from './team-modal/team-modal.component';
 import { ImageUploaderComponent } from '../../@shared/image-uploader/image-uploader.component';
 import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
 import { DropdownModule } from 'primeng/dropdown';
+import { TeamPeopleComponent } from './team-people/team-people.component';
+import { PeopleRolePipe } from 'src/app/@core/pipes/people-role.pipe';
+import { TeamPeopleModalComponent } from './team-people/team-people-modal/team-people-modal.component';
 
 @NgModule({
-  declarations: [TeamListComponent, TeamModalComponent],
+  declarations: [TeamListComponent, TeamModalComponent, TeamPeopleComponent, TeamPeopleModalComponent],
   providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
@@ -35,6 +38,7 @@ import { DropdownModule } from 'primeng/dropdown';
     CardModule,
     InputTextModule,
     CustomDatePipe,
+    PeopleRolePipe,
     FormsModule,
     ReactiveFormsModule,
     DynamicDialogModule,

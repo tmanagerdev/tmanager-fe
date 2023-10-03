@@ -1,0 +1,13 @@
+.p-panel.p-component {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .ng-trigger-panelContent {
+    flex: 1;
+
+    .p-panel-content {
+      height: 100%;
+    }
+  }
+}

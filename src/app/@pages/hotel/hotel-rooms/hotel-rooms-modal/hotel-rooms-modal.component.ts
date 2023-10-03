@@ -14,6 +14,7 @@ export class HotelRoomsModalComponent {
   roomForm: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
     price: new FormControl(null),
+    numPax: new FormControl(null),
   });
 
   constructor(

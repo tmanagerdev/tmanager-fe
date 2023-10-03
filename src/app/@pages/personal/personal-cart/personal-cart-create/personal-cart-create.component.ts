@@ -12,9 +12,10 @@ import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/@core/services/auth.service';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
 import { Subject, iif, switchMap, take, takeUntil, tap } from 'rxjs';
-import { clearFormArray } from 'src/app/@core/utils';
+import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PersonalCartCrateConfirmModalComponent } from './personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
+import { CartCreateAccomodationsService } from './cart-create-accomodations/cart-create-accomodations.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -42,7 +43,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Riepilogo',
     },
   ];
-  activeIndex: number = 0;
+  activeIndex: number = 1;
   currentUser: any;
   event: any;
 
@@ -90,6 +91,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     startDate: new FormControl(null),
     endDate: new FormControl(null),
     rooms: new FormArray<any>([]),
+    roomings: new FormArray<any>([]),
   });
   roadForm: FormGroup = new FormGroup({
     roads: new FormArray<any>([]),
@@ -124,7 +126,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     private eventApiService: EventApiService,
     private authService: AuthService,
     private messageService: MessageService,
-    public dialogService: DialogService
+    public dialogService: DialogService,
+    public accomodationService: CartCreateAccomodationsService
   ) {
     this.isEdit = route.snapshot.data['isEdit'];
     this.currentUser = this.authService.currentUser;
@@ -138,7 +141,22 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           tap((cart) => this.patchFormEdit(cart)),
           tap((cart) => (this.eventId = cart.event.id)),
           switchMap(() => this.eventApiService.findOne(this.eventId)),
-          tap((event) => (this.event = { ...event }))
+          tap((event) => {
+            this.event = { ...event };
+            let roomings: any = [];
+            for (const room of (this.accomodationForm.get('rooms') as FormArray)
+              .value) {
+              for (const rooming of room.rooming) {
+                if (rooming.people && rooming.people.id) {
+                  roomings = [...roomings, rooming.people.id];
+                }
+              }
+            }
+            this.accomodationService.initPeople(
+              this.event.away.people ?? [],
+              roomings
+            );
+          })
         )
         .subscribe();
     } else {
@@ -252,8 +270,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     this.paxForm.patchValue({ players, managers, staffs });
 
     // PATCH ACCOMODATION FORM
-    const startDate = new Date(cart.startDate);
-    const endDate = new Date(cart.endDate);
+    const startDate = cart.startDate ? new Date(cart.startDate) : null;
+    const endDate = cart.endDate ? new Date(cart.endDate) : null;
     this.accomodationForm.patchValue({ startDate, endDate });
     if (cart.rooms && cart.rooms.length) {
       const { id, name } = cart.rooms[0].room.hotel;
@@ -265,10 +283,35 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           id: new FormControl(r.room.id),
           name: new FormControl(r.room.name),
           price: new FormControl(r.room.price),
-          quantity: new FormControl(r.quantity),
+          numPax: new FormControl(r.room.numPax),
+          rooming: new FormArray([]),
           hotelId: new FormControl(r.room.hotel.id),
           hotelName: new FormControl(r.room.hotel.name),
+          uuid: new FormControl(uuidv4()),
         });
+
+        for (const cartRooming of r.rooming) {
+          const rooming = new FormGroup({
+            people: new FormGroup({
+              id: new FormControl(
+                cartRooming.people ? cartRooming.people.id : null
+              ),
+              name: new FormControl(
+                cartRooming.people ? cartRooming.people.name : null
+              ),
+              surname: new FormControl(
+                cartRooming.people ? cartRooming.people.surname : null
+              ),
+              category: new FormControl(
+                cartRooming.people ? cartRooming.people.category : null
+              ),
+            }),
+            name: new FormControl(cartRooming.name),
+            surname: new FormControl(cartRooming.surname),
+            category: new FormControl(cartRooming.category),
+          });
+          (room.get('rooming') as FormArray).push(rooming);
+        }
         accomodationRooms.push(room);
       }
     }
@@ -328,6 +371,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
    * il form principale del carrello
    */
   populateCartForm() {
+    console.log('populate cart form');
     this.cartForm.patchValue(this.paxForm.value);
 
     this.cartForm.get('event')?.get('id')?.setValue(this.event.id);
@@ -381,18 +425,22 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     clearFormArray(this.cartForm.get('rooms') as FormArray);
     for (const r of accomodationRooms.value) {
       const cartRooms = this.cartForm.get('rooms') as FormArray;
-      if (!!r.quantity) {
-        cartRooms.push(
-          new FormGroup({
-            roomId: new FormControl(r.id),
-            name: new FormControl(r.name),
-            price: new FormControl(r.price),
-            quantity: new FormControl(r.quantity),
-            hotelId: new FormControl(r.hotelId),
-            hotelName: new FormControl(r.hotelName),
-          })
-        );
-      }
+      cartRooms.push(
+        new FormGroup({
+          roomId: new FormControl(r.id),
+          name: new FormControl(r.name),
+          price: new FormControl(r.price),
+          rooming: new FormControl(
+            r.rooming.map((r: any) => {
+              return r.people && r.people.id
+                ? { peopleId: r.people.id }
+                : { name: r.name, surname: r.surname, category: r.category };
+            })
+          ),
+          hotelId: new FormControl(r.hotelId),
+          hotelName: new FormControl(r.hotelName),
+        })
+      );
     }
 
     clearFormArray(this.cartForm.get('roads') as FormArray);

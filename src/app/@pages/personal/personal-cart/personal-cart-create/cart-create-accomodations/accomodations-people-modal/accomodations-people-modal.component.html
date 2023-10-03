@@ -1,0 +1,87 @@
+<p class="mb-3">Seleziona i membri nella stanza</p>
+<div class="flex justify-content-around">
+  <div
+    class="p-2 border-1 surface-border border-round w-15rem max-h-30rem overflow-y-scroll"
+  >
+    <p class="text-center font-semibold mb-2">Anagrafica</p>
+    <ng-container *ngIf="roomBlocked">
+      <ng-container *ngFor="let p of peopleViewed">
+        <div class="px-2 py-3 flex align-items-center text-300">
+          <i class="pi pi-plus-circle mr-2 text-primary"></i>
+          <p>{{ p.name }} {{ p.surname }}</p>
+        </div>
+      </ng-container>
+      <div class="px-2 py-3 flex align-items-center text-300">
+        <i class="pi pi-plus-circle mr-2 text-primary"></i>
+        <p>Giocatore da confermare</p>
+      </div>
+      <div class="px-2 py-3 flex align-items-center text-300">
+        <i class="pi pi-plus-circle mr-2 text-primary"></i>
+        <p>Dirigente da confermare</p>
+      </div>
+      <div class="px-2 py-3 flex align-items-center text-300">
+        <i class="pi pi-plus-circle mr-2 text-primary"></i>
+        <p>Staff da confermare</p>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!roomBlocked">
+      <ng-container *ngFor="let p of peopleViewed">
+        <div
+          class="px-2 py-3 flex align-items-center cursor-pointer hover:text-primary"
+          (click)="onAddGuest(p)"
+        >
+          <i class="pi pi-plus-circle mr-2"></i>
+          <p>{{ p.name }} {{ p.surname }}</p>
+        </div>
+      </ng-container>
+      <div
+        class="px-2 py-3 flex align-items-center cursor-pointer hover:text-primary"
+        (click)="onAddPlaceholder('PLAYER')"
+      >
+        <i class="pi pi-plus-circle mr-2 text-primary"></i>
+        <p>Giocatore da confermare</p>
+      </div>
+      <div
+        class="px-2 py-3 flex align-items-center cursor-pointer hover:text-primary"
+        (click)="onAddPlaceholder('MANAGER')"
+      >
+        <i class="pi pi-plus-circle mr-2 text-primary"></i>
+        <p>Dirigente da confermare</p>
+      </div>
+      <div
+        class="px-2 py-3 flex align-items-center cursor-pointer hover:text-primary"
+        (click)="onAddPlaceholder('STAFF')"
+      >
+        <i class="pi pi-plus-circle mr-2 text-primary"></i>
+        <p>Staff da confermare</p>
+      </div>
+    </ng-container>
+  </div>
+  <div
+    class="p-2 border-1 surface-border border-round w-15rem max-h-30rem overflow-y-scroll"
+  >
+    <p class="text-center font-semibold mb-2">
+      Stanza ({{ selectedPeopleLength }} / {{ numPax }})
+    </p>
+    <ng-container *ngFor="let p of selectedPeople">
+      <div
+        class="p-2 flex align-items-center cursor-pointer hover:text-red-500"
+        (click)="onRemoveGuest(p)"
+      >
+        <i class="pi pi-minus-circle mr-2"></i>
+        <p>{{ p.name }} {{ p.surname }}</p>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<div class="flex justify-content-end gap-2 dialog-buttons mt-3">
+  <button
+    pButton
+    type="button"
+    label="Annulla"
+    class="p-button-secondary"
+    (click)="ref.close()"
+  ></button>
+  <button pButton label="Salva" (click)="onSave()"></button>
+</div>
