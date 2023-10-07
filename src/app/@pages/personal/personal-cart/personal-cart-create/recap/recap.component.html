@@ -30,7 +30,7 @@
       <div class="flex flex-column mt-1">
         <p class="font-semibold mb-2">Alloggio e camere</p>
         <ng-container *ngIf="hotel">
-          <p>
+          <p class="mb-2">
             {{ hotel }} - dal
             {{ this.cartForm.get("startDate")?.value | customDate }} al
             {{ this.cartForm.get("endDate")?.value | customDate }}

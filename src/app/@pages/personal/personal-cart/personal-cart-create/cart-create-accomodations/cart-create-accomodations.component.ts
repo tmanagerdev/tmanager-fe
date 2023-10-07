@@ -9,11 +9,20 @@ import {
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject, map, switchMap, takeUntil, tap } from 'rxjs';
+import {
+  Subject,
+  combineLatestWith,
+  map,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/accomodations-people-modal.component';
 import { CartCreateAccomodationsService } from './cart-create-accomodations.service';
+import { CartApiService } from 'src/app/@core/api/carts-api.service';
 
 @Component({
   selector: 'app-cart-create-accomodations',
@@ -22,6 +31,7 @@ import { CartCreateAccomodationsService } from './cart-create-accomodations.serv
 })
 export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   _event: any;
+  team: number = 0;
   hotels: any = [];
   selectedHotel: any = null;
   coordRoomToDelete: any;
@@ -32,6 +42,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   @Input() isEdit: boolean = false;
   @Input() set event(event: any) {
     this._event = event;
+    this.team = event.away.id;
     this.loadHotels();
 
     if (!this.isEdit) {
@@ -84,6 +95,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private hotelApiService: HotelApiService,
+    private cartApiService: CartApiService,
     public dialogService: DialogService,
     private accomodationService: CartCreateAccomodationsService
   ) {
@@ -105,11 +117,12 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
             const hotel = this.hotels.find((h: any) => h.id === hotelId);
             if (hotel) {
               this.selectedHotel = { ...hotel };
-              this.selectedHotel.rooms.forEach((room: any) => {});
             }
           } else {
-            if (this.hotel && this.hotel.value) {
-              this.selectedHotel = this.hotel.value;
+            if (this.hotel && this.hotel.value && this.hotel.value.id) {
+              this.selectedHotel = {
+                ...this.hotel.value,
+              };
             }
           }
         })
@@ -219,5 +232,52 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   onToggleMenu(room: any, menu: any, event: any) {
     this.coordRoomToDelete = room;
     menu.toggle(event);
+  }
+
+  onCloneLast() {
+    this.cartApiService
+      .copyLastRooming(this.team)
+      .pipe(
+        take(1),
+        combineLatestWith(this.accomodationService.people$),
+        tap(([{ data }, people]) => {
+          for (const d of data) {
+            const room = this.selectedHotel.rooms.find(
+              (r: any) => r.name === d.roomName
+            );
+            const newRoom = new FormGroup({
+              id: new FormControl(room.id),
+              hotelId: new FormControl(this.selectedHotel.id),
+              hotelName: new FormControl(this.selectedHotel.name),
+              name: new FormControl(room.name),
+              price: new FormControl(room.price),
+              numPax: new FormControl(room.numPax),
+              rooming: new FormArray([]),
+              uuid: new FormControl(uuidv4()),
+            });
+
+            for (let p of d.people) {
+              if (p.peopleId) {
+                p = people.find((person: any) => person.id === p.peopleId);
+              }
+              const newPeople = new FormGroup({
+                people: new FormGroup({
+                  id: new FormControl(p.id ? p.id : null),
+                  name: new FormControl(p.id ? p.name : null),
+                  surname: new FormControl(p.id ? p.surname : null),
+                  category: new FormControl(p.id ? p.category : null),
+                }),
+                name: new FormControl(!p.id ? p.name : null),
+                surname: new FormControl(!p.id ? p.surname : null),
+                category: new FormControl(!p.id ? p.category : null),
+              });
+              (newRoom.get('rooming') as FormArray).push(newPeople);
+            }
+
+            this.rooms.push(newRoom);
+          }
+        })
+      )
+      .subscribe();
   }
 }

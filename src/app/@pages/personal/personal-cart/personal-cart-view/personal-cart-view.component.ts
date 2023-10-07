@@ -52,13 +52,10 @@ export class PersonalCartViewComponent {
       } else {
         group.push({ name, price, quantity: 1 });
       }
-      // group[name] = group[name] ?? [];
-      // group[name].push(room);
       return group;
     }, []);
-    console.log('roomByName', roomByName);
+
     return roomByName;
-    //return this.cartForm?.get('rooms')?.value;
   }
 
   get roads() {

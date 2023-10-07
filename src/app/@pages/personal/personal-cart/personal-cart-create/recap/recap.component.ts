@@ -41,7 +41,6 @@ export class RecapComponent implements OnInit {
   }
 
   get hotel() {
-    console.log('hotel', this.cartForm?.get('rooms')?.value);
     return this.cartForm?.get('rooms')?.value[0]?.hotelName;
   }
 
@@ -55,13 +54,9 @@ export class RecapComponent implements OnInit {
       } else {
         group.push({ name, price, quantity: 1 });
       }
-      // group[name] = group[name] ?? [];
-      // group[name].push(room);
       return group;
     }, []);
-    console.log('roomByName', roomByName);
     return roomByName;
-    //return this.cartForm?.get('rooms')?.value;
   }
 
   get roads() {

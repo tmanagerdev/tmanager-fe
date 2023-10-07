@@ -45,4 +45,12 @@ export class CartApiService {
   delete(id: number): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/carts/${id}`);
   }
+
+  copyLastRooming(team: number): Observable<any> {
+    return this.httpClient.get(`${environment.apiUrl}/carts/last-roomings`, {
+      params: {
+        team,
+      },
+    });
+  }
 }

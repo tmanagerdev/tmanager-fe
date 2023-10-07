@@ -43,7 +43,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Riepilogo',
     },
   ];
-  activeIndex: number = 1;
+  activeIndex: number = 0;
   currentUser: any;
   event: any;
 
@@ -87,6 +87,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     hotel: new FormGroup({
       id: new FormControl(null),
       name: new FormControl(null),
+      rooms: new FormControl(null),
     }),
     startDate: new FormControl(null),
     endDate: new FormControl(null),
@@ -167,6 +168,10 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
             this.event = { ...event };
+            this.accomodationService.initPeople(
+              this.event.away.people ?? [],
+              []
+            );
           })
         )
         .subscribe();

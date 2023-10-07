@@ -42,7 +42,15 @@
   <p-divider></p-divider>
   <div class="py-3">
     <ng-container *ngIf="selectedHotel; else noHotelSelected">
-      <p class="mb-2">Gestisci le stanze</p>
+      <div class="mb-2 w-full flex align-items-center justify-content-between">
+        <p>Gestisci le stanze</p>
+        <p-button
+          *ngIf="!isEdit"
+          (onClick)="onCloneLast()"
+          label="Copia da ultima trasferta"
+          styleClass="p-button-text"
+        ></p-button>
+      </div>
       <p-accordion>
         <ng-container *ngFor="let hotelRoom of selectedHotel.rooms">
           <p-accordionTab>
