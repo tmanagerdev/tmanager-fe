@@ -11,6 +11,7 @@ export class VeichleApiService {
 
   findAll({
     page,
+    city,
     take,
     name,
     sortField = '',
@@ -21,12 +22,13 @@ export class VeichleApiService {
         page,
         take,
         ...(name ? { name } : null),
+        ...(city ? { city } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     });
   }
 
-  findOne(veichleId: string): Observable<any> {
+  findOne(veichleId: number): Observable<any> {
     return this.httpClient.get(`${environment.apiUrl}/veichles/${veichleId}`);
   }
 
@@ -40,5 +42,20 @@ export class VeichleApiService {
 
   delete(id: string): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/veichles/${id}`);
+  }
+
+  createRoad(veichle: number, road: any): Observable<any> {
+    return this.httpClient.post(`${environment.apiUrl}/roads`, {
+      ...road,
+      veichle,
+    });
+  }
+
+  updateRoad(roadId: any, road: any): Observable<any> {
+    return this.httpClient.put(`${environment.apiUrl}/roads/${roadId}`, road);
+  }
+
+  deleteRoad(roadId: any): Observable<any> {
+    return this.httpClient.delete(`${environment.apiUrl}/roads/${roadId}`);
   }
 }

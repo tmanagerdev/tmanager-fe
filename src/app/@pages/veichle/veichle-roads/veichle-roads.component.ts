@@ -1,24 +1,23 @@
 import { Component } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
-import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
-import { HotelRoomsModalComponent } from './hotel-rooms-modal/hotel-rooms-modal.component';
+import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { VeichleRoadsModalComponent } from './veichle-roads-modal/veichle-roads-modal.component';
 
 @Component({
-  selector: 'app-hotel-rooms',
-  templateUrl: './hotel-rooms.component.html',
-  styleUrls: ['./hotel-rooms.component.scss'],
+  selector: 'app-veichle-roads',
+  templateUrl: './veichle-roads.component.html',
+  styleUrls: ['./veichle-roads.component.scss'],
 })
-export class HotelRoomsComponent {
-  hotelId: number = 0;
-  hotel: any;
+export class VeichleRoadsComponent {
+  veichleId: number = 0;
+  veichle: any;
   totalRecords: number = 0;
   loading: boolean = false;
 
-  hotel$: Subject<void> = new Subject();
+  veichle$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
 
   ref!: DynamicDialogRef;
@@ -32,30 +31,30 @@ export class HotelRoomsComponent {
   }
 
   constructor(
-    private hotelApiService: HotelApiService,
+    private veichleApiService: VeichleApiService,
     private route: ActivatedRoute,
     private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public dialogService: DialogService
   ) {
-    this.hotelId = this.route.snapshot.params['id'];
+    this.veichleId = this.route.snapshot.params['id'];
 
-    this.hotel$
+    this.veichle$
       .pipe(
         takeUntil(this.unsubscribe$),
-        switchMap(() => this.hotelApiService.findOne(this.hotelId)),
+        switchMap(() => this.veichleApiService.findOne(this.veichleId)),
         tap((data) => {
           this.loading = false;
-          this.hotel = { ...data };
-          this.totalRecords = this.hotel.rooms.length;
+          this.veichle = { ...data };
+          this.totalRecords = this.veichle.roads.length;
         })
       )
       .subscribe();
   }
 
   ngOnInit(): void {
-    this.loadHotel();
+    this.loadVeichle();
   }
 
   ngOnDestroy(): void {
@@ -63,35 +62,34 @@ export class HotelRoomsComponent {
     this.unsubscribe$.complete();
   }
 
-  loadHotel(): void {
-    if (this.hotel && this.hotel.rooms) {
-      this.hotel.rooms = [];
+  loadVeichle(): void {
+    if (this.veichle && this.veichle.roads) {
+      this.veichle.roads = [];
     }
     this.loading = true;
-    this.hotel$.next();
+    this.veichle$.next();
   }
 
   create() {
-    this.ref = this.dialogService.open(HotelRoomsModalComponent, {
-      header: `Crea nuovo hotel`,
+    this.ref = this.dialogService.open(VeichleRoadsModalComponent, {
+      header: `Crea nuova tratta`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {},
     });
-
-    this.ref.onClose.subscribe((newRoom: any) => {
-      if (newRoom) {
-        this.hotelApiService
-          .createRoom(this.hotelId, newRoom)
+    this.ref.onClose.subscribe((newRoad: any) => {
+      if (newRoad) {
+        this.veichleApiService
+          .createRoad(this.veichleId, newRoad)
           .pipe(
             take(1),
             tap((data) => {
-              this.loadHotel();
+              this.loadVeichle();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza creata',
-                detail: newRoom.name,
+                summary: 'Tratta creata',
+                detail: newRoad.name,
               });
             })
           )
@@ -100,30 +98,29 @@ export class HotelRoomsComponent {
     });
   }
 
-  update(room: any) {
-    this.ref = this.dialogService.open(HotelRoomsModalComponent, {
-      header: `Aggiorna stanza`,
+  update(road: any) {
+    this.ref = this.dialogService.open(VeichleRoadsModalComponent, {
+      header: `Aggiorna tratta`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         isEdit: true,
-        room,
+        road,
       },
     });
-
-    this.ref.onClose.subscribe((newRoom: any) => {
-      if (newRoom) {
-        this.hotelApiService
-          .updateRoom(this.hotelId, room.id, newRoom)
+    this.ref.onClose.subscribe((newRoad: any) => {
+      if (newRoad) {
+        this.veichleApiService
+          .updateRoad(road.id, newRoad)
           .pipe(
             take(1),
             tap((data) => {
-              this.loadHotel();
+              this.loadVeichle();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza aggiornata',
-                detail: newRoom.name,
+                summary: 'Tratta aggiornata',
+                detail: newRoad.name,
               });
             })
           )
@@ -132,22 +129,22 @@ export class HotelRoomsComponent {
     });
   }
 
-  remove(room: any) {
+  remove(road: any) {
     this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questa stanza?',
+      message: 'Sei sicuro di voler eliminare questa tratta?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.hotelApiService
-          .deleteRoom(this.hotelId, room.id)
+        this.veichleApiService
+          .deleteRoad(road.id)
           .pipe(
             take(1),
             tap(() => {
-              this.loadHotel();
+              this.loadVeichle();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza eliminata',
-                detail: room.name,
+                summary: 'Tratta eliminata',
+                detail: road.name,
               });
             })
           )
@@ -156,7 +153,7 @@ export class HotelRoomsComponent {
     });
   }
 
-  backToHotels() {
-    this.router.navigate(['/hotel']);
+  backToVeichles() {
+    this.router.navigate(['/veichle']);
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
@@ -36,6 +36,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     private calendarApiService: CalendarApiService,
     private eventApiService: EventApiService,
     private route: ActivatedRoute,
+    private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public dialogService: DialogService
@@ -221,5 +222,9 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
           .subscribe();
       },
     });
+  }
+
+  backToCalendar() {
+    this.router.navigate(['/calendar']);
   }
 }
