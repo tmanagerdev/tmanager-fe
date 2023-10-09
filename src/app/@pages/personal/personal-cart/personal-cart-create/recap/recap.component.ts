@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 
 @Component({
@@ -67,6 +67,10 @@ export class RecapComponent implements OnInit {
     return this.cartForm?.get('activities') as FormArray;
   }
 
+  get genericNotes() {
+    return this.cartForm?.get('genericNotes') as FormControl;
+  }
+
   get total() {
     const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
       return acc + room.price * room.quantity * 100;
@@ -102,7 +106,6 @@ export class RecapComponent implements OnInit {
   }
 
   onPrevStep() {
-    console.log('prev step');
     this.prevStep.emit(this.activeIndex);
   }
 }

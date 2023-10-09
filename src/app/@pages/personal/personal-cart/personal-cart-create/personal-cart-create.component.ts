@@ -77,6 +77,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     activities: new FormArray([]),
     rooms: new FormArray([]),
     roads: new FormArray([]),
+    genericNotes: new FormControl(null),
+    accomodationNotes: new FormControl(null),
   });
   paxForm: FormGroup = new FormGroup({
     players: new FormControl(null),
@@ -93,6 +95,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     endDate: new FormControl(null),
     rooms: new FormArray<any>([]),
     roomings: new FormArray<any>([]),
+    accomodationNotes: new FormControl(null),
   });
   roadForm: FormGroup = new FormGroup({
     roads: new FormArray<any>([]),
@@ -270,6 +273,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
    */
   patchFormEdit(cart: any) {
     console.log('patchFormEdit', cart);
+    // PATCH CART FORM
+    this.cartForm.get('genericNotes')?.setValue(cart.genericNotes);
     // PATCH PAX FORM
     const { players, managers, staffs } = cart;
     this.paxForm.patchValue({ players, managers, staffs });
@@ -277,7 +282,11 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     // PATCH ACCOMODATION FORM
     const startDate = cart.startDate ? new Date(cart.startDate) : null;
     const endDate = cart.endDate ? new Date(cart.endDate) : null;
-    this.accomodationForm.patchValue({ startDate, endDate });
+    this.accomodationForm.patchValue({
+      startDate,
+      endDate,
+      accomodationNotes: cart.accomodationNotes,
+    });
     if (cart.rooms && cart.rooms.length) {
       const { id, name } = cart.rooms[0].room.hotel;
       this.accomodationForm.patchValue({ hotel: { id, name } });
@@ -419,9 +428,11 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       ?.setValue(this.event.home.city.name);
 
     console.log('accomodation form', this.accomodationForm.value);
-    const { startDate, endDate } = this.accomodationForm.value;
+    const { startDate, endDate, accomodationNotes } =
+      this.accomodationForm.value;
     this.cartForm.get('startDate')?.setValue(startDate);
     this.cartForm.get('endDate')?.setValue(endDate);
+    this.cartForm.get('accomodationNotes')?.setValue(accomodationNotes);
 
     const accomodationRooms = this.accomodationForm.get('rooms') as FormArray;
     const roadRoads = this.roadForm.get('roads') as FormArray;
