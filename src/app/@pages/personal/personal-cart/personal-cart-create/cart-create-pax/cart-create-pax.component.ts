@@ -17,7 +17,9 @@ export class CartCreatePaxComponent {
     const players = this.paxForm.get('players')?.value ?? 0;
     const staffs = this.paxForm.get('staffs')?.value ?? 0;
     const managers = this.paxForm.get('managers')?.value ?? 0;
-    return players + staffs + managers;
+    const equipments = this.paxForm.get('equipments')?.value ?? 0;
+    const others = this.paxForm.get('others')?.value ?? 0;
+    return players + staffs + managers + equipments + others;
   }
 
   constructor() {}

@@ -21,16 +21,62 @@
       </div>
       <div class="flex flex-column mt-5">
         <p class="font-semibold mb-2">Partecipanti</p>
-        <p>Calciatori: {{ this.cartForm.get("players")?.value }}</p>
-        <p>Staff: {{ this.cartForm.get("staffs")?.value }}</p>
-        <p>Dirigenti: {{ this.cartForm.get("managers")?.value }}</p>
-        <p class="my-1 text-lg">Totale: {{ totalPax }}</p>
+        <div class="flex flex-wrap gap-3">
+          <div
+            class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+          >
+            <p class="text-5xl font-bold">
+              {{ this.cartForm.get("players")?.value ?? 0 }}
+            </p>
+            <p>Giocatori</p>
+          </div>
+          <div
+            class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+          >
+            <p class="text-5xl font-bold">
+              {{ this.cartForm.get("staffs")?.value ?? 0 }}
+            </p>
+            <p>Staff</p>
+          </div>
+          <div
+            class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+          >
+            <p class="text-5xl font-bold">
+              {{ this.cartForm.get("managers")?.value ?? 0 }}
+            </p>
+            <p>Dirigenti</p>
+          </div>
+          <div
+            class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+          >
+            <p class="text-5xl font-bold">
+              {{ this.cartForm.get("equipments")?.value ?? 0 }}
+            </p>
+            <p>Magazzinieri</p>
+          </div>
+          <div
+            class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+          >
+            <p class="text-5xl font-bold">
+              {{ this.cartForm.get("others")?.value ?? 0 }}
+            </p>
+            <p>Altro</p>
+          </div>
+          <div
+            class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem ml-auto"
+          >
+            <p class="text-5xl font-bold">
+              {{ totalPax }}
+            </p>
+            <p>Totale</p>
+          </div>
+        </div>
       </div>
       <p-divider></p-divider>
       <div class="flex flex-column mt-1">
         <p class="font-semibold mb-2">Alloggio e camere</p>
         <ng-container *ngIf="hotel">
-          <p class="mb-2">
+          <p class="mb-5">
             {{ hotel }} - dal
             {{ this.cartForm.get("startDate")?.value | customDate }} al
             {{ this.cartForm.get("endDate")?.value | customDate }}
@@ -60,7 +106,7 @@
       </div>
       <p-divider></p-divider>
       <div class="flex flex-column mt-1">
-        <p class="font-semibold mb-2">Autonoleggio e tratte</p>
+        <p class="font-semibold mb-2">Bus - Auto - Trasporti</p>
         <ng-container *ngIf="roads && roads.length">
           <ng-container *ngFor="let r of roads; let i = index">
             <div class="mb-2">

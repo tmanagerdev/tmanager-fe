@@ -69,6 +69,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     players: new FormControl(null),
     staffs: new FormControl(null),
     managers: new FormControl(null),
+    equipments: new FormControl(null),
+    others: new FormControl(null),
     activities: new FormArray([]),
     rooms: new FormArray([]),
     roads: new FormArray([]),
@@ -295,8 +297,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     // PATCH CART FORM
     this.cartForm.get('genericNotes')?.setValue(cart.genericNotes);
     // PATCH PAX FORM
-    const { players, managers, staffs } = cart;
-    this.paxForm.patchValue({ players, managers, staffs });
+    const { players, managers, staffs, equipments, others } = cart;
+    this.paxForm.patchValue({ players, managers, staffs, equipments, others });
 
     // PATCH ACCOMODATION FORM
     const startDate = cart.startDate ? new Date(cart.startDate) : null;

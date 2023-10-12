@@ -37,54 +37,101 @@
   <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round m-4">
     <div class="flex flex-column mt-5">
       <p class="font-semibold mb-2">Partecipanti</p>
-      <p>Calciatori: {{ cart.players }}</p>
-      <p>Staff: {{ cart.staffs }}</p>
-      <p>Dirigenti: {{ cart.managers }}</p>
-      <p class="my-1 text-lg">Totale: {{ totalPax }}</p>
+      <div class="flex flex-wrap gap-3">
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-5xl font-bold">
+            {{ this.cart.players ?? 0 }}
+          </p>
+          <p>Giocatori</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-5xl font-bold">
+            {{ this.cart.staffs ?? 0 }}
+          </p>
+          <p>Staff</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-5xl font-bold">
+            {{ this.cart.managers ?? 0 }}
+          </p>
+          <p>Dirigenti</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-5xl font-bold">
+            {{ this.cart.equipments ?? 0 }}
+          </p>
+          <p>Magazzinieri</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-5xl font-bold">
+            {{ this.cart.others ?? 0 }}
+          </p>
+          <p>Altro</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem ml-auto"
+        >
+          <p class="text-5xl font-bold">
+            {{ totalPax }}
+          </p>
+          <p>Totale</p>
+        </div>
+      </div>
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Alloggio</p>
+      <p class="font-semibold mb-2">Alloggio e camere</p>
       <ng-container *ngIf="hotel">
-        <p class="mb-2">
+        <p class="mb-5">
           {{ hotel }} - dal {{ cart.startDate | customDate }} al
           {{ cart.endDate | customDate }}
         </p>
+        <ng-container *ngIf="rooms && rooms.length">
+          <p-table [value]="rooms">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Tipologia</th>
+                <th>Quantità</th>
+                <th class="text-right">Prezzo</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-room>
+              <tr>
+                <td>{{ room.name }}</td>
+                <td>{{ room.quantity }}</td>
+                <td class="text-right">
+                  {{ room.price | currency : "EUR" : "symbol" }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
       </ng-container>
       <ng-container *ngIf="!hotel">
         <p>Nessun hotel selezionato</p>
       </ng-container>
     </div>
-    <p-divider></p-divider>
-    <div class="flex flex-column mt-1">
+    <!-- <p-divider></p-divider>
+     <div class="flex flex-column mt-1">
       <p class="font-semibold mb-2">Camere</p>
-      <ng-container *ngIf="rooms && rooms.length">
-        <p-table [value]="rooms">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Tipologia</th>
-              <th>Quantità</th>
-              <th class="text-right">Prezzo</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-room>
-            <tr>
-              <td>{{ room.name }}</td>
-              <td>{{ room.quantity }}</td>
-              <td class="text-right">
-                {{ room.price | currency : "EUR" : "symbol" }}
-              </td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </ng-container>
+      
       <ng-container *ngIf="!rooms || !rooms.length">
         <p>Nessuna stanza selezionata</p>
       </ng-container>
-    </div>
+    </div> -->
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Autonoleggio e tratte</p>
+      <p class="font-semibold mb-2">Bus - Auto - Trasporti</p>
       <ng-container *ngIf="roads && roads.length">
         <ng-container *ngFor="let r of roads; let i = index">
           <div class="mb-2">
