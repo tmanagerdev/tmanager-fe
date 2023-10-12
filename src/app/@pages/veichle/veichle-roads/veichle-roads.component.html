@@ -1,15 +1,15 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
-<ng-container *ngIf="hotel">
+<ng-container *ngIf="veichle">
   <div class="flex align-items-center gap-4 mb-2">
     <i
       class="pi pi-angle-left cursor-pointer text-4xl"
-      (click)="backToHotels()"
+      (click)="backToVeichles()"
     ></i>
     <span>
-      <h2 class="mb-2">Rooms: {{ hotel.name }}</h2>
-      <p>di {{ hotel.city.name }}</p>
+      <h2 class="mb-2">Tatte: {{ veichle.name }}</h2>
+      <p>di {{ veichle.city.name }}</p>
     </span>
   </div>
 
@@ -21,7 +21,7 @@
       <button
         pButton
         pRipple
-        label="Crea nuova stanza"
+        label="Crea nuova tratta"
         class="p-button-primary mr-2"
         (click)="create()"
       ></button>
@@ -30,7 +30,7 @@
 
   <p-table
     #dt
-    [value]="hotel.rooms"
+    [value]="veichle.roads"
     [totalRecords]="totalRecords"
     dataKey="id"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -40,14 +40,12 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th pSortableColumn="name">
-          Tipologia <p-sortIcon field="name"></p-sortIcon>
+        <th pSortableColumn="from">
+          Da <p-sortIcon field="from"></p-sortIcon>
         </th>
+        <th pSortableColumn="to">A<p-sortIcon field="to"></p-sortIcon></th>
         <th pSortableColumn="price">
           Prezzo<p-sortIcon field="price"></p-sortIcon>
-        </th>
-        <th pSortableColumn="numPax">
-          Pax<p-sortIcon field="numPax"></p-sortIcon>
         </th>
         <th pSortableColumn="createdAt">
           Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -55,12 +53,12 @@
         <th>Azioni</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-room>
+    <ng-template pTemplate="body" let-road>
       <tr>
-        <td>{{ room.name }}</td>
-        <td>{{ room.price | currency : "EUR" : "symbol" }}</td>
-        <td>{{ room.numPax }}</td>
-        <td>{{ room.createdAt | customDate }}</td>
+        <td>{{ road.from }}</td>
+        <td>{{ road.to }}</td>
+        <td>{{ road.price | currency : "EUR" : "symbol" }}</td>
+        <td>{{ road.createdAt | customDate }}</td>
         <td>
           <p-button
             icon="pi pi-ellipsis-v"
@@ -73,14 +71,14 @@
               pRipple
               label="Modifica"
               class="p-button-text"
-              (click)="update(room)"
+              (click)="update(road)"
             ></button>
             <button
               pButton
               pRipple
               label="Rimuovi"
               class="p-button-text p-button-danger"
-              (click)="remove(room)"
+              (click)="remove(road)"
             ></button>
           </p-overlayPanel>
         </td>

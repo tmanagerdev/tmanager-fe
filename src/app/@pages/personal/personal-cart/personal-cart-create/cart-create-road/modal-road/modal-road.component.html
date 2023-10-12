@@ -1,107 +1,52 @@
-<div class="flex flex-column h-full">
-  <div class="flex flex-column flex-1" [formGroup]="roadForm">
-    <div class="flex flex-column my-2">
-      <p class="mb-2">#{{ index }}</p>
-      <p class="font-semibold my-2">Info</p>
-      <div class="formgrid grid">
-        <div class="field col">
-          <label>Luogo di partenza</label>
-          <input pInputText type="text" formControlName="from" />
-        </div>
-        <div class="field col">
-          <label>Luogo di arrivo</label>
-          <input pInputText type="text" formControlName="to" />
-        </div>
+<div class="flex flex-column flex-1" [formGroup]="roadForm">
+  <div class="flex flex-column my-2">
+    <div class="flex gap-2">
+      <div class="flex-1">
+        <label>Giorno</label>
+        <p-calendar
+          dateFormat="dd/mm/yy"
+          formControlName="startDate"
+        ></p-calendar>
       </div>
-      <div class="formgrid grid">
-        <div class="field col">
-          <label>Data di partenza</label>
-          <div class="flex gap-2">
-            <p-calendar
-              dateFormat="dd/mm/yy"
-              formControlName="startDate"
-              class="flex-1"
-            ></p-calendar>
-            <p-calendar
-              dateFormat="hh:MM"
-              formControlName="startDateHour"
-              [timeOnly]="true"
-              class="w-5rem flex justify-content-center"
-            ></p-calendar>
-          </div>
-        </div>
-        <div class="field col">
-          <label>Data di arrivo</label>
-          <div class="flex gap-2">
-            <p-calendar
-              dateFormat="dd/mm/yy"
-              formControlName="endDate"
-              class="flex-1"
-            ></p-calendar>
-            <p-calendar
-              dateFormat="hh:MM"
-              formControlName="endDateHour"
-              [timeOnly]="true"
-              class="w-5rem flex justify-content-center"
-            ></p-calendar>
-          </div>
-        </div>
+      <div>
+        <label>Orario</label>
+        <p-calendar
+          dateFormat="hh:MM"
+          formControlName="startDateHour"
+          [timeOnly]="true"
+          class="w-5rem flex justify-content-center"
+        ></p-calendar>
       </div>
-      <div class="formgrid grid">
-        <div class="field col">
-          <label>Prezzo</label>
-          <div class="flex gap-2">
-            <p-inputNumber
-              mode="currency"
-              inputId="currency-italy"
-              formControlName="price"
-              placeholder="Prezzo"
-              currency="EUR"
-              locale="it-IT"
-            ></p-inputNumber>
-          </div>
-        </div>
-      </div>
-      <div class="flex gap-2">
-        <p class="font-semibold my-2">Mezzi di trasporto</p>
-        <p-button
-          (onClick)="onAddVeichle()"
-          label="Aggiungi"
-          styleClass="p-button-text"
-        ></p-button>
-      </div>
+    </div>
 
-      <ng-container formArrayName="veichles">
-        <ng-container *ngFor="let v of veichles.controls; let i = index">
-          <div class="flex flex-column my-2" [formGroupName]="i">
-            <div class="formgroup-inline flex align-items-center">
-              <div class="field flex flex-column gap-2">
-                <label>Quantità</label>
-                <p-inputNumber
-                  inputId="integeronly"
-                  formControlName="quantity"
-                  class="w-5rem"
-                ></p-inputNumber>
-              </div>
-              <div class="field flex flex-column gap-2">
-                <label>Veicolo</label>
-                <p-dropdown
-                  formControlName="veichle"
-                  [options]="veichlesList"
-                  optionLabel="name"
-                  class="w-15rem"
-                  placeholder="Seleziona veicolo"
-                ></p-dropdown>
-              </div>
-              <p-button
-                (onClick)="onRemoveVeichle(i)"
-                label="Elimina"
-                styleClass="p-button-text p-button-danger"
-              ></p-button>
-            </div>
-          </div>
-        </ng-container>
-      </ng-container>
+    <div class="flex gap-2 my-5">
+      <div class="flex flex-column">
+        <label>Quantità</label>
+        <p-inputNumber
+          inputId="integeronly"
+          formControlName="quantity"
+          class="w-5rem"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-1">
+        <label>Veicolo</label>
+        <p-dropdown
+          [formControl]="veichleControl"
+          [options]="veichlesList"
+          [filter]="true"
+          filterBy="veichle.name"
+          placeholder="Seleziona veicolo"
+        >
+          <ng-template let-veichle pTemplate="selectedItem">
+            {{ veichle.veichle }} / {{ veichle.from }} - {{ veichle.to }} /
+            {{ veichle.price | currency : "EUR" : "symbol" }}
+          </ng-template>
+          <ng-template let-veichle pTemplate="item">
+            {{ veichle.veichle }} / {{ veichle.from }} - {{ veichle.to }} /
+            {{ veichle.price | currency : "EUR" : "symbol" }}
+          </ng-template>
+        </p-dropdown>
+      </div>
     </div>
   </div>
 

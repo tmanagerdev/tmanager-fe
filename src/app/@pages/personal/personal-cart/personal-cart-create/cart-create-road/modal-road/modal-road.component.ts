@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
@@ -9,18 +9,23 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 })
 export class ModalRoadComponent {
   roadForm: FormGroup = new FormGroup({
+    startDate: new FormControl(null),
+    startDateHour: new FormControl(null),
+    veichle: new FormControl(null),
+    quantity: new FormControl(1),
+    id: new FormControl(null),
+    price: new FormControl(null),
     from: new FormControl(null),
     to: new FormControl(null),
-    startDate: new FormControl(null),
-    endDate: new FormControl(null),
-    price: new FormControl(null),
-    veichles: new FormArray([]),
-    startDateHour: new FormControl(null),
-    endDateHour: new FormControl(null),
+    veichleId: new FormControl(null),
+    createdAt: new FormControl(null),
+    updatedAt: new FormControl(null),
   });
   isEdit: boolean = false;
   index: number = 0;
   veichlesList: any = [];
+
+  veichleControl = new FormControl();
 
   get veichles() {
     return this.roadForm.get('veichles') as FormArray;
@@ -32,21 +37,18 @@ export class ModalRoadComponent {
     if (this.config.data) {
       const { roadForm, veichlesList, index, isEdit } = this.config.data;
       this.roadForm = roadForm;
+      console.log(veichlesList);
       this.veichlesList = veichlesList;
       this.index = index;
       this.isEdit = isEdit;
 
       if (this.isEdit) {
         const road = this.roadForm.value;
+        console.log('road', road);
         const startDateHour = new Date(road.startDate);
-        const endDateHour = new Date(road.endDate);
         startDateHour.setHours(
           new Date(road.startDate).getHours(),
           new Date(road.startDate).getMinutes()
-        );
-        endDateHour.setHours(
-          new Date(road.endDate).getHours(),
-          new Date(road.endDate).getMinutes()
         );
 
         this.roadForm.addControl(
@@ -54,34 +56,35 @@ export class ModalRoadComponent {
           new FormControl(startDateHour)
         );
 
-        this.roadForm.addControl('endDateHour', new FormControl(endDateHour));
+        this.veichleControl.setValue({
+          veichle: road.veichle,
+          id: road.id,
+          price: road.price,
+          from: road.from,
+          to: road.to,
+          veichleId: road.veichleId,
+          createdAt: road.createdAt,
+          updatedAt: road.updatedAt,
+        });
+
+        console.log('settato', this.veichleControl.value);
       }
     }
   }
 
   onSave() {
+    const veichle = this.veichleControl.value;
+
+    console.log('on save veichle', veichle);
+
     const road = this.roadForm.value;
     const startDateHour = new Date(road.startDateHour).getHours();
     const startDateMinute = new Date(road.startDateHour).getMinutes();
     const startDate = new Date(road.startDate);
-    const endDateHour = new Date(road.endDateHour).getHours();
-    const endDateMinute = new Date(road.endDateHour).getMinutes();
-    const endDate = new Date(road.endDate);
     startDate.setHours(startDateHour, startDateMinute);
-    endDate.setHours(endDateHour, endDateMinute);
-    this.roadForm.patchValue({ startDate, endDate });
+    this.roadForm.patchValue({ startDate, ...veichle });
+
+    console.log(this.roadForm.value);
     this.ref.close(this.roadForm);
-  }
-
-  onAddVeichle() {
-    const newVeichle = new FormGroup({
-      veichle: new FormControl(null),
-      quantity: new FormControl(null),
-    });
-    this.veichles.push(newVeichle);
-  }
-
-  onRemoveVeichle(indexVeichle: number) {
-    this.veichles.removeAt(indexVeichle);
   }
 }

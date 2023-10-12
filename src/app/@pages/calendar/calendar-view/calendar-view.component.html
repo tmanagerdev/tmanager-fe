@@ -1,5 +1,13 @@
 <ng-container *ngIf="calendar">
-  <h2 class="mb-2">Calendario {{ calendar.name }}</h2>
+  <div class="flex align-items-center gap-4 mb-2">
+    <i
+      class="pi pi-angle-left cursor-pointer text-4xl"
+      (click)="backToCalendar()"
+    ></i>
+    <span>
+      <h2>Calendario {{ calendar.name }}</h2>
+    </span>
+  </div>
   <p-toast></p-toast>
   <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 

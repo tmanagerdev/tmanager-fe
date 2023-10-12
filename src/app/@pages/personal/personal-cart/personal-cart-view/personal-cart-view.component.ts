@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { compareDates } from 'src/app/@core/utils';
 
 @Component({
   selector: 'app-personal-cart-view',
@@ -15,6 +16,13 @@ export class PersonalCartViewComponent {
 
   cart$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
+
+  totalPax: number = 0;
+  hotel: string = '';
+  rooms: any = [];
+  roads: any = [];
+  roadsGroupByDate: any[] = [];
+  total: number = 0;
 
   get awayTeam() {
     return this.cart?.event.away;
@@ -32,52 +40,8 @@ export class PersonalCartViewComponent {
     return this.cart?.event.date;
   }
 
-  get totalPax() {
-    return this.cart?.players + this.cart?.staffs + this.cart?.managers;
-  }
-
-  get hotel() {
-    return this.cart?.rooms && this.cart?.rooms.length
-      ? this.cart?.rooms[0].room.hotel.name
-      : '';
-  }
-
-  get rooms() {
-    const rooms = this.cart?.rooms;
-    const roomByName = rooms.reduce((group: any, room: any) => {
-      const { name, price } = room.room;
-      const index = group.findIndex((g: any) => g.name === name);
-      if (index > -1) {
-        group[index].quantity++;
-      } else {
-        group.push({ name, price, quantity: 1 });
-      }
-      return group;
-    }, []);
-
-    return roomByName;
-  }
-
-  get roads() {
-    return this.cart?.roads;
-  }
-
   get activities() {
     return this.cart?.activities;
-  }
-
-  get total() {
-    const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
-      return acc + room.price * room.quantity * 100;
-    }, 0);
-    const totalActivity = this.activities.reduce((acc: any, activity: any) => {
-      return acc + activity.activity.price * 100;
-    }, 0);
-    const totalRoads = this.roads.reduce((acc: any, road: any) => {
-      return acc + road.price * 100;
-    }, 0);
-
-    return totalAccomodation / 100 + totalActivity / 100 + totalRoads / 100;
   }
 
   constructor(
@@ -93,7 +57,57 @@ export class PersonalCartViewComponent {
       .pipe(
         takeUntil(this.unsubscribe$),
         switchMap(() => this.cartApiService.findOne(this.cartId)),
-        tap((cart) => (this.cart = { ...cart }))
+        tap((cart) => {
+          this.cart = { ...cart };
+
+          this.totalPax =
+            this.cart?.players + this.cart?.staffs + this.cart?.managers;
+          this.hotel =
+            this.cart?.rooms && this.cart?.rooms.length
+              ? this.cart?.rooms[0].room.hotel.name
+              : '';
+
+          this.rooms = this.cart?.rooms.reduce((group: any, room: any) => {
+            const { name, price } = room.room;
+            const index = group.findIndex((g: any) => g.name === name);
+            if (index > -1) {
+              group[index].quantity++;
+            } else {
+              group.push({ name, price, quantity: 1 });
+            }
+            return group;
+          }, []);
+
+          const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
+            return acc + room.price * room.quantity * 100;
+          }, 0);
+          const totalActivity = this.activities.reduce(
+            (acc: any, activity: any) => {
+              return acc + activity.activity.price * 100;
+            },
+            0
+          );
+          const totalRoads = this.cart?.roads.reduce((acc: any, road: any) => {
+            return acc + road.road.price * road.quantity * 100;
+          }, 0);
+
+          this.total =
+            totalAccomodation / 100 + totalActivity / 100 + totalRoads / 100;
+
+          this.roads = this.cart?.roads.reduce((group: any, road: any) => {
+            const index = group.findIndex((g: any) =>
+              g.data.some(
+                (el: any) => !compareDates(el.startDate, road.startDate)
+              )
+            );
+            if (index > -1) {
+              group[index].data.push(road);
+            } else {
+              group.push({ date: road.startDate, data: [road] });
+            }
+            return group;
+          }, []);
+        })
       )
       .subscribe();
   }
