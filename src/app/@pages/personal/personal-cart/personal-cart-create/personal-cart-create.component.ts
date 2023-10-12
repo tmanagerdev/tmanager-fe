@@ -1,21 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  UntypedFormArray,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/@core/services/auth.service';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
-import { Subject, iif, switchMap, take, takeUntil, tap } from 'rxjs';
+import { Subject, iif, switchMap, takeUntil, tap } from 'rxjs';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PersonalCartCrateConfirmModalComponent } from './personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
 import { CartCreateAccomodationsService } from './cart-create-accomodations/cart-create-accomodations.service';
+import { ECategoryPeople } from 'src/app/@core/models/people.model';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -85,6 +80,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     players: new FormControl(null),
     staffs: new FormControl(null),
     managers: new FormControl(null),
+    equipments: new FormControl(null),
+    others: new FormControl(null),
   });
   accomodationForm: FormGroup = new FormGroup({
     hotel: new FormGroup({
@@ -177,6 +174,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               this.event.away.people ?? [],
               []
             );
+            this.setPax();
           })
         )
         .subscribe();
@@ -242,6 +240,25 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     this.activeIndex = event;
     if (this.activeIndex == 4) {
       this.populateCartForm();
+    }
+  }
+
+  setPax() {
+    const keyBinding = [
+      { key: 'players', category: ECategoryPeople.PLAYER },
+      { key: 'staffs', category: ECategoryPeople.STAFF },
+      { key: 'managers', category: ECategoryPeople.MANAGER },
+      { key: 'equipments', category: ECategoryPeople.EQUIPMENT },
+      { key: 'others', category: ECategoryPeople.OTHER },
+    ];
+
+    for (const k of keyBinding) {
+      this.paxForm
+        .get(k.key)
+        ?.setValue(
+          this.event.away.people.filter((p: any) => p.category === k.category)
+            .length ?? 0
+        );
     }
   }
 

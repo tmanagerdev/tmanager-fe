@@ -24,9 +24,16 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TeamPeopleComponent } from './team-people/team-people.component';
 import { PeopleRolePipe } from 'src/app/@core/pipes/people-role.pipe';
 import { TeamPeopleModalComponent } from './team-people/team-people-modal/team-people-modal.component';
+import { TagRolePeopleComponent } from 'src/app/@shared/tag-role-people/tag-role-people.component';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
-  declarations: [TeamListComponent, TeamModalComponent, TeamPeopleComponent, TeamPeopleModalComponent],
+  declarations: [
+    TeamListComponent,
+    TeamModalComponent,
+    TeamPeopleComponent,
+    TeamPeopleModalComponent,
+  ],
   providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
@@ -50,6 +57,8 @@ import { TeamPeopleModalComponent } from './team-people/team-people-modal/team-p
     ImageUploaderComponent,
     TeamLogoComponent,
     DropdownModule,
+    TagRolePeopleComponent,
+    CalendarModule,
   ],
 })
 export class TeamModule {}
