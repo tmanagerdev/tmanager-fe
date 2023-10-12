@@ -25,7 +25,9 @@
     <ng-template let-road let-index="rowIndex" pTemplate="listItem">
       <div class="w-full flex justify-content-between align-items-center py-2">
         <div class="flex gap-5">
-          <p>{{ road.startDate | customDate : "showHours" }}</p>
+          <p style="min-width: 180px">
+            {{ road.startDate | customDate : "showHours" }}
+          </p>
           <p>
             {{ road.quantity }}x
             <span class="ml-1">
