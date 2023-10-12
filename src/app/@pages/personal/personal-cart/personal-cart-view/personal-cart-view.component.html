@@ -88,15 +88,17 @@
       <ng-container *ngIf="roads && roads.length">
         <ng-container *ngFor="let r of roads; let i = index">
           <div class="mb-2">
-            <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
-            <p class="mb-1 text-sm">
-              {{ r.startDate | customDate : "showHours" }} -
-              {{ r.endDate | customDate : "showHours" }}
+            <p class="mb-1">
+              {{ r.date | customDate : "showHours" }}
             </p>
-            <ng-container *ngFor="let v of r.veichles">
-              <div class="px-2">{{ v.quantity }}x {{ v.veichle.name }}</div>
+            <ng-container *ngFor="let d of r.data; let i = index">
+              <p class="mb-1">
+                {{ d.quantity }}x {{ d.road.veichle.name }} /
+                {{ d.road.from }} - {{ d.road.to }} /
+                {{ d.road.price | currency : "EUR" : "symbol" }}
+              </p>
             </ng-container>
-            <p class="my-1">{{ r.price | currency : "EUR" : "symbol" }}</p>
+
             <ng-container *ngIf="i !== roads.length - 1">
               <p-divider></p-divider>
             </ng-container>

@@ -37,7 +37,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Attività',
     },
     {
-      label: 'Autonoleggio e tratte',
+      label: 'Bus-Auto-Trasporti',
     },
     {
       label: 'Riepilogo',
@@ -292,7 +292,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       this.accomodationForm.patchValue({ hotel: { id, name } });
       const accomodationRooms = this.accomodationForm.get('rooms') as FormArray;
       for (const r of cart.rooms) {
-        console.log('creazione room');
         const room = new FormGroup({
           id: new FormControl(r.room.id),
           name: new FormControl(r.room.name),
@@ -335,24 +334,18 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       const roads = this.roadForm.get('roads') as FormArray;
       for (const r of cart.roads) {
         const road = new FormGroup({
-          id: new FormControl(r.id),
+          id: new FormControl(r.road.id),
           startDate: new FormControl(new Date(r.startDate)),
-          endDate: new FormControl(new Date(r.endDate)),
-          price: new FormControl(r.price),
-          from: new FormControl(r.from),
-          to: new FormControl(r.to),
-          veichles: new FormArray([]),
+          startDateHour: new FormControl(new Date(r.startDate)),
+          price: new FormControl(r.road.price),
+          from: new FormControl(r.road.from),
+          to: new FormControl(r.road.to),
+          quantity: new FormControl(r.quantity),
+          veichleId: new FormControl(r.road.veichle.id),
+          veichle: new FormControl(r.road.veichle.name),
+          createdAt: new FormControl(r.road.createdAt),
+          updatedAt: new FormControl(r.road.updatedAt),
         });
-
-        const veichles = road.get('veichles') as FormArray;
-        for (const v of r.veichles) {
-          const veichle = new FormGroup({
-            id: new FormControl(v.id),
-            veichle: new FormControl(v.veichle),
-            quantity: new FormControl(v.quantity),
-          });
-          veichles.push(veichle);
-        }
 
         roads.push(road);
       }
@@ -371,7 +364,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           price: new FormControl(a.activity.price),
           note: new FormControl(a.note),
         });
-        console.log('add activity', activity.value);
         actvitiyActivities.push(activity);
       }
     }
@@ -462,35 +454,21 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     clearFormArray(this.cartForm.get('roads') as FormArray);
     for (const r of roadRoads.value) {
       const cartRoads = this.cartForm.get('roads') as FormArray;
-      const veichles: UntypedFormArray = new UntypedFormArray([]);
-
-      if (r.veichles) {
-        for (const v of r.veichles) {
-          veichles.push(
-            new FormGroup({
-              quantity: new FormControl(v.quantity),
-              veichle: new FormControl(v.veichle),
-            })
-          );
-        }
-      }
-
       cartRoads.push(
         new FormGroup({
-          id: new FormControl(r.id),
-          endDate: new FormControl(r.endDate),
+          roadId: new FormControl(r.id),
+          quantity: new FormControl(r.quantity),
           startDate: new FormControl(r.startDate),
+          veichleName: new FormControl(r.veichle),
           from: new FormControl(r.from),
           to: new FormControl(r.to),
           price: new FormControl(r.price),
-          veichles,
         })
       );
     }
 
     clearFormArray(this.cartForm.get('activities') as FormArray);
     for (const a of activiyActivities.value) {
-      console.log('a', a);
       const cartActivities = this.cartForm.get('activities') as FormArray;
 
       cartActivities.push(

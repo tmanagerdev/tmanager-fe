@@ -29,3 +29,13 @@ export const uuidv4 = () => {
     ).toString(16)
   );
 };
+
+/**
+ * Returns true if dates ar not the same
+ * @param first
+ * @param second
+ * @returns
+ */
+export const compareDates = (first: Date, second: Date): boolean => {
+  return first > second || first < second;
+};
