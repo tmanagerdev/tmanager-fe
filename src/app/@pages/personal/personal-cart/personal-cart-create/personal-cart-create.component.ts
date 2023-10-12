@@ -79,6 +79,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     roads: new FormArray([]),
     genericNotes: new FormControl(null),
     accomodationNotes: new FormControl(null),
+    roadNotes: new FormControl(null),
   });
   paxForm: FormGroup = new FormGroup({
     players: new FormControl(null),
@@ -99,6 +100,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   });
   roadForm: FormGroup = new FormGroup({
     roads: new FormArray<any>([]),
+    roadNotes: new FormControl(null),
   });
   activityForm: FormGroup = new FormGroup({
     activities: new FormArray<any>([]),
@@ -330,6 +332,9 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     }
 
     // PATCH ROADS FORM
+    this.roadForm.patchValue({
+      roadNotes: cart.roadNotes,
+    });
     if (cart.roads && cart.roads.length) {
       const roads = this.roadForm.get('roads') as FormArray;
       for (const r of cart.roads) {
@@ -419,7 +424,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       ?.get('name')
       ?.setValue(this.event.home.city.name);
 
-    console.log('accomodation form', this.accomodationForm.value);
     const { startDate, endDate, accomodationNotes } =
       this.accomodationForm.value;
     this.cartForm.get('startDate')?.setValue(startDate);
@@ -451,6 +455,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       );
     }
 
+    const { roadNotes } = this.roadForm.value;
+    this.cartForm.get('roadNotes')?.setValue(roadNotes);
     clearFormArray(this.cartForm.get('roads') as FormArray);
     for (const r of roadRoads.value) {
       const cartRoads = this.cartForm.get('roads') as FormArray;

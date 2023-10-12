@@ -56,6 +56,19 @@
       </div>
     </ng-template>
   </p-dataView>
+
+  <div class="mt-3" [formGroup]="roadForm">
+    <label class="font-semibold"
+      >Segnalaci qui i tuoi voli di arrivo e partenza</label
+    >
+    <textarea
+      rows="3"
+      cols="30"
+      pInputTextarea
+      formControlName="roadNotes"
+      class="mt-2"
+    ></textarea>
+  </div>
 </div>
 
 <div class="w-full flex justify-content-between mb-3">
