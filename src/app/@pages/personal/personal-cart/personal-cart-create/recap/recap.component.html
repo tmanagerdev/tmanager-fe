@@ -1,8 +1,11 @@
-<p-messages
-  [(value)]="messages!"
-  [enableService]="false"
-  [closable]="false"
-></p-messages>
+<ng-container *ngIf="_status === EStatusCart.DRAFT">
+  <p-messages
+    [(value)]="messages!"
+    [enableService]="false"
+    [closable]="false"
+  ></p-messages>
+</ng-container>
+
 <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
   <ng-container *ngIf="!!this.cartForm">
     <div

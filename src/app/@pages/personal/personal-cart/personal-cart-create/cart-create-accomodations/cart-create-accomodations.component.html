@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div
   class="flex flex-column w-full tman-shadow px-5 py-3 border-round mb-4"
   [formGroup]="accomodationForm"
@@ -25,7 +27,8 @@
       <div
         class="flex border-1 border-round border-300 px-3 py-2 cursor-pointer align-items-center gap-2"
         [ngClass]="{
-          'border-primary': selectedHotel && selectedHotel.id === h.id
+          'border-primary': selectedHotel && selectedHotel.id === h.id,
+          'cursor-pointer': _status === EStatusCart.DRAFT
         }"
         (click)="onSelectHotel(h)"
       >
@@ -89,6 +92,7 @@
                           <i
                             class="pi pi-ellipsis-v cursor-pointer"
                             (click)="onToggleMenu(r, menu, $event)"
+                            *ngIf="_status === EStatusCart.DRAFT"
                           ></i>
                         </div>
                       </ng-template>
@@ -119,15 +123,17 @@
                     </p-panel>
                   </div>
                 </ng-container>
-                <div class="col-4">
-                  <div
-                    class="h-full flex justify-content-center align-items-center border-dashed border-1 new-room text-primary"
-                    (click)="onAddNewRoom(hotelRoom)"
-                  >
-                    <i class="pi pi-plus-circle mr-2"></i>
-                    <p class="m-0">Aggiungi room</p>
+                <ng-container *ngIf="_status === EStatusCart.DRAFT">
+                  <div class="col-4">
+                    <div
+                      class="h-full flex justify-content-center align-items-center border-dashed border-1 new-room text-primary"
+                      (click)="onAddNewRoom(hotelRoom)"
+                    >
+                      <i class="pi pi-plus-circle mr-2"></i>
+                      <p class="m-0">Aggiungi room</p>
+                    </div>
                   </div>
-                </div>
+                </ng-container>
               </div>
             </ng-template>
           </p-accordionTab>

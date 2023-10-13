@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { compareDates } from 'src/app/@core/utils';
 
 @Component({
@@ -64,6 +65,14 @@ export class RecapComponent implements OnInit {
       }, []);
   }
   @Input() activeIndex: number = 0;
+  @Input() set status(value: EStatusCart) {
+    if (value) {
+      this._status = value;
+      if (value !== EStatusCart.DRAFT) {
+        this.genericNotes.disable();
+      }
+    }
+  }
 
   @Output() nextStep: EventEmitter<number> = new EventEmitter();
   @Output() prevStep: EventEmitter<number> = new EventEmitter();
@@ -73,6 +82,8 @@ export class RecapComponent implements OnInit {
   rooms: any[] = [];
   roads: any[] = [];
   total: number = 0;
+  EStatusCart = EStatusCart;
+  _status: EStatusCart = EStatusCart.DRAFT;
 
   _cartForm: FormGroup = new FormGroup({});
 

@@ -9,6 +9,13 @@
       </span>
       del {{ event.date | customDate }}
     </p>
+    <ng-container *ngIf="status !== EStatusCart.DRAFT">
+      <p-messages
+        [(value)]="messages!"
+        [enableService]="false"
+        [closable]="false"
+      ></p-messages>
+    </ng-container>
     <p-steps
       [model]="items"
       [activeIndex]="activeIndex"
@@ -23,6 +30,7 @@
             [activeIndex]="activeIndex"
             [paxForm]="paxForm"
             [event]="event"
+            [status]="status"
             (nextStep)="onNextStep()"
           ></app-cart-create-pax>
         </ng-container>
@@ -32,6 +40,7 @@
             [activeIndex]="activeIndex"
             [accomodationForm]="accomodationForm"
             [event]="event"
+            [status]="status"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-accomodations>
@@ -41,6 +50,7 @@
             [event]="event"
             [activeIndex]="activeIndex"
             [activityForm]="activityForm"
+            [status]="status"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-activity>
@@ -50,6 +60,7 @@
             [activeIndex]="activeIndex"
             [roadForm]="roadForm"
             [event]="event"
+            [status]="status"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-road>
@@ -58,6 +69,7 @@
           <app-recap
             [cartForm]="cartForm"
             [activeIndex]="activeIndex"
+            [status]="status"
             (nextStep)="onSaveCart()"
             (prevStep)="onPrevStep()"
           ></app-recap>

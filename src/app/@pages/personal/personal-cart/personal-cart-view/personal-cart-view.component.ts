@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { compareDates } from 'src/app/@core/utils';
 
 @Component({
@@ -23,8 +24,8 @@ export class PersonalCartViewComponent {
   roads: any = [];
   roadsGroupByDate: any[] = [];
   total: number = 0;
-
   isDownloading: boolean = false;
+  EStatusCart = EStatusCart;
 
   get awayTeam() {
     return this.cart?.event.away;
@@ -44,6 +45,10 @@ export class PersonalCartViewComponent {
 
   get activities() {
     return this.cart?.activities;
+  }
+
+  get status(): EStatusCart {
+    return this.cart?.status;
   }
 
   constructor(
@@ -143,7 +148,7 @@ export class PersonalCartViewComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cartApiService
-          .update(this.cart.id, { isCompleted: true })
+          .update(this.cart.id, { status: EStatusCart.PENDING })
           .pipe(
             take(1),
             tap(() => {

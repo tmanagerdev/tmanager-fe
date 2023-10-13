@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem, Message, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/@core/services/auth.service';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
 import { Subject, iif, switchMap, takeUntil, tap } from 'rxjs';
@@ -11,6 +11,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PersonalCartCrateConfirmModalComponent } from './personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
 import { CartCreateAccomodationsService } from './cart-create-accomodations/cart-create-accomodations.service';
 import { ECategoryPeople } from 'src/app/@core/models/people.model';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -41,6 +42,9 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   activeIndex: number = 0;
   currentUser: any;
   event: any;
+  EStatusCart = EStatusCart;
+  status: EStatusCart = EStatusCart.DRAFT;
+  messages: Message[] | undefined;
 
   cartForm: FormGroup = new FormGroup({
     team: new FormGroup({
@@ -144,7 +148,10 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           takeUntil(this.unsubscribe$),
           switchMap(() => this.cartApiService.findOne(this.cartId)),
           tap((cart) => this.patchFormEdit(cart)),
-          tap((cart) => (this.eventId = cart.event.id)),
+          tap((cart) => {
+            this.eventId = cart.event.id;
+            this.status = cart.status;
+          }),
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
             this.event = { ...event };
@@ -210,6 +217,15 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     !!this.isEdit ? this.loadCart() : this.loadEvent();
+
+    this.messages = [
+      {
+        severity: 'warn',
+        summary: 'Attezione!',
+        detail:
+          'Questa trasferta è stata presa in carico da TMANAGER, puoi modificare solo gli ospiti delle stanze',
+      },
+    ];
   }
 
   ngOnDestroy(): void {
@@ -267,24 +283,24 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   onSaveCart() {
     const cart = { ...this.cartForm.value };
 
-    this.ref = this.dialogService.open(PersonalCartCrateConfirmModalComponent, {
-      header: this.isEdit ? 'Aggiornamento trasferta' : 'Creazione trasferta',
-      width: '450px',
-      contentStyle: { overflow: 'visible' },
-      baseZIndex: 10001,
-    });
+    // this.ref = this.dialogService.open(PersonalCartCrateConfirmModalComponent, {
+    //   header: this.isEdit ? 'Aggiornamento trasferta' : 'Creazione trasferta',
+    //   width: '450px',
+    //   contentStyle: { overflow: 'visible' },
+    //   baseZIndex: 10001,
+    // });
 
-    this.ref.onClose.subscribe((action: string) => {
-      switch (action) {
-        case 'confirm':
-          cart.isCompleted = true;
-          break;
-        default:
-          break;
-      }
+    // this.ref.onClose.subscribe((action: string) => {
+    //   switch (action) {
+    //     case 'confirm':
+    //       cart.isCompleted = true;
+    //       break;
+    //     default:
+    //       break;
+    //   }
 
-      this.save$.next(cart);
-    });
+    this.save$.next(cart);
+    //});
   }
 
   /**

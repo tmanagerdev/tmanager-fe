@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import {
   Subject,
@@ -23,6 +23,7 @@ import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/accomodations-people-modal.component';
 import { CartCreateAccomodationsService } from './cart-create-accomodations.service';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 
 @Component({
   selector: 'app-cart-create-accomodations',
@@ -36,10 +37,22 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   selectedHotel: any = null;
   coordRoomToDelete: any;
   ref!: DynamicDialogRef;
+  EStatusCart = EStatusCart;
+  _status: EStatusCart = EStatusCart.DRAFT;
 
   @Input() accomodationForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() isEdit: boolean = false;
+  @Input() set status(value: EStatusCart) {
+    if (value) {
+      this._status = value;
+      if (value !== EStatusCart.DRAFT) {
+        this.accomodationForm.get('startDate')?.disable();
+        this.accomodationForm.get('endDate')?.disable();
+        this.accomodationForm.get('accomodationNotes')?.disable();
+      }
+    }
+  }
   @Input() set event(event: any) {
     this._event = event;
     this.team = event.away.id;
@@ -97,7 +110,8 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     private hotelApiService: HotelApiService,
     private cartApiService: CartApiService,
     public dialogService: DialogService,
-    private accomodationService: CartCreateAccomodationsService
+    private accomodationService: CartCreateAccomodationsService,
+    private messageService: MessageService
   ) {
     this.hotel$
       .pipe(
@@ -154,6 +168,10 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   }
 
   onSelectHotel(hotel: any) {
+    if (this._status !== EStatusCart.DRAFT) {
+      return;
+    }
+
     clearFormArray(this.rooms);
     if (this.selectedHotel && this.selectedHotel.id === hotel.id) {
       this.selectedHotel = null;
@@ -241,6 +259,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
         take(1),
         combineLatestWith(this.accomodationService.people$),
         tap(([{ data }, people]) => {
+          clearFormArray(this.rooms);
           for (const d of data) {
             const room = this.selectedHotel.rooms.find(
               (r: any) => r.name === d.roomName
@@ -276,6 +295,11 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
 
             this.rooms.push(newRoom);
           }
+
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Rooming copiata da ultima trasferta',
+          });
         })
       )
       .subscribe();

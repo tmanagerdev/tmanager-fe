@@ -6,6 +6,13 @@
       <div class="flex flex-column">
         <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
+        <span class="mt-2">
+          <p-tag severity="Primary">
+            <p *ngIf="status === EStatusCart.PENDING">
+              Presa in carico il {{ cart.pendingAt | customDate }}
+            </p>
+          </p-tag>
+        </span>
       </div>
       <div class="flex flex-column align-items-end">
         <app-team-logo [team]="awayTeam"></app-team-logo>
@@ -13,35 +20,38 @@
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-end dialog-buttons">
-      <ng-container *ngIf="!cart.isCompleted; else isCompleted">
-        <button
-          pButton
-          pRipple
-          icon="pi pi-file-pdf"
-          class="p-button-rounded mr-2"
-          [ngClass]="{ 'p-button-outlined': !isDownloading }"
-          label="PDF"
-          (click)="download()"
-          [loading]="isDownloading"
-          loadingIcon="pi pi-file-pdf"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-outlined mr-2"
-          label="Modifica"
-          (click)="update()"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-check"
-          class="p-button-rounded p-button-outlined p-button-success"
-          label="Completa"
-          (click)="complete()"
-        ></button>
-      </ng-container>
+      <!-- <ng-container
+        *ngIf="cart.status === EStatusCart.DRAFT; else isCompleted"
+      > -->
+      <button
+        pButton
+        pRipple
+        icon="pi pi-file-pdf"
+        class="p-button-rounded mr-2"
+        [ngClass]="{ 'p-button-outlined': !isDownloading }"
+        label="PDF"
+        (click)="download()"
+        [loading]="isDownloading"
+        loadingIcon="pi pi-file-pdf"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-outlined mr-2"
+        label="Modifica"
+        (click)="update()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-check"
+        class="p-button-rounded p-button-outlined p-button-success"
+        label="Completa"
+        (click)="complete()"
+        *ngIf="cart.status === EStatusCart.DRAFT"
+      ></button>
+      <!-- </ng-container> -->
     </div>
   </div>
 

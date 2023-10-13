@@ -4,6 +4,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
 import { ModalRoadComponent } from './modal-road/modal-road.component';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 
 @Component({
   selector: 'app-cart-create-road',
@@ -19,6 +20,8 @@ export class CartCreateRoadComponent implements OnInit {
   city: number = 0;
   _event: any;
   firstIndex: number = 0;
+  EStatusCart = EStatusCart;
+  _status: EStatusCart = EStatusCart.DRAFT;
 
   searchControl = new FormControl('');
 
@@ -29,6 +32,14 @@ export class CartCreateRoadComponent implements OnInit {
   }
 
   @Input() activeIndex: number = 0;
+  @Input() set status(value: EStatusCart) {
+    if (value) {
+      this._status = value;
+      if (value !== EStatusCart.DRAFT) {
+        this.roadForm.get('roadNotes')?.disable();
+      }
+    }
+  }
   @Input() roadForm: FormGroup = new FormGroup({});
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();

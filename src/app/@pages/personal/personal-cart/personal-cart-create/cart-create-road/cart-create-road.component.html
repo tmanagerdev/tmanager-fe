@@ -9,6 +9,7 @@
       icon="pi pi-plus"
       iconPos="right"
       styleClass="p-button-rounded"
+      *ngIf="_status === EStatusCart.DRAFT"
     ></p-button>
   </div>
   <p-dataView
@@ -44,6 +45,7 @@
             icon="pi pi-pencil"
             class="p-button-rounded p-button-outlined mr-2"
             (click)="onUpdateRoad(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
           ></button>
           <button
             pButton
@@ -51,6 +53,7 @@
             icon="pi pi-trash"
             class="p-button-rounded p-button-outlined p-button-danger"
             (click)="onDeleteRoad(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
           ></button>
         </div>
       </div>

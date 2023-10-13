@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { Subject, debounceTime, map, switchMap, takeUntil, tap } from 'rxjs';
 import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { clearFormArray } from 'src/app/@core/utils';
 
 @Component({
@@ -24,11 +25,20 @@ export class CartCreateActivityComponent {
   loading: boolean = false;
   selectedActivities: any = [];
   filter: string = '';
+  EStatusCart = EStatusCart;
+  _status: EStatusCart = EStatusCart.DRAFT;
 
   searchFilter = new FormControl('');
   _activityForm: UntypedFormGroup = new FormGroup({});
 
   @Input() activeIndex: number = 0;
+  @Input() set status(value: EStatusCart) {
+    if (value) {
+      this._status = value;
+      if (value !== EStatusCart.DRAFT) {
+      }
+    }
+  }
   @Input() set event(event: any) {
     if (event) {
       this._event = event;
