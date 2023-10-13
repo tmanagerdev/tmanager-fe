@@ -17,6 +17,17 @@
         <button
           pButton
           pRipple
+          icon="pi pi-file-pdf"
+          class="p-button-rounded mr-2"
+          [ngClass]="{ 'p-button-outlined': !isDownloading }"
+          label="PDF"
+          (click)="download()"
+          [loading]="isDownloading"
+          loadingIcon="pi pi-file-pdf"
+        ></button>
+        <button
+          pButton
+          pRipple
           icon="pi pi-pencil"
           class="p-button-rounded p-button-outlined mr-2"
           label="Modifica"
@@ -143,10 +154,10 @@
             <ng-template pTemplate="body" let-road>
               <tr>
                 <td>{{ road.quantity }}</td>
-                <td>{{ road.veichleName }}</td>
-                <td>{{ road.from }} - {{ road.to }}</td>
+                <td>{{ road.road.veichle.name }}</td>
+                <td>{{ road.road.from }} - {{ road.road.to }}</td>
                 <td class="text-right">
-                  {{ road.price | currency : "EUR" : "symbol" }}
+                  {{ road.road.price | currency : "EUR" : "symbol" }}
                 </td>
               </tr>
             </ng-template>

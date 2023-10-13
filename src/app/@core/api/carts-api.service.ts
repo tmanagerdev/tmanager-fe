@@ -53,4 +53,15 @@ export class CartApiService {
       },
     });
   }
+
+  downloadPdf(id: number): Observable<any> {
+    const httpOptions = {
+      responseType: 'blob' as 'json',
+    };
+
+    return this.httpClient.get(
+      `${environment.apiUrl}/carts/${id}/pdf`,
+      httpOptions
+    );
+  }
 }

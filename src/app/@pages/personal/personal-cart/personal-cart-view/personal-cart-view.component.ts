@@ -24,6 +24,8 @@ export class PersonalCartViewComponent {
   roadsGroupByDate: any[] = [];
   total: number = 0;
 
+  isDownloading: boolean = false;
+
   get awayTeam() {
     return this.cart?.event.away;
   }
@@ -156,5 +158,25 @@ export class PersonalCartViewComponent {
           .subscribe();
       },
     });
+  }
+
+  download() {
+    this.isDownloading = true;
+    this.cartApiService
+      .downloadPdf(this.cartId)
+      .pipe(
+        take(1),
+        tap((data) => {
+          this.isDownloading = false;
+          var downloadURL = window.URL.createObjectURL(data);
+          var link = document.createElement('a');
+          link.href = downloadURL;
+          link.download = `trasferta_${this.city.name}.pdf`;
+          link.click();
+        })
+      )
+      .subscribe((data) => {
+        //this.blob = new Blob([data], {type: 'application/pdf'});
+      });
   }
 }
