@@ -61,7 +61,11 @@ export class PersonalCartViewComponent {
           this.cart = { ...cart };
 
           this.totalPax =
-            this.cart?.players + this.cart?.staffs + this.cart?.managers;
+            this.cart?.players +
+            this.cart?.staffs +
+            this.cart?.managers +
+            this.cart?.equipments +
+            this.cart?.others;
           this.hotel =
             this.cart?.rooms && this.cart?.rooms.length
               ? this.cart?.rooms[0].room.hotel.name

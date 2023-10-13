@@ -15,7 +15,9 @@ export class RecapComponent implements OnInit {
     this.totalPax =
       this.cartForm?.get('players')?.value +
       this.cartForm?.get('staffs')?.value +
-      this.cartForm?.get('managers')?.value;
+      this.cartForm?.get('managers')?.value +
+      this.cartForm?.get('equipments')?.value +
+      this.cartForm?.get('others')?.value;
     this.rooms = this.cartForm
       ?.get('rooms')
       ?.value.reduce((group: any, room: any) => {
