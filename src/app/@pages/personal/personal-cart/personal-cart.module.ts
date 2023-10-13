@@ -38,6 +38,7 @@ import { PanelModule } from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import { AccomodationsPeopleModalComponent } from './personal-cart-create/cart-create-accomodations/accomodations-people-modal/accomodations-people-modal.component';
 import { TagRolePeopleComponent } from 'src/app/@shared/tag-role-people/tag-role-people.component';
+import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { TagRolePeopleComponent } from 'src/app/@shared/tag-role-people/tag-role
     PanelModule,
     MenuModule,
     TagRolePeopleComponent,
+    RoomNamePipe,
   ],
 })
 export class PersonalCartModule {}

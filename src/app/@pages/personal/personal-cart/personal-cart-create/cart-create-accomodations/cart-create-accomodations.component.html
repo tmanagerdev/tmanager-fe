@@ -43,7 +43,10 @@
   <div class="py-3">
     <ng-container *ngIf="selectedHotel; else noHotelSelected">
       <div class="mb-2 w-full flex align-items-center justify-content-between">
-        <p>Gestisci le stanze</p>
+        <p>
+          Gestisci le stanze
+          <span class="text-xs">(Tariffa colazione inclusa)</span>
+        </p>
         <p-button
           *ngIf="!isEdit"
           (onClick)="onCloneLast()"
@@ -61,9 +64,9 @@
                 >
                   <i class="pi pi-user mr-2"></i>
                 </ng-container>
-                <span class="vertical-align-middle mr-2">{{
-                  hotelRoom.name
-                }}</span>
+                <span class="vertical-align-middle mr-2">
+                  {{ hotelRoom.name | roomName }}
+                </span>
                 <span class="vertical-align-middle font-normal">
                   ({{ hotelRoom.price | currency : "EUR" : "symbol" }})
                 </span>

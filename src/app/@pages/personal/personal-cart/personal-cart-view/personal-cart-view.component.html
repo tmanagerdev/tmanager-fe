@@ -36,12 +36,12 @@
 
   <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round m-4">
     <div class="flex flex-column mt-5">
-      <p class="font-semibold mb-2">Partecipanti</p>
+      <p class="font-semibold mb-2 text-xl">Partecipanti</p>
       <div class="flex flex-wrap gap-3">
         <div
           class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
         >
-          <p class="text-5xl font-bold">
+          <p class="text-3xl font-bold">
             {{ this.cart.players ?? 0 }}
           </p>
           <p>Giocatori</p>
@@ -49,7 +49,7 @@
         <div
           class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
         >
-          <p class="text-5xl font-bold">
+          <p class="text-3xl font-bold">
             {{ this.cart.staffs ?? 0 }}
           </p>
           <p>Staff</p>
@@ -57,7 +57,7 @@
         <div
           class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
         >
-          <p class="text-5xl font-bold">
+          <p class="text-3xl font-bold">
             {{ this.cart.managers ?? 0 }}
           </p>
           <p>Dirigenti</p>
@@ -65,7 +65,7 @@
         <div
           class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
         >
-          <p class="text-5xl font-bold">
+          <p class="text-3xl font-bold">
             {{ this.cart.equipments ?? 0 }}
           </p>
           <p>Magazzinieri</p>
@@ -73,7 +73,7 @@
         <div
           class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
         >
-          <p class="text-5xl font-bold">
+          <p class="text-3xl font-bold">
             {{ this.cart.others ?? 0 }}
           </p>
           <p>Altro</p>
@@ -90,14 +90,16 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Alloggio e camere</p>
+      <p class="font-semibold mb-2 text-xl">Alloggio e camere</p>
       <ng-container *ngIf="hotel">
-        <p class="mb-5">
-          {{ hotel }} - dal {{ cart.startDate | customDate }} al
-          {{ cart.endDate | customDate }}
-        </p>
         <ng-container *ngIf="rooms && rooms.length">
           <p-table [value]="rooms">
+            <ng-template pTemplate="caption">
+              <p>
+                {{ hotel }} - dal {{ cart.startDate | customDate }} al
+                {{ cart.endDate | customDate }}
+              </p>
+            </ng-template>
             <ng-template pTemplate="header">
               <tr>
                 <th>Tipologia</th>
@@ -107,7 +109,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-room>
               <tr>
-                <td>{{ room.name }}</td>
+                <td>{{ room.name | roomName }}</td>
                 <td>{{ room.quantity }}</td>
                 <td class="text-right">
                   {{ room.price | currency : "EUR" : "symbol" }}
@@ -121,35 +123,34 @@
         <p>Nessun hotel selezionato</p>
       </ng-container>
     </div>
-    <!-- <p-divider></p-divider>
-     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Camere</p>
-      
-      <ng-container *ngIf="!rooms || !rooms.length">
-        <p>Nessuna stanza selezionata</p>
-      </ng-container>
-    </div> -->
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Bus - Auto - Trasporti</p>
+      <p class="font-semibold mb-2 text-xl">Bus - Auto - Trasporti</p>
       <ng-container *ngIf="roads && roads.length">
         <ng-container *ngFor="let r of roads; let i = index">
-          <div class="mb-2">
-            <p class="mb-1">
-              {{ r.date | customDate : "showHours" }}
-            </p>
-            <ng-container *ngFor="let d of r.data; let i = index">
-              <p class="mb-1">
-                {{ d.quantity }}x {{ d.road.veichle.name }} /
-                {{ d.road.from }} - {{ d.road.to }} /
-                {{ d.road.price | currency : "EUR" : "symbol" }}
-              </p>
-            </ng-container>
-
-            <ng-container *ngIf="i !== roads.length - 1">
-              <p-divider></p-divider>
-            </ng-container>
-          </div>
+          <p-table [value]="r.data">
+            <ng-template pTemplate="caption">
+              <p>{{ r.date | customDate : "showHours" }}</p>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Quantità</th>
+                <th>Veicolo</th>
+                <th>Tratta</th>
+                <th class="text-right">Prezzo</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-road>
+              <tr>
+                <td>{{ road.quantity }}</td>
+                <td>{{ road.veichleName }}</td>
+                <td>{{ road.from }} - {{ road.to }}</td>
+                <td class="text-right">
+                  {{ road.price | currency : "EUR" : "symbol" }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
         </ng-container>
       </ng-container>
       <ng-container *ngIf="!roads || !roads.length">
@@ -158,7 +159,7 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Attività</p>
+      <p class="font-semibold mb-2 text-xl">Attività</p>
       <ng-container *ngIf="activities && activities.length">
         <p-table [value]="activities">
           <ng-template pTemplate="header">
@@ -187,8 +188,8 @@
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-between">
-      <p class="font-semibold mb-2">TOTALE</p>
-      <p class="text-2xl">{{ total | currency : "EUR" : "symbol" }}</p>
+      <p class="font-semibold mb-2 text-xl">TOTALE</p>
+      <p class="text-3xl">{{ total | currency : "EUR" : "symbol" }}</p>
     </div>
   </div>
 </ng-container>
