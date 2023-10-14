@@ -7,10 +7,8 @@
         <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
         <span class="mt-2">
-          <p-tag severity="Primary">
-            <p *ngIf="status === EStatusCart.PENDING">
-              Presa in carico il {{ cart.pendingAt | customDate }}
-            </p>
+          <p-tag severity="Primary" *ngIf="status === EStatusCart.PENDING">
+            <p>Presa in carico il {{ cart.pendingAt | customDate }}</p>
           </p-tag>
         </span>
       </div>
@@ -20,9 +18,6 @@
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-end dialog-buttons">
-      <!-- <ng-container
-        *ngIf="cart.status === EStatusCart.DRAFT; else isCompleted"
-      > -->
       <button
         pButton
         pRipple
@@ -51,7 +46,6 @@
         (click)="complete()"
         *ngIf="cart.status === EStatusCart.DRAFT"
       ></button>
-      <!-- </ng-container> -->
     </div>
   </div>
 
