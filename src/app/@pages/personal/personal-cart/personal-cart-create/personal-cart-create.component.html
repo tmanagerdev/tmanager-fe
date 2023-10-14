@@ -36,16 +36,30 @@
         </ng-container>
         <ng-container *ngSwitchCase="1">
           <app-cart-create-accomodations
+            [selectedHotel]="selectedHotel"
             [isEdit]="isEdit"
             [activeIndex]="activeIndex"
             [accomodationForm]="accomodationForm"
             [event]="event"
             [status]="status"
+            [hotels]="hotels"
+            [selectedHotel]="selectedHotel"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
+            (changeSelectedHotel)="onChangeSelectedHotel($event)"
           ></app-cart-create-accomodations>
         </ng-container>
         <ng-container *ngSwitchCase="2">
+          <app-cart-create-meal
+            [event]="event"
+            [activeIndex]="activeIndex"
+            [hotelMeals]="hotelMeals"
+            [mealForm]="mealForm"
+            (nextStep)="onNextStep()"
+            (prevStep)="onPrevStep()"
+          ></app-cart-create-meal>
+        </ng-container>
+        <ng-container *ngSwitchCase="3">
           <app-cart-create-activity
             [event]="event"
             [activeIndex]="activeIndex"
@@ -55,17 +69,18 @@
             (prevStep)="onPrevStep()"
           ></app-cart-create-activity>
         </ng-container>
-        <ng-container *ngSwitchCase="3">
+        <ng-container *ngSwitchCase="4">
           <app-cart-create-road
             [activeIndex]="activeIndex"
             [roadForm]="roadForm"
             [event]="event"
+            [veichles]="veichles"
             [status]="status"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-road>
         </ng-container>
-        <ng-container *ngSwitchCase="4">
+        <ng-container *ngSwitchCase="5">
           <app-recap
             [cartForm]="cartForm"
             [activeIndex]="activeIndex"

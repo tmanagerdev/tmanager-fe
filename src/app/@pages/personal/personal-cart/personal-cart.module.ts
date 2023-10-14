@@ -39,6 +39,8 @@ import { MenuModule } from 'primeng/menu';
 import { AccomodationsPeopleModalComponent } from './personal-cart-create/cart-create-accomodations/accomodations-people-modal/accomodations-people-modal.component';
 import { TagRolePeopleComponent } from 'src/app/@shared/tag-role-people/tag-role-people.component';
 import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
+import { CartCreateMealComponent } from './personal-cart-create/cart-create-meal/cart-create-meal.component';
+import { ModalMealComponent } from './personal-cart-create/cart-create-meal/modal-meal/modal-meal.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,8 @@ import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
     ModalRoadComponent,
     PersonalCartCrateConfirmModalComponent,
     AccomodationsPeopleModalComponent,
+    CartCreateMealComponent,
+    ModalMealComponent,
   ],
   providers: [DialogService, MessageService, ConfirmationService],
   imports: [

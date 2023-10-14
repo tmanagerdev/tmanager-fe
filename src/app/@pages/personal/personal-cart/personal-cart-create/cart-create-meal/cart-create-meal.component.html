@@ -1,0 +1,109 @@
+<div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
+  <div class="flex justify-content-between">
+    <div class="flex flex-column">
+      <p class="text-sm pb-1">Seleziona quantità e orario dei pasti</p>
+      <p class="font-semibold text-lg my-2">Pasti</p>
+    </div>
+    <p-button
+      (onClick)="onAddMeal()"
+      icon="pi pi-plus"
+      iconPos="right"
+      styleClass="p-button-rounded"
+      *ngIf="_status === EStatusCart.DRAFT"
+    ></p-button>
+  </div>
+  <p-table
+    [tableStyle]="{ 'min-width': '50rem' }"
+    #dv
+    [value]="mealsValue"
+    [totalRecords]="mealsValue.length"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Data</th>
+        <th>Quantità</th>
+        <th>Pasto</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-meal let-index="rowIndex">
+      <tr>
+        <td>{{ meal.startDate | customDate : "showHours" }}</td>
+        <td>{{ meal.quantity }}</td>
+        <td>{{ meal.name }}</td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-outlined mr-2"
+            (click)="onUpdateMeal(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-outlined p-button-danger"
+            (click)="onDeleteMeal(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <p>Nessun pasto selezionato</p>
+    </ng-template>
+
+    <!-- <ng-template let-meal let-index="rowIndex" pTemplate="listItem">
+      <div class="w-full flex justify-content-between align-items-center py-2">
+        <div class="flex gap-5">
+          <p style="min-width: 180px">
+            {{ meal.startDate | customDate : "showHours" }}
+          </p>
+          <p>
+            {{ meal.quantity }}x
+            <span class="ml-1">
+              {{ meal.name }}
+            </span>
+          </p>
+        </div>
+
+        <div>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-outlined mr-2"
+            (click)="onUpdateMeal(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-outlined p-button-danger"
+            (click)="onDeleteMeal(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
+          ></button>
+        </div>
+      </div>
+    </ng-template> -->
+  </p-table>
+</div>
+
+<div class="w-full flex justify-content-between mb-3">
+  <p-button
+    label="Indietro"
+    (onClick)="onPrevStep()"
+    icon="pi pi-angle-left"
+    styleClass="p-button-secondary"
+  ></p-button>
+  <p-button
+    label="Avanti"
+    (onClick)="onNextStep()"
+    icon="pi pi-angle-right"
+    iconPos="right"
+    [disabled]="!mealForm.valid"
+  ></p-button>
+</div>

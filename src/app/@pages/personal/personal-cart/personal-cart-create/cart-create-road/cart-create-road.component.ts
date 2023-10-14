@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { Subject } from 'rxjs';
 import { ModalRoadComponent } from './modal-road/modal-road.component';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 
@@ -12,26 +11,17 @@ import { EStatusCart } from 'src/app/@core/models/cart.model';
   styleUrls: ['./cart-create-road.component.scss'],
 })
 export class CartCreateRoadComponent implements OnInit {
-  veichles: any = [];
   ref!: DynamicDialogRef;
-  totalRecords = 0;
-  page: number = 0;
-  size: number = 5;
-  city: number = 0;
-  _event: any;
   firstIndex: number = 0;
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
 
   searchControl = new FormControl('');
 
-  @Input() set event(value: any) {
-    this._event = value;
-    this.city = value.home.city.id;
-    this.loadVeichles();
-  }
-
+  @Input() event: any;
   @Input() activeIndex: number = 0;
+  @Input() veichles: any = [];
+  @Input() roadForm: FormGroup = new FormGroup({});
   @Input() set status(value: EStatusCart) {
     if (value) {
       this._status = value;
@@ -40,7 +30,6 @@ export class CartCreateRoadComponent implements OnInit {
       }
     }
   }
-  @Input() roadForm: FormGroup = new FormGroup({});
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
@@ -60,33 +49,9 @@ export class CartCreateRoadComponent implements OnInit {
     return this.searchControl.value;
   }
 
-  get event() {
-    return this._event;
-  }
-
-  constructor(
-    private veichleApiService: VeichleApiService,
-    private dialogService: DialogService
-  ) {
-    this.veichle$
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        switchMap(() =>
-          this.veichleApiService.findAllRoad({
-            ...(this.search ? { search: this.search } : null),
-            ...(this.city ? { city: this.city } : null),
-          })
-        ),
-        tap((veichles: any) => (this.veichles = [...veichles]))
-      )
-      .subscribe();
-  }
+  constructor(private dialogService: DialogService) {}
 
   ngOnInit(): void {}
-
-  loadVeichles() {
-    this.veichle$.next();
-  }
 
   onNextStep() {
     this.nextStep.emit();
@@ -161,9 +126,5 @@ export class CartCreateRoadComponent implements OnInit {
         this.roads.push(road);
       }
     });
-  }
-
-  onPage({ first, rows }: any) {
-    this.firstIndex = first;
   }
 }

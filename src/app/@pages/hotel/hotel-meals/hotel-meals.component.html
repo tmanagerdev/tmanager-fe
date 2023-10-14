@@ -8,7 +8,7 @@
       (click)="backToHotels()"
     ></i>
     <span>
-      <h2 class="mb-2">Rooms: {{ hotel.name }}</h2>
+      <h2 class="mb-2">Pasti: {{ hotel.name }}</h2>
       <p>di {{ hotel.city.name }}</p>
     </span>
   </div>
@@ -21,7 +21,7 @@
       <button
         pButton
         pRipple
-        label="Crea nuova stanza"
+        label="Crea nuovo pasto"
         class="p-button-primary mr-2"
         (click)="create()"
       ></button>
@@ -30,7 +30,7 @@
 
   <p-table
     #dt
-    [value]="hotel.rooms"
+    [value]="hotel.meals"
     [totalRecords]="totalRecords"
     dataKey="id"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -41,13 +41,7 @@
     <ng-template pTemplate="header">
       <tr>
         <th pSortableColumn="name">
-          Tipologia <p-sortIcon field="name"></p-sortIcon>
-        </th>
-        <th pSortableColumn="price">
-          Prezzo<p-sortIcon field="price"></p-sortIcon>
-        </th>
-        <th pSortableColumn="numPax">
-          Pax<p-sortIcon field="numPax"></p-sortIcon>
+          Nome <p-sortIcon field="name"></p-sortIcon>
         </th>
         <th pSortableColumn="createdAt">
           Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -55,12 +49,10 @@
         <th>Azioni</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-room>
+    <ng-template pTemplate="body" let-meal>
       <tr>
-        <td>{{ room.name | roomName }}</td>
-        <td>{{ room.price | currency : "EUR" : "symbol" }}</td>
-        <td>{{ room.numPax }}</td>
-        <td>{{ room.createdAt | customDate }}</td>
+        <td>{{ meal.name }}</td>
+        <td>{{ meal.createdAt | customDate }}</td>
         <td>
           <p-button
             icon="pi pi-ellipsis-v"
@@ -73,14 +65,14 @@
               pRipple
               label="Modifica"
               class="p-button-text"
-              (click)="update(room)"
+              (click)="update(meal)"
             ></button>
             <button
               pButton
               pRipple
               label="Rimuovi"
               class="p-button-text p-button-danger"
-              (click)="remove(room)"
+              (click)="remove(meal)"
             ></button>
           </p-overlayPanel>
         </td>

@@ -5,13 +5,15 @@ import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { MenuItem, Message, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/@core/services/auth.service';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
-import { Subject, iif, switchMap, takeUntil, tap } from 'rxjs';
+import { Subject, iif, map, switchMap, takeUntil, tap } from 'rxjs';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { PersonalCartCrateConfirmModalComponent } from './personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
 import { CartCreateAccomodationsService } from './cart-create-accomodations/cart-create-accomodations.service';
 import { ECategoryPeople } from 'src/app/@core/models/people.model';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
+import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
+import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -30,6 +32,9 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Alloggio',
     },
     {
+      label: 'Pasti',
+    },
+    {
       label: 'Attività',
     },
     {
@@ -42,9 +47,14 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   activeIndex: number = 0;
   currentUser: any;
   event: any;
+  city: any;
+  hotels: any;
+  veichles: any;
+  hotelMeals: any;
   EStatusCart = EStatusCart;
   status: EStatusCart = EStatusCart.DRAFT;
   messages: Message[] | undefined;
+  selectedHotel: any = null;
 
   cartForm: FormGroup = new FormGroup({
     team: new FormGroup({
@@ -78,6 +88,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     activities: new FormArray([]),
     rooms: new FormArray([]),
     roads: new FormArray([]),
+    meals: new FormArray([]),
     genericNotes: new FormControl(null),
     accomodationNotes: new FormControl(null),
     roadNotes: new FormControl(null),
@@ -94,6 +105,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       id: new FormControl(null),
       name: new FormControl(null),
       rooms: new FormControl(null),
+      meals: new FormControl(null),
     }),
     startDate: new FormControl(null),
     endDate: new FormControl(null),
@@ -105,11 +117,15 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     roads: new FormArray<any>([]),
     roadNotes: new FormControl(null),
   });
+  mealForm: FormGroup = new FormGroup({
+    meals: new FormArray<any>([]),
+  });
   activityForm: FormGroup = new FormGroup({
     activities: new FormArray<any>([]),
   });
 
   event$: Subject<void> = new Subject();
+  hotel$: Subject<void> = new Subject();
   cart$: Subject<void> = new Subject();
   save$: Subject<any> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -128,11 +144,17 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     return this.cartForm.get('roads') as FormArray;
   }
 
+  get meals() {
+    return this.cartForm.get('meals') as FormArray;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private cartApiService: CartApiService,
     private eventApiService: EventApiService,
+    private hotelApiService: HotelApiService,
+    private veichleApiService: VeichleApiService,
     private authService: AuthService,
     private messageService: MessageService,
     public dialogService: DialogService,
@@ -155,6 +177,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
             this.event = { ...event };
+            this.city = { ...this.event.home.city };
             let roomings: any = [];
             for (const room of (this.accomodationForm.get('rooms') as FormArray)
               .value) {
@@ -168,7 +191,29 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               this.event.away.people ?? [],
               roomings
             );
-          })
+          }),
+          switchMap(() =>
+            this.hotelApiService.findAll({
+              take: 200,
+              page: 1,
+              city: this.event.home.city.id,
+            })
+          ),
+          map((data) => data.data),
+          tap((hotels) => {
+            this.hotels = [...hotels];
+            this.selectedHotel = this.hotels.find(
+              (h: any) =>
+                h.id === this.accomodationForm.get('hotel')?.get('id')?.value
+            );
+            this.hotelMeals = [...this.selectedHotel.meals];
+          }),
+          switchMap(() =>
+            this.veichleApiService.findAllRoad({
+              city: this.city.id,
+            })
+          ),
+          tap((veichles: any) => (this.veichles = [...veichles]))
         )
         .subscribe();
     } else {
@@ -179,12 +224,28 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
             this.event = { ...event };
+            this.city = { ...this.event.home.city };
             this.accomodationService.initPeople(
               this.event.away.people ?? [],
               []
             );
             this.setPax();
-          })
+          }),
+          switchMap(() =>
+            this.hotelApiService.findAll({
+              take: 200,
+              page: 1,
+              city: this.event.home.city.id,
+            })
+          ),
+          map((data) => data.data),
+          tap((hotels) => (this.hotels = [...hotels])),
+          switchMap(() =>
+            this.veichleApiService.findAllRoad({
+              city: this.city.id,
+            })
+          ),
+          tap((veichles: any) => (this.veichles = [...veichles]))
         )
         .subscribe();
     }
@@ -246,17 +307,17 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   }
 
   onNextStep() {
-    if (this.activeIndex <= 4) {
+    if (this.activeIndex <= 5) {
       this.activeIndex++;
     }
-    if (this.activeIndex == 4) {
+    if (this.activeIndex == 5) {
       this.populateCartForm();
     }
   }
 
   onActiveIndexChange(event: number) {
     this.activeIndex = event;
-    if (this.activeIndex == 4) {
+    if (this.activeIndex == 5) {
       this.populateCartForm();
     }
   }
@@ -278,6 +339,14 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
             .length ?? 0
         );
     }
+  }
+
+  onChangeSelectedHotel(hotel: any) {
+    console.log('onChangeSelectedHotel', hotel);
+    clearFormArray(this.mealForm.get('meals') as FormArray);
+    clearFormArray(this.accomodationForm.get('rooms') as FormArray);
+
+    this.hotelMeals = [...hotel.meals];
   }
 
   onSaveCart() {
@@ -363,6 +432,20 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           (room.get('rooming') as FormArray).push(rooming);
         }
         accomodationRooms.push(room);
+      }
+    }
+
+    // PATCH MEAL FORM
+    if (cart.meals && cart.meals.length) {
+      const meals = this.mealForm.get('meals') as FormArray;
+      for (const m of cart.meals) {
+        const room = new FormGroup({
+          id: new FormControl(m.meal.id),
+          name: new FormControl(m.meal.name),
+          quantity: new FormControl(m.quantity),
+          startDate: new FormControl(new Date(m.startDate)),
+        });
+        meals.push(room);
       }
     }
 
@@ -468,7 +551,9 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     const accomodationRooms = this.accomodationForm.get('rooms') as FormArray;
     const roadRoads = this.roadForm.get('roads') as FormArray;
     const activiyActivities = this.activityForm.get('activities') as FormArray;
+    const mealMeals = this.mealForm.get('meals') as FormArray;
 
+    // PUPOLATE ROOMS
     clearFormArray(this.cartForm.get('rooms') as FormArray);
     for (const r of accomodationRooms.value) {
       const cartRooms = this.cartForm.get('rooms') as FormArray;
@@ -490,6 +575,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       );
     }
 
+    // POPULATE ROADS
     const { roadNotes } = this.roadForm.value;
     this.cartForm.get('roadNotes')?.setValue(roadNotes);
     clearFormArray(this.cartForm.get('roads') as FormArray);
@@ -508,6 +594,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       );
     }
 
+    // POPULATE ACTIVITIES
     clearFormArray(this.cartForm.get('activities') as FormArray);
     for (const a of activiyActivities.value) {
       const cartActivities = this.cartForm.get('activities') as FormArray;
@@ -519,6 +606,20 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           description: new FormControl(a.description),
           price: new FormControl(a.price),
           note: new FormControl(a.note),
+        })
+      );
+    }
+
+    // POPULATE MEALS
+    clearFormArray(this.cartForm.get('meals') as FormArray);
+    for (const m of mealMeals.value) {
+      const cartMeals = this.cartForm.get('meals') as FormArray;
+      cartMeals.push(
+        new FormGroup({
+          mealId: new FormControl(m.id),
+          quantity: new FormControl(m.quantity),
+          startDate: new FormControl(m.startDate),
+          name: new FormControl(m.name),
         })
       );
     }

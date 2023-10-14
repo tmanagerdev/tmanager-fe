@@ -1,7 +1,7 @@
 <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
   <div class="flex justify-content-between">
     <div class="flex flex-column">
-      <p>Seleziona le tratte della trasferta</p>
+      <p class="text-sm pb-1">Seleziona le tratte della trasferta</p>
       <p class="font-semibold text-lg my-2">Bus - Auto - Trasporti</p>
     </div>
     <p-button
@@ -12,33 +12,25 @@
       *ngIf="_status === EStatusCart.DRAFT"
     ></p-button>
   </div>
-  <p-dataView
-    #dv
-    [value]="roadsValue"
-    [rows]="size"
-    [paginator]="true"
-    [totalRecords]="roadsValue.length"
-    [emptyMessage]="'Nessuna tratta indicata'"
-    [alwaysShowPaginator]="false"
-    [first]="firstIndex"
-    (onPage)="onPage($event)"
-  >
-    <ng-template let-road let-index="rowIndex" pTemplate="listItem">
-      <div class="w-full flex justify-content-between align-items-center py-2">
-        <div class="flex gap-5">
-          <p style="min-width: 180px">
-            {{ road.startDate | customDate : "showHours" }}
-          </p>
-          <p>
-            {{ road.quantity }}x
-            <span class="ml-1">
-              {{ road.veichle }} / {{ road.from }} - {{ road.to }} /
-              {{ road.price | currency : "EUR" : "symbol" }}
-            </span>
-          </p>
-        </div>
-
-        <div>
+  <p-table #dv [value]="roadsValue" [totalRecords]="roadsValue.length">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Data</th>
+        <th>Quantità</th>
+        <th>Veicolo</th>
+        <th>Tratta</th>
+        <th>Prezzo</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-road let-index="rowIndex">
+      <tr>
+        <td>{{ road.startDate | customDate : "showHours" }}</td>
+        <td>{{ road.quantity }}</td>
+        <td>{{ road.veichle }}</td>
+        <td>{{ road.from }} - {{ road.to }}</td>
+        <td>{{ road.price | currency : "EUR" : "symbol" }}</td>
+        <td>
           <button
             pButton
             pRipple
@@ -55,10 +47,13 @@
             (click)="onDeleteRoad(index)"
             *ngIf="_status === EStatusCart.DRAFT"
           ></button>
-        </div>
-      </div>
+        </td>
+      </tr>
     </ng-template>
-  </p-dataView>
+    <ng-template pTemplate="emptymessage">
+      <p>Nessuna tratta selezionata</p>
+    </ng-template>
+  </p-table>
 
   <div class="mt-3" [formGroup]="roadForm">
     <label class="font-semibold"

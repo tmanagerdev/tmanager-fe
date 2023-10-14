@@ -1,18 +1,17 @@
 import { Component } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
-import { HotelRoomsModalComponent } from './hotel-rooms-modal/hotel-rooms-modal.component';
+import { HotelMealsModalComponent } from './hotel-meals-modal/hotel-meals-modal.component';
 
 @Component({
-  selector: 'app-hotel-rooms',
-  templateUrl: './hotel-rooms.component.html',
-  styleUrls: ['./hotel-rooms.component.scss'],
+  selector: 'app-hotel-meals',
+  templateUrl: './hotel-meals.component.html',
+  styleUrls: ['./hotel-meals.component.scss'],
 })
-export class HotelRoomsComponent {
+export class HotelMealsComponent {
   hotelId: number = 0;
   hotel: any;
   totalRecords: number = 0;
@@ -65,33 +64,33 @@ export class HotelRoomsComponent {
 
   loadHotel(): void {
     if (this.hotel && this.hotel.rooms) {
-      this.hotel.rooms = [];
+      this.hotel.meals = [];
     }
     this.loading = true;
     this.hotel$.next();
   }
 
   create() {
-    this.ref = this.dialogService.open(HotelRoomsModalComponent, {
-      header: `Crea nuova stanza`,
+    this.ref = this.dialogService.open(HotelMealsModalComponent, {
+      header: `Crea nuovo pasto`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {},
     });
 
-    this.ref.onClose.subscribe((newRoom: any) => {
-      if (newRoom) {
+    this.ref.onClose.subscribe((newMeal: any) => {
+      if (newMeal) {
         this.hotelApiService
-          .createRoom(this.hotelId, newRoom)
+          .createMeal(this.hotelId, newMeal)
           .pipe(
             take(1),
             tap((data) => {
               this.loadHotel();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza creata',
-                detail: newRoom.name,
+                summary: 'Pasto aggiunto',
+                detail: newMeal.name,
               });
             })
           )
@@ -100,30 +99,30 @@ export class HotelRoomsComponent {
     });
   }
 
-  update(room: any) {
-    this.ref = this.dialogService.open(HotelRoomsModalComponent, {
-      header: `Aggiorna stanza`,
+  update(meal: any) {
+    this.ref = this.dialogService.open(HotelMealsModalComponent, {
+      header: `Aggiorna pasto`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
         isEdit: true,
-        room,
+        meal,
       },
     });
 
-    this.ref.onClose.subscribe((newRoom: any) => {
-      if (newRoom) {
+    this.ref.onClose.subscribe((newMeal: any) => {
+      if (newMeal) {
         this.hotelApiService
-          .updateRoom(this.hotelId, room.id, newRoom)
+          .updateMeal(meal.id, newMeal)
           .pipe(
             take(1),
             tap((data) => {
               this.loadHotel();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza aggiornata',
-                detail: newRoom.name,
+                summary: 'Pasto aggiornato',
+                detail: newMeal.name,
               });
             })
           )
@@ -132,22 +131,22 @@ export class HotelRoomsComponent {
     });
   }
 
-  remove(room: any) {
+  remove(meal: any) {
     this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questa stanza?',
+      message: 'Sei sicuro di voler eliminare questo pasto?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.hotelApiService
-          .deleteRoom(this.hotelId, room.id)
+          .deleteMeal(meal.id)
           .pipe(
             take(1),
             tap(() => {
               this.loadHotel();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza eliminata',
-                detail: room.name,
+                summary: 'Pasto eliminato',
+                detail: meal.name,
               });
             })
           )

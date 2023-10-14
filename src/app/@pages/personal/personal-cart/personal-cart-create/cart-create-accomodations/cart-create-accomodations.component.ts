@@ -33,14 +33,16 @@ import { EStatusCart } from 'src/app/@core/models/cart.model';
 export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   _event: any;
   team: number = 0;
-  hotels: any = [];
-  selectedHotel: any = null;
+  _hotels: any = [];
+  //selectedHotel: any = null;
   coordRoomToDelete: any;
   ref!: DynamicDialogRef;
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
 
+  @Input() selectedHotel: any = null;
   @Input() accomodationForm: FormGroup = new FormGroup({});
+  @Input() mealForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() isEdit: boolean = false;
   @Input() set status(value: EStatusCart) {
@@ -69,9 +71,32 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
       });
     }
   }
+  @Input() set hotels(hotels: any) {
+    if (hotels && hotels.length) {
+      if (this.isEdit) {
+        this._hotels = hotels;
+
+        // const hotelId = this.accomodationForm.value.hotel.id;
+        // const hotel = this._hotels.find((h: any) => h.id === hotelId);
+        // if (hotel) {
+        //   this.selectedHotel = { ...hotel };
+        //   this.changeSelectedHotel.emit(this.selectedHotel);
+        // }
+      } else {
+        this._hotels = hotels;
+        // if (this.hotel && this.hotel.value && this.hotel.value.id) {
+        //   this.selectedHotel = {
+        //     ...this.hotel.value,
+        //   };
+        //   this.changeSelectedHotel.emit(this.selectedHotel);
+        // }
+      }
+    }
+  }
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
+  @Output() changeSelectedHotel: EventEmitter<any> = new EventEmitter();
 
   hotel$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -84,9 +109,9 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     return this.accomodationForm.get('rooms')?.value;
   }
 
-  get hotel() {
-    return this.accomodationForm.get('hotel') as FormGroup;
-  }
+  // get hotel() {
+  //   return this.accomodationForm.get('hotel') as FormGroup;
+  // }
 
   items: MenuItem[] = [
     {
@@ -112,37 +137,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     public dialogService: DialogService,
     private accomodationService: CartCreateAccomodationsService,
     private messageService: MessageService
-  ) {
-    this.hotel$
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        switchMap(() =>
-          this.hotelApiService.findAll({
-            take: 200,
-            page: 1,
-            city: this._event.home.city.id,
-          })
-        ),
-        map((data) => data.data),
-        tap((hotels) => (this.hotels = [...hotels])),
-        tap(() => {
-          if (this.isEdit) {
-            const hotelId = this.accomodationForm.value.hotel.id;
-            const hotel = this.hotels.find((h: any) => h.id === hotelId);
-            if (hotel) {
-              this.selectedHotel = { ...hotel };
-            }
-          } else {
-            if (this.hotel && this.hotel.value && this.hotel.value.id) {
-              this.selectedHotel = {
-                ...this.hotel.value,
-              };
-            }
-          }
-        })
-      )
-      .subscribe();
-  }
+  ) {}
 
   ngOnInit(): void {}
 
@@ -153,10 +148,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
 
   loadHotels() {
     this.hotel$.next();
-  }
-
-  populateRoomForm() {
-    this.hotel.patchValue({ ...this.selectedHotel });
   }
 
   onNextStep() {
@@ -172,14 +163,9 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    clearFormArray(this.rooms);
-    if (this.selectedHotel && this.selectedHotel.id === hotel.id) {
-      this.selectedHotel = null;
-      return;
-    } else {
-      this.selectedHotel = hotel;
-      this.populateRoomForm();
-    }
+    this.selectedHotel =
+      this.selectedHotel && this.selectedHotel.id === hotel.id ? null : hotel;
+    this.changeSelectedHotel.emit(hotel);
   }
 
   getRooms(hotelRoom: any) {

@@ -1,0 +1,66 @@
+<div class="flex flex-column flex-1" [formGroup]="mealForm">
+  <div class="flex flex-column my-2">
+    <div class="flex gap-2">
+      <div class="flex-1">
+        <label>Giorno</label>
+        <p-calendar
+          dateFormat="dd/mm/yy"
+          formControlName="startDate"
+        ></p-calendar>
+      </div>
+      <div>
+        <label>Orario</label>
+        <p-calendar
+          dateFormat="hh:MM"
+          formControlName="startDateHour"
+          [timeOnly]="true"
+          class="w-5rem flex justify-content-center"
+        ></p-calendar>
+      </div>
+    </div>
+
+    <div class="flex gap-2 my-5">
+      <div class="flex flex-column">
+        <label>Quantità</label>
+        <p-inputNumber
+          inputId="integeronly"
+          formControlName="quantity"
+          class="w-5rem"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-1">
+        <label>Pasto</label>
+        <p-dropdown
+          [formControl]="mealControl"
+          [options]="mealsList"
+          [filter]="true"
+          filterBy="name"
+          placeholder="Seleziona pasto"
+        >
+          <ng-template let-meal pTemplate="selectedItem">
+            {{ meal.name }}
+          </ng-template>
+          <ng-template let-meal pTemplate="item">
+            {{ meal.name }}
+          </ng-template>
+        </p-dropdown>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      [label]="isEdit ? 'Aggiorna' : 'Aggiungi'"
+      (click)="onSave()"
+    ></button>
+  </div>
+</div>

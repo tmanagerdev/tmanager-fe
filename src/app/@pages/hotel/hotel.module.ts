@@ -25,6 +25,9 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { HotelRoomsComponent } from './hotel-rooms/hotel-rooms.component';
 import { HotelRoomsModalComponent } from './hotel-rooms/hotel-rooms-modal/hotel-rooms-modal.component';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
+import { HotelMealsComponent } from './hotel-meals/hotel-meals.component';
+import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-meals-modal.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     HotelModalComponent,
     HotelRoomsComponent,
     HotelRoomsModalComponent,
+    HotelMealsComponent,
+    HotelMealsModalComponent,
   ],
   imports: [
     CommonModule,
@@ -56,6 +61,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
     EntityListComponent,
     OverlayPanelModule,
     InputNumberModule,
+    RoomNamePipe,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })
