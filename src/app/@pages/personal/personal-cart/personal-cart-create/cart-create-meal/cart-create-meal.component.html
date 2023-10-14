@@ -52,43 +52,8 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-      <p>Nessun pasto selezionato</p>
+      <p class="p-3">Nessun pasto selezionato</p>
     </ng-template>
-
-    <!-- <ng-template let-meal let-index="rowIndex" pTemplate="listItem">
-      <div class="w-full flex justify-content-between align-items-center py-2">
-        <div class="flex gap-5">
-          <p style="min-width: 180px">
-            {{ meal.startDate | customDate : "showHours" }}
-          </p>
-          <p>
-            {{ meal.quantity }}x
-            <span class="ml-1">
-              {{ meal.name }}
-            </span>
-          </p>
-        </div>
-
-        <div>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-outlined mr-2"
-            (click)="onUpdateMeal(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
-          ></button>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-outlined p-button-danger"
-            (click)="onDeleteMeal(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
-          ></button>
-        </div>
-      </div>
-    </ng-template> -->
   </p-table>
 </div>
 
