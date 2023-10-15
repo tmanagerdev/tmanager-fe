@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../models/base.model';
+import { IEvent } from '../models/event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +21,7 @@ export class EventApiService {
     calendar,
     sortField = '',
     sortOrder = 1,
-  }: any): Observable<any> {
+  }: any): Observable<ApiResponse<IEvent>> {
     return this.httpClient.get(`${environment.apiUrl}/events`, {
       params: {
         page,
@@ -31,22 +33,22 @@ export class EventApiService {
         ...(calendar ? { calendar } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
-    });
+    }) as any;
   }
 
-  findOne(eventId: number): Observable<any> {
+  findOne(eventId: number): Observable<Partial<IEvent>> {
     return this.httpClient.get(`${environment.apiUrl}/events/${eventId}`);
   }
 
-  create(event: any): Observable<any> {
+  create(event: Partial<IEvent>): Observable<Partial<IEvent>> {
     return this.httpClient.post(`${environment.apiUrl}/events`, event);
   }
 
-  update(id: string, event: any): Observable<any> {
+  update(id: number, event: Partial<IEvent>): Observable<Partial<IEvent>> {
     return this.httpClient.put(`${environment.apiUrl}/events/${id}`, event);
   }
 
-  delete(id: string): Observable<any> {
+  delete(id: number): Observable<Partial<IEvent>> {
     return this.httpClient.delete(`${environment.apiUrl}/events/${id}`);
   }
 }

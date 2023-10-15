@@ -2,8 +2,16 @@
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
 <ng-container *ngIf="hotel">
-  <h2 class="mb-2">Rooms: {{ hotel.name }}</h2>
-  <p>di {{ hotel.city.name }}</p>
+  <div class="flex align-items-center gap-4 mb-2">
+    <i
+      class="pi pi-angle-left cursor-pointer text-4xl"
+      (click)="backToHotels()"
+    ></i>
+    <span>
+      <h2 class="mb-2">Rooms: {{ hotel.name }}</h2>
+      <p>di {{ hotel.city.name }}</p>
+    </span>
+  </div>
 
   <div
     class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
@@ -35,8 +43,11 @@
         <th pSortableColumn="name">
           Tipologia <p-sortIcon field="name"></p-sortIcon>
         </th>
-        <th pSortableColumn="city">
-          Prezzo<p-sortIcon field="city"></p-sortIcon>
+        <th pSortableColumn="price">
+          Prezzo<p-sortIcon field="price"></p-sortIcon>
+        </th>
+        <th pSortableColumn="numPax">
+          Pax<p-sortIcon field="numPax"></p-sortIcon>
         </th>
         <th pSortableColumn="createdAt">
           Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -46,8 +57,9 @@
     </ng-template>
     <ng-template pTemplate="body" let-room>
       <tr>
-        <td>{{ room.name }}</td>
+        <td>{{ room.name | roomName }}</td>
         <td>{{ room.price | currency : "EUR" : "symbol" }}</td>
+        <td>{{ room.numPax }}</td>
         <td>{{ room.createdAt | customDate }}</td>
         <td>
           <p-button

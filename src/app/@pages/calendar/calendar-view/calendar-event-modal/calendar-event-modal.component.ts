@@ -3,6 +3,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
+import { IDropdownFilters } from 'src/app/@core/models/base.model';
+import { IEvent } from 'src/app/@core/models/event.model';
+import { ITeam } from 'src/app/@core/models/team.model';
 
 @Component({
   selector: 'app-calendar-event-modal',
@@ -10,9 +13,9 @@ import { TeamApiService } from 'src/app/@core/api/team-api.service';
   styleUrls: ['./calendar-event-modal.component.scss'],
 })
 export class CalendarEventModalComponent {
-  event: any;
+  event!: Partial<IEvent>;
   isEdit: boolean = false;
-  teams: any[] = [];
+  teams: Partial<ITeam>[] = [];
 
   eventForm: FormGroup = new FormGroup({
     date: new FormControl(null, Validators.required),
@@ -34,8 +37,8 @@ export class CalendarEventModalComponent {
       this.isEdit = this.config.data.isEditing;
       this.eventForm.patchValue({
         ...this.event,
-        date: new Date(this.event.date),
-        hour: new Date(this.event.date),
+        date: new Date(this.event.date!),
+        hour: new Date(this.event.date!),
       });
       this.teams.push({ ...this.event.home });
       this.teams.push({ ...this.event.away });
@@ -85,8 +88,7 @@ export class CalendarEventModalComponent {
     this.teams$.next(name);
   }
 
-  onFilterTeam({ filter }: any) {
-    console.log('query', filter);
+  onFilterTeam({ filter }: IDropdownFilters) {
     if (filter && filter.length > 2) {
       this.loadFilteredTeams(filter);
     }

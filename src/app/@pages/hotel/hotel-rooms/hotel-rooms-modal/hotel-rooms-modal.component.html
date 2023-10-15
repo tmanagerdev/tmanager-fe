@@ -5,7 +5,13 @@
 >
   <div class="flex flex-column gap-2">
     <label>Nome</label>
-    <input pInputText placeholder="Nome" formControlName="name" />
+    <p-dropdown
+      placeholder="Name"
+      formControlName="name"
+      [options]="names"
+      optionLabel="label"
+      optionValue="value"
+    ></p-dropdown>
   </div>
   <div class="flex flex-column gap-2">
     <label>Prezzo</label>
@@ -15,6 +21,14 @@
       formControlName="price"
       placeholder="Prezzo"
       currency="EUR"
+      locale="it-IT"
+    ></p-inputNumber>
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>N° Pax</label>
+    <p-inputNumber
+      formControlName="numPax"
+      placeholder="Numero pax"
       locale="it-IT"
     ></p-inputNumber>
   </div>

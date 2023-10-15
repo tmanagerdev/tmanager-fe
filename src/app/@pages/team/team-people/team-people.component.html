@@ -1,0 +1,102 @@
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<ng-container *ngIf="people">
+  <div class="flex align-items-center gap-4">
+    <i
+      class="pi pi-angle-left cursor-pointer text-4xl"
+      (click)="backToTeams()"
+    ></i>
+    <span>
+      <h2 class="mb-2">Anagrafica {{ team.name }}</h2>
+      <p>Gestisci i membri della squadra</p>
+    </span>
+  </div>
+
+  <div
+    class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+  >
+    <span></span>
+    <div>
+      <button
+        pButton
+        pRipple
+        label="Aggiungi membro"
+        class="p-button-primary mr-2"
+        (click)="create()"
+      ></button>
+    </div>
+  </div>
+
+  <p-table
+    #dt
+    [value]="people"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [loading]="loading"
+    class="tman-shadow"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nome</th>
+        <th>Cognome</th>
+        <th>Ruolo</th>
+        <th>Data di nascita</th>
+        <th>Luogo di nascita</th>
+        <th>Documento</th>
+        <th>Scadenza</th>
+        <th>Data Creazione</th>
+        <th>Azioni</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-people>
+      <tr>
+        <td>{{ people.name }}</td>
+        <td>{{ people.surname }}</td>
+        <td>
+          <app-tag-role-people [people]="people"></app-tag-role-people>
+        </td>
+        <td>{{ people.birthDate | customDate }}</td>
+        <td>{{ people.birthPlace }}</td>
+        <td>{{ people.docNumber }}</td>
+        <td>{{ people.docExpiredAt | customDate }}</td>
+        <td>{{ people.createdAt | customDate }}</td>
+        <td>
+          <p-button
+            icon="pi pi-ellipsis-v"
+            (click)="op.toggle($event)"
+            styleClass="p-button-rounded p-button-secondary p-button-text"
+          ></p-button>
+          <p-overlayPanel #op [style]="{ width: '160px' }">
+            <button
+              pButton
+              pRipple
+              label="Modifica"
+              class="p-button-text"
+              (click)="update(people)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              label="Rimuovi"
+              class="p-button-text p-button-danger"
+              (click)="remove(people)"
+            ></button>
+          </p-overlayPanel>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <ng-container *ngFor="let row of rowsArray">
+        <tr>
+          <ng-container *ngFor="let cell of cellsArray">
+            <td><p-skeleton></p-skeleton></td>
+          </ng-container>
+        </tr>
+      </ng-container>
+    </ng-template>
+  </p-table>
+</ng-container>

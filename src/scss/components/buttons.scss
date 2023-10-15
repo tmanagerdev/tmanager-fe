@@ -24,3 +24,21 @@
 .p-button {
   background: var(--primary-color);
 }
+
+.dirigente {
+  .p-tag {
+    background-color: #ff6a88;
+  }
+}
+
+.giocatore {
+  .p-tag {
+    background-color: #3b82f6;
+  }
+}
+
+.staff {
+  .p-tag {
+    background-color: #16a085;
+  }
+}

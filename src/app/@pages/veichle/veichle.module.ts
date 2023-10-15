@@ -17,9 +17,18 @@ import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { CityRoutingModule } from './veichle-routing.module';
+import { DropdownModule } from 'primeng/dropdown';
+import { VeichleRoadsComponent } from './veichle-roads/veichle-roads.component';
+import { VeichleRoadsModalComponent } from './veichle-roads/veichle-roads-modal/veichle-roads-modal.component';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
-  declarations: [VeichleListComponent, VeichleModalComponent],
+  declarations: [
+    VeichleListComponent,
+    VeichleModalComponent,
+    VeichleRoadsComponent,
+    VeichleRoadsModalComponent,
+  ],
   imports: [
     CommonModule,
     CityRoutingModule,
@@ -37,6 +46,8 @@ import { CityRoutingModule } from './veichle-routing.module';
     ConfirmDialogModule,
     SkeletonModule,
     OverlayPanelModule,
+    DropdownModule,
+    InputNumberModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

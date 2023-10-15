@@ -6,3 +6,24 @@
 .material-symbols-outlined {
   font-variation-settings: "FILL" 1;
 }
+
+.new-room {
+  border-color: #dee2e6;
+  border-radius: 6px;
+  color: #343a40;
+  cursor: pointer;
+  min-height: 150px;
+
+  &:hover {
+    border-color: #5d87ff;
+    background: #f8f9fa;
+  }
+}
+
+.room-item {
+  min-height: 150px;
+
+  .room-user {
+    border-bottom: 1px solid #dee2e6;
+  }
+}

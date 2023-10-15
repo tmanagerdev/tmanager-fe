@@ -4,16 +4,24 @@
   padding: 4px;
   font-weight: 600;
 
-  &-success {
-    background-color: var(--green-300);
-    color: var(--green-900);
-  }
-  &-warning {
-    background-color: var(--red-300);
-    color: var(--red-900);
-  }
-  &-primary {
+  &-DRAFT {
     background-color: var(--primary-300);
     color: var(--primary-900);
+  }
+  &-PENDING {
+    background-color: var(--purple-300);
+    color: var(--purple-900);
+  }
+  &-CONFIRMED {
+    background-color: var(--orange-300);
+    color: var(--orange-900);
+  }
+  &-DEPOSIT {
+    background-color: var(--yellow-300);
+    color: var(--yellow-900);
+  }
+  &-COMPLETED {
+    background-color: var(--green-300);
+    color: var(--green-900);
   }
 }

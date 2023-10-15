@@ -1,55 +1,72 @@
 <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
   <div class="flex justify-content-between">
     <div class="flex flex-column">
-      <p>Seleziona le tratte della trasferta</p>
-      <p class="font-semibold text-lg my-2">Autonoleggio e tratte</p>
+      <p class="text-sm pb-1">Seleziona le tratte della trasferta</p>
+      <p class="font-semibold text-lg my-2">Bus - Auto - Trasporti</p>
     </div>
     <p-button
       (onClick)="onAddRoad()"
       icon="pi pi-plus"
       iconPos="right"
       styleClass="p-button-rounded"
+      *ngIf="_status === EStatusCart.DRAFT"
     ></p-button>
   </div>
-  <p-divider></p-divider>
-  <ng-container *ngIf="roads.value && roads.value.length; else noRoads">
-    <ng-container *ngFor="let r of roads.value; let i = index">
-      <div class="flex justify-content-between mb-2">
-        <div>
-          <p class="mb-1">
-            Da {{ r.from }} a {{ r.to }} -
-            {{ r.price | currency : "EUR" : "symbol" }}
-          </p>
-          <p class="mb-1">
-            {{ r.startDate | customDate : "showHours" }} -
-            {{ r.endDate | customDate : "showHours" }}
-          </p>
-          <ng-container *ngFor="let v of r.veichles">
-            <div *ngIf="v && v.quantity && v.veichle" class="px-2">
-              {{ v.quantity }}x {{ v.veichle.name }}
-            </div>
-          </ng-container>
-        </div>
-        <div class="flex gap-2">
+  <p-table #dv [value]="roadsValue" [totalRecords]="roadsValue.length">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Data</th>
+        <th>Quantità</th>
+        <th>Veicolo</th>
+        <th>Tratta</th>
+        <th>Prezzo</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-road let-index="rowIndex">
+      <tr>
+        <td>{{ road.startDate | customDate : "showHours" }}</td>
+        <td>{{ road.quantity }}</td>
+        <td>{{ road.veichle }}</td>
+        <td>{{ road.from }} - {{ road.to }}</td>
+        <td>{{ road.price | currency : "EUR" : "symbol" }}</td>
+        <td>
           <button
             pButton
             pRipple
             icon="pi pi-pencil"
             class="p-button-rounded p-button-outlined mr-2"
-            (click)="onUpdateRoad(i)"
+            (click)="onUpdateRoad(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
           ></button>
           <button
             pButton
             pRipple
             icon="pi pi-trash"
             class="p-button-rounded p-button-outlined p-button-danger"
-            (click)="onDeleteRoad(i)"
+            (click)="onDeleteRoad(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
           ></button>
-        </div>
-      </div>
-      <p-divider *ngIf="i < roads.value.length - 1"></p-divider>
-    </ng-container>
-  </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <p class="p-3">Nessuna tratta selezionata</p>
+    </ng-template>
+  </p-table>
+
+  <div class="mt-3" [formGroup]="roadForm">
+    <label class="font-semibold"
+      >Segnalaci qui i tuoi voli di arrivo e partenza</label
+    >
+    <textarea
+      rows="3"
+      cols="30"
+      pInputTextarea
+      formControlName="roadNotes"
+      class="mt-2"
+    ></textarea>
+  </div>
 </div>
 
 <div class="w-full flex justify-content-between mb-3">

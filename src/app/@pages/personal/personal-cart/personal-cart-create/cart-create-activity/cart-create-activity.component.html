@@ -1,5 +1,71 @@
 <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
-  <p>Seleziona le attività per questa trasferta</p>
+  <div class="flex justify-content-between">
+    <div class="flex flex-column">
+      <p class="text-sm pb-1">Seleziona le attività per questa trasferta</p>
+      <p class="font-semibold text-lg my-2">Attività disponibili</p>
+    </div>
+    <p-button
+      (onClick)="onAddActivity()"
+      icon="pi pi-plus"
+      iconPos="right"
+      styleClass="p-button-rounded"
+      *ngIf="_status === EStatusCart.DRAFT"
+    ></p-button>
+  </div>
+
+  <p-table
+    [tableStyle]="{ 'min-width': '50rem' }"
+    #dv
+    [value]="activitiesValue"
+    [totalRecords]="activitiesValue.length"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Data</th>
+        <th>Quantità</th>
+        <th>Attività</th>
+        <th>Prezzo</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-activity let-index="rowIndex">
+      <tr>
+        <td>{{ activity.startDate | customDate : "showHours" }}</td>
+        <td>{{ activity.quantity }}</td>
+        <td>
+          <p>
+            {{ activity.name }}
+          </p>
+          <p>
+            {{ activity.description }}
+          </p>
+        </td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-outlined mr-2"
+            (click)="onUpdateActivity(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-outlined p-button-danger"
+            (click)="onDeleteActivity(index)"
+            *ngIf="_status === EStatusCart.DRAFT"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <p class="p-3">Nessuna attività selezionata</p>
+    </ng-template>
+  </p-table>
+
+  <!-- <p>Seleziona le attività per questa trasferta</p>
   <p class="text-sm font-italic">
     Potrai indicare eventuali note allo step finale di riepilogo
   </p>
@@ -66,20 +132,20 @@
           </div>
         </div>
       </ng-template>
-    </p-dataView>
-  </div>
-  <div class="w-full flex justify-content-between mb-3">
-    <p-button
-      label="Indietro"
-      (onClick)="onPrevStep()"
-      icon="pi pi-angle-left"
-      styleClass="p-button-secondary"
-    ></p-button>
-    <p-button
-      label="Avanti"
-      (onClick)="onNextStep()"
-      icon="pi pi-angle-right"
-      iconPos="right"
-    ></p-button>
-  </div>
+    </p-dataView>-->
+</div>
+
+<div class="w-full flex justify-content-between mb-3">
+  <p-button
+    label="Indietro"
+    (onClick)="onPrevStep()"
+    icon="pi pi-angle-left"
+    styleClass="p-button-secondary"
+  ></p-button>
+  <p-button
+    label="Avanti"
+    (onClick)="onNextStep()"
+    icon="pi pi-angle-right"
+    iconPos="right"
+  ></p-button>
 </div>

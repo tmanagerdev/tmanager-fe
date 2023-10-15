@@ -1,0 +1,77 @@
+<form
+  [formGroup]="peopleForm"
+  class="flex flex-column gap-3"
+  (ngSubmit)="onSave()"
+>
+  <div class="flex flex-column gap-2">
+    <label>Nome</label>
+    <input pInputText placeholder="Nome" formControlName="name" />
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Cognome</label>
+    <input pInputText placeholder="Cognome" formControlName="surname" />
+  </div>
+  <div class="flex flex-50 flex-column gap-2">
+    <label>Ruolo</label>
+    <p-dropdown
+      [options]="categories"
+      formControlName="category"
+      optionLabel="label"
+      optionValue="value"
+    ></p-dropdown>
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Data di nascita</label>
+    <div class="flex gap-2">
+      <p-calendar
+        dateFormat="dd/mm/yy"
+        formControlName="birthDate"
+        placeholder="Data di nascita"
+        class="flex-1"
+      ></p-calendar>
+    </div>
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Luogo di nascita</label>
+    <input
+      pInputText
+      placeholder="Luogo di nascita"
+      formControlName="birthPlace"
+    />
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Documento</label>
+    <input
+      pInputText
+      placeholder="Luogo di nascita"
+      formControlName="docNumber"
+    />
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Data di scadenza</label>
+    <div class="flex gap-2">
+      <p-calendar
+        dateFormat="dd/mm/yy"
+        formControlName="docExpiredAt"
+        placeholder="Data di scadenza"
+        class="flex-1"
+      ></p-calendar>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons mt-4">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Salva"
+      [disabled]="!peopleForm.valid"
+    ></button>
+  </div>
+</form>

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
@@ -34,6 +34,7 @@ export class HotelRoomsComponent {
   constructor(
     private hotelApiService: HotelApiService,
     private route: ActivatedRoute,
+    private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public dialogService: DialogService
@@ -72,7 +73,7 @@ export class HotelRoomsComponent {
 
   create() {
     this.ref = this.dialogService.open(HotelRoomsModalComponent, {
-      header: `Crea nuovo hotel`,
+      header: `Crea nuova stanza`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
@@ -153,5 +154,9 @@ export class HotelRoomsComponent {
           .subscribe();
       },
     });
+  }
+
+  backToHotels() {
+    this.router.navigate(['/hotel']);
   }
 }

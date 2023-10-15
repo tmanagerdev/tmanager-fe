@@ -6,17 +6,11 @@ import {
   MessageService,
 } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import {
-  Subject,
-  debounceTime,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-  timeout,
-} from 'rxjs';
+import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { CityModalComponent } from '../city-modal/city-modal.component';
+import { ICity } from 'src/app/@core/models/city.model';
+import { ISort } from 'src/app/@core/models/base.model';
 
 @Component({
   selector: 'app-city-list',
@@ -24,12 +18,12 @@ import { CityModalComponent } from '../city-modal/city-modal.component';
   styleUrls: ['./city-list.component.scss'],
 })
 export class CityListComponent implements OnInit {
-  cities: any[] = [];
+  cities: Partial<ICity>[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
-  sort: any = null;
+  sort: ISort | null = null;
   loading: boolean = false;
 
   searchFilter = new FormControl('');
@@ -113,7 +107,7 @@ export class CityListComponent implements OnInit {
       baseZIndex: 10001,
     });
 
-    this.ref.onClose.subscribe((city: any) => {
+    this.ref.onClose.subscribe((city: Partial<ICity>) => {
       if (city) {
         this.cityApiService
           .create(city)
@@ -133,7 +127,7 @@ export class CityListComponent implements OnInit {
     });
   }
 
-  update(city: any) {
+  update(city: Partial<ICity>) {
     this.ref = this.dialogService.open(CityModalComponent, {
       header: `Aggiorna ${city.name}`,
       width: '450px',
@@ -144,10 +138,10 @@ export class CityListComponent implements OnInit {
       },
     });
 
-    this.ref.onClose.subscribe((newCity: any) => {
+    this.ref.onClose.subscribe((newCity: Partial<ICity>) => {
       if (newCity) {
         this.cityApiService
-          .update(city.id, newCity)
+          .update(city.id!, newCity)
           .pipe(
             take(1),
             tap(() => {
@@ -164,14 +158,14 @@ export class CityListComponent implements OnInit {
     });
   }
 
-  remove(city: any) {
+  remove(city: Partial<ICity>) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questa città?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cityApiService
-          .delete(city.id)
+          .delete(city.id!)
           .pipe(
             take(1),
             tap(() => {

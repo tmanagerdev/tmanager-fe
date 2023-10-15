@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject, map, switchMap, takeUntil, tap } from 'rxjs';
-import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { Subject } from 'rxjs';
 import { ModalRoadComponent } from './modal-road/modal-road.component';
+import { EStatusCart } from 'src/app/@core/models/cart.model';
 
 @Component({
   selector: 'app-cart-create-road',
@@ -11,12 +11,25 @@ import { ModalRoadComponent } from './modal-road/modal-road.component';
   styleUrls: ['./cart-create-road.component.scss'],
 })
 export class CartCreateRoadComponent implements OnInit {
-  veichles: any = [];
   ref!: DynamicDialogRef;
+  firstIndex: number = 0;
+  EStatusCart = EStatusCart;
+  _status: EStatusCart = EStatusCart.DRAFT;
 
-  @Input() activeIndex: number = 0;
+  searchControl = new FormControl('');
+
   @Input() event: any;
+  @Input() activeIndex: number = 0;
+  @Input() veichles: any = [];
   @Input() roadForm: FormGroup = new FormGroup({});
+  @Input() set status(value: EStatusCart) {
+    if (value) {
+      this._status = value;
+      if (value !== EStatusCart.DRAFT) {
+        this.roadForm.get('roadNotes')?.disable();
+      }
+    }
+  }
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
@@ -28,32 +41,17 @@ export class CartCreateRoadComponent implements OnInit {
     return this.roadForm.get('roads') as FormArray;
   }
 
-  constructor(
-    private veichleApiService: VeichleApiService,
-    private dialogService: DialogService
-  ) {
-    this.veichle$
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        switchMap(() =>
-          this.veichleApiService.findAll({
-            take: 200,
-            page: 1,
-          })
-        ),
-        map((data) => data.data),
-        tap((veichles) => (this.veichles = [...veichles]))
-      )
-      .subscribe();
+  get roadsValue(): any {
+    return this.roadForm.get('roads')?.value;
   }
 
-  ngOnInit(): void {
-    this.loadVeichles();
+  get search() {
+    return this.searchControl.value;
   }
 
-  loadVeichles() {
-    this.veichle$.next();
-  }
+  constructor(private dialogService: DialogService) {}
+
+  ngOnInit(): void {}
 
   onNextStep() {
     this.nextStep.emit();
@@ -64,12 +62,12 @@ export class CartCreateRoadComponent implements OnInit {
   }
 
   onUpdateRoad(indexRoads: number) {
-    const roadToUpdate = this.roads.at(indexRoads) as FormGroup;
+    const index = indexRoads + this.firstIndex;
+    const roadToUpdate = this.roads.at(index) as FormGroup;
 
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiorna tratta',
       width: '700px',
-      height: '700px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
@@ -82,43 +80,37 @@ export class CartCreateRoadComponent implements OnInit {
 
     this.ref.onClose.subscribe((road: FormGroup) => {
       if (road) {
-        this.roads.at(indexRoads).setValue({ ...road.value });
+        this.roads.at(index).setValue({ ...road.value });
       }
     });
   }
 
   onDeleteRoad(indexRoads: number) {
-    this.roads.removeAt(indexRoads);
+    this.roads.removeAt(indexRoads + this.firstIndex);
   }
 
   onAddRoad() {
     const startDate = new Date(this.event.date);
-    const endDate = new Date(this.event.date);
     startDate.setDate(startDate.getDate() - 1);
     startDate.setHours(0, 0, 0, 0);
-    endDate.setDate(endDate.getDate() - 1);
-    endDate.setHours(0, 0, 0, 0);
 
     const newRoad = new FormGroup({
+      startDate: new FormControl(startDate),
+      startDateHour: new FormControl(startDate),
+      veichle: new FormControl(null),
+      quantity: new FormControl(1),
+      id: new FormControl(null),
+      price: new FormControl(null),
       from: new FormControl(null),
       to: new FormControl(null),
-      startDate: new FormControl(startDate),
-      endDate: new FormControl(endDate),
-      price: new FormControl(null),
-      startDateHour: new FormControl(startDate),
-      endDateHour: new FormControl(endDate),
-      veichles: new FormArray([]),
-    });
-
-    const newVeichle = new FormGroup({
-      veichle: new FormControl(null),
-      quantity: new FormControl(null),
+      veichleId: new FormControl(null),
+      createdAt: new FormControl(null),
+      updatedAt: new FormControl(null),
     });
 
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiungi nuova tratta',
       width: '700px',
-      height: '700px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {

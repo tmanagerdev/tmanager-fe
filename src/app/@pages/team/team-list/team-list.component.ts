@@ -12,6 +12,7 @@ import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { TeamModalComponent } from '../team-modal/team-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-team-list',
@@ -62,7 +63,8 @@ export class TeamListComponent {
     private teamApiService: TeamApiService,
     private cityApiService: CityApiService,
     private leagueApiService: LeagueApiService,
-    public dialogService: DialogService
+    public dialogService: DialogService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -275,5 +277,9 @@ export class TeamListComponent {
     if (filter && filter.length > 3) {
       this.loadFilteredLeagues(filter);
     }
+  }
+
+  people(team: any) {
+    this.router.navigate(['team', team.id]);
   }
 }

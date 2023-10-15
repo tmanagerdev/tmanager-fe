@@ -24,6 +24,7 @@ import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { StatusCartPipe } from 'src/app/@core/pipes/status-cart.pipe';
 
 @NgModule({
   declarations: [CartListComponent],
@@ -52,6 +53,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     InputNumberModule,
     OverlayPanelModule,
     InputSwitchModule,
+    StatusCartPipe,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

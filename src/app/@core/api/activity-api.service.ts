@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
+import { IActivity } from '../models/activity.model';
+import { ApiResponse } from '../models/base.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,7 @@ export class ActivityApiService {
     endDate,
     sortField = '',
     sortOrder = 1,
-  }: any): Observable<any> {
+  }: any): Observable<ApiResponse<IActivity>> {
     return this.httpClient.get(`${environment.apiUrl}/activities`, {
       params: {
         page,
@@ -29,27 +31,27 @@ export class ActivityApiService {
         ...(endDate ? { endDate } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
-    });
+    }) as any;
   }
 
-  findOne(activityId: string): Observable<any> {
+  findOne(activityId: number): Observable<Partial<IActivity>> {
     return this.httpClient.get(
       `${environment.apiUrl}/activities/${activityId}`
     );
   }
 
-  create(activity: any): Observable<any> {
+  create(activity: Partial<IActivity>): Observable<Partial<IActivity>> {
     return this.httpClient.post(`${environment.apiUrl}/activities`, activity);
   }
 
-  update(id: string, activity: any): Observable<any> {
+  update(id: number, activity: Partial<IActivity>): Observable<any> {
     return this.httpClient.put(
       `${environment.apiUrl}/activities/${id}`,
       activity
     );
   }
 
-  delete(id: string): Observable<any> {
+  delete(id: number): Observable<Partial<IActivity>> {
     return this.httpClient.delete(`${environment.apiUrl}/activities/${id}`);
   }
 }

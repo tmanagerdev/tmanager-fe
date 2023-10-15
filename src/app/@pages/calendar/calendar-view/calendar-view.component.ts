@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CalendarApiService } from 'src/app/@core/api/calendar-api.service';
 import { CalendarEventModalComponent } from './calendar-event-modal/calendar-event-modal.component';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
+import { ICalendar } from 'src/app/@core/models/calendar.model';
+import { IEvent } from 'src/app/@core/models/event.model';
 
 @Component({
   selector: 'app-calendar-view',
@@ -15,11 +17,11 @@ import { EventApiService } from 'src/app/@core/api/events-api.service';
 })
 export class CalendarViewComponent implements OnInit, OnDestroy {
   calendarId: number = 0;
-  calendar: any;
+  calendar!: Partial<ICalendar>;
   activeDay: number = 0;
-  totalDays: any[] = [];
-  activeGames: any[] = [];
-  viewOptions: any[] = [
+  totalDays: number[] = [];
+  activeGames: Partial<ICalendar>[] = [];
+  viewOptions = [
     { label: 'Tutte', value: 'all' },
     { label: 'Andata', value: 'first' },
     { label: 'Ritorno', value: 'second' },
@@ -36,6 +38,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     private calendarApiService: CalendarApiService,
     private eventApiService: EventApiService,
     private route: ActivatedRoute,
+    private router: Router,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public dialogService: DialogService
@@ -79,12 +82,12 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 .map((d, i) => i);
               break;
             case 'first':
-              this.totalDays = Array(this.calendar.dates / 2)
+              this.totalDays = Array(this.calendar.dates! / 2)
                 .fill(0)
                 .map((d, i) => i);
               break;
             case 'second':
-              this.totalDays = Array(this.calendar.dates / 2)
+              this.totalDays = Array(this.calendar.dates! / 2)
                 .fill(0)
                 .map((d, i) => i + 18);
               this.activeDay = this.activeDay + 18;
@@ -113,9 +116,6 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   }
 
   loadGames() {
-    // this.activeGames = this.calendar.calendarEvents.filter(
-    //   (ce: any) => ce.day === this.activeDay + 1
-    // );
     this.events$.next();
   }
 
@@ -128,9 +128,6 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
         break;
     }
     this.activeDay = event;
-    // this.activeGames = this.calendar.calendarEvents.filter(
-    //   (ce: any) => ce.day === this.activeDay + 1
-    // );
     this.events$.next();
   }
 
@@ -150,7 +147,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.ref.onClose.subscribe((newEvent: any) => {
+    this.ref.onClose.subscribe((newEvent: Partial<IEvent>) => {
       if (newEvent) {
         this.eventApiService
           .create(newEvent)
@@ -169,7 +166,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  update(event: any) {
+  update(event: Partial<IEvent>) {
     this.ref = this.dialogService.open(CalendarEventModalComponent, {
       header: `Aggiorna partita`,
       width: '450px',
@@ -181,10 +178,10 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.ref.onClose.subscribe((newEvent: any) => {
+    this.ref.onClose.subscribe((newEvent: Partial<IEvent>) => {
       if (newEvent) {
         this.eventApiService
-          .update(event.id, newEvent)
+          .update(event.id!, newEvent)
           .pipe(
             take(1),
             tap((data) => {
@@ -200,14 +197,14 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  remove(event: any) {
+  remove(event: Partial<IEvent>) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questa partita?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.eventApiService
-          .delete(event.id)
+          .delete(event.id!)
           .pipe(
             take(1),
             tap(() => {
@@ -221,5 +218,9 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
           .subscribe();
       },
     });
+  }
+
+  backToCalendar() {
+    this.router.navigate(['/calendar']);
   }
 }

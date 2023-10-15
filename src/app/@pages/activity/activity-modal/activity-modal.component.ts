@@ -3,6 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
+import { IActivity } from 'src/app/@core/models/activity.model';
+import { IDropdownFilters } from 'src/app/@core/models/base.model';
+import { ICity } from 'src/app/@core/models/city.model';
 
 @Component({
   selector: 'app-activity-modal',
@@ -10,9 +13,9 @@ import { CityApiService } from 'src/app/@core/api/city-api.service';
   styleUrls: ['./activity-modal.component.scss'],
 })
 export class ActivityModalComponent {
-  activity: any;
+  activity: Partial<IActivity> = {};
   isEdit: boolean = false;
-  cities: any[] = [];
+  cities: Partial<ICity>[] = [];
 
   activityForm: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -37,8 +40,8 @@ export class ActivityModalComponent {
       if (this.isEdit) {
         this.activityForm.patchValue({
           ...this.activity,
-          startDate: new Date(this.activity.startDate),
-          endDate: new Date(this.activity.endDate),
+          startDate: new Date(this.activity.startDate!),
+          endDate: new Date(this.activity.endDate!),
         });
         this.cities.push({ ...this.activity.city });
       }
@@ -77,7 +80,7 @@ export class ActivityModalComponent {
     this.cities$.next(name);
   }
 
-  onFilterCities({ filter }: any) {
+  onFilterCities({ filter }: IDropdownFilters) {
     if (filter && filter.length > 3) {
       this.loadFilteredCities(filter);
     }

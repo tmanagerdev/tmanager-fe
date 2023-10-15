@@ -63,4 +63,19 @@ export class HotelApiService {
       `${environment.apiUrl}/hotels/${hotelId}/delete/${roomId}`
     );
   }
+
+  createMeal(hotel: number, meal: any): Observable<any> {
+    return this.httpClient.post(`${environment.apiUrl}/meals`, {
+      ...meal,
+      hotel,
+    });
+  }
+
+  updateMeal(mealId: any, meal: any): Observable<any> {
+    return this.httpClient.put(`${environment.apiUrl}/meals/${mealId}`, meal);
+  }
+
+  deleteMeal(mealId: any): Observable<any> {
+    return this.httpClient.delete(`${environment.apiUrl}/meals/${mealId}`);
+  }
 }

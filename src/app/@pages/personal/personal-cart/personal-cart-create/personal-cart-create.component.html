@@ -9,6 +9,13 @@
       </span>
       del {{ event.date | customDate }}
     </p>
+    <ng-container *ngIf="status !== EStatusCart.DRAFT">
+      <p-messages
+        [(value)]="messages!"
+        [enableService]="false"
+        [closable]="false"
+      ></p-messages>
+    </ng-container>
     <p-steps
       [model]="items"
       [activeIndex]="activeIndex"
@@ -23,41 +30,62 @@
             [activeIndex]="activeIndex"
             [paxForm]="paxForm"
             [event]="event"
+            [status]="status"
             (nextStep)="onNextStep()"
           ></app-cart-create-pax>
         </ng-container>
         <ng-container *ngSwitchCase="1">
           <app-cart-create-accomodations
+            [selectedHotel]="selectedHotel"
             [isEdit]="isEdit"
             [activeIndex]="activeIndex"
             [accomodationForm]="accomodationForm"
             [event]="event"
+            [status]="status"
+            [hotels]="hotels"
+            [selectedHotel]="selectedHotel"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
+            (changeSelectedHotel)="onChangeSelectedHotel($event)"
           ></app-cart-create-accomodations>
         </ng-container>
         <ng-container *ngSwitchCase="2">
-          <app-cart-create-activity
+          <app-cart-create-meal
             [event]="event"
             [activeIndex]="activeIndex"
+            [hotelMeals]="hotelMeals"
+            [mealForm]="mealForm"
+            (nextStep)="onNextStep()"
+            (prevStep)="onPrevStep()"
+          ></app-cart-create-meal>
+        </ng-container>
+        <ng-container *ngSwitchCase="3">
+          <app-cart-create-activity
+            [event]="event"
+            [cityActivities]="cityActivities"
+            [activeIndex]="activeIndex"
             [activityForm]="activityForm"
+            [status]="status"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-activity>
         </ng-container>
-        <ng-container *ngSwitchCase="3">
+        <ng-container *ngSwitchCase="4">
           <app-cart-create-road
             [activeIndex]="activeIndex"
             [roadForm]="roadForm"
             [event]="event"
+            [veichles]="veichles"
+            [status]="status"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-road>
         </ng-container>
-        <ng-container *ngSwitchCase="4">
+        <ng-container *ngSwitchCase="5">
           <app-recap
             [cartForm]="cartForm"
             [activeIndex]="activeIndex"
+            [status]="status"
             (nextStep)="onSaveCart()"
             (prevStep)="onPrevStep()"
           ></app-recap>

@@ -33,6 +33,15 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TagModule } from 'primeng/tag';
 import { TeamLogoComponent } from '../../../@shared/team-logo/team-logo.component';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { AccordionModule } from 'primeng/accordion';
+import { PanelModule } from 'primeng/panel';
+import { MenuModule } from 'primeng/menu';
+import { AccomodationsPeopleModalComponent } from './personal-cart-create/cart-create-accomodations/accomodations-people-modal/accomodations-people-modal.component';
+import { TagRolePeopleComponent } from 'src/app/@shared/tag-role-people/tag-role-people.component';
+import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
+import { CartCreateMealComponent } from './personal-cart-create/cart-create-meal/cart-create-meal.component';
+import { ModalMealComponent } from './personal-cart-create/cart-create-meal/modal-meal/modal-meal.component';
+import { ModalActivityComponent } from './personal-cart-create/cart-create-activity/modal-activity/modal-activity.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +56,10 @@ import { MultiSelectModule } from 'primeng/multiselect';
     RecapComponent,
     ModalRoadComponent,
     PersonalCartCrateConfirmModalComponent,
+    AccomodationsPeopleModalComponent,
+    CartCreateMealComponent,
+    ModalMealComponent,
+    ModalActivityComponent,
   ],
   providers: [DialogService, MessageService, ConfirmationService],
   imports: [
@@ -73,6 +86,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
     TagModule,
     TeamLogoComponent,
     MultiSelectModule,
+    AccordionModule,
+    PanelModule,
+    MenuModule,
+    TagRolePeopleComponent,
+    RoomNamePipe,
   ],
 })
 export class PersonalCartModule {}

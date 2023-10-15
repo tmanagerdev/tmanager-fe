@@ -6,6 +6,11 @@
       <div class="flex flex-column">
         <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
+        <span class="mt-2">
+          <p-tag severity="Primary" *ngIf="status === EStatusCart.PENDING">
+            <p>Presa in carico il {{ cart.pendingAt | customDate }}</p>
+          </p-tag>
+        </span>
       </div>
       <div class="flex flex-column align-items-end">
         <app-team-logo [team]="awayTeam"></app-team-logo>
@@ -13,113 +18,193 @@
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-end dialog-buttons">
-      <ng-container *ngIf="!cart.isCompleted; else isCompleted">
-        <button
-          pButton
-          pRipple
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-outlined mr-2"
-          label="Modifica"
-          (click)="update()"
-        ></button>
-        <button
-          pButton
-          pRipple
-          icon="pi pi-check"
-          class="p-button-rounded p-button-outlined p-button-success"
-          label="Completa"
-          (click)="complete()"
-        ></button>
-      </ng-container>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-file-pdf"
+        class="p-button-rounded mr-2"
+        [ngClass]="{ 'p-button-outlined': !isDownloading }"
+        label="PDF"
+        (click)="download()"
+        [loading]="isDownloading"
+        loadingIcon="pi pi-file-pdf"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-outlined mr-2"
+        label="Modifica"
+        (click)="update()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-check"
+        class="p-button-rounded p-button-outlined p-button-success"
+        label="Completa"
+        (click)="complete()"
+        *ngIf="cart.status === EStatusCart.DRAFT"
+      ></button>
     </div>
   </div>
 
   <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round m-4">
     <div class="flex flex-column mt-5">
-      <p class="font-semibold mb-2">Partecipanti</p>
-      <p>Calciatori: {{ cart.players }}</p>
-      <p>Staff: {{ cart.staffs }}</p>
-      <p>Dirigenti: {{ cart.managers }}</p>
-      <p class="my-1 text-lg">Totale: {{ totalPax }}</p>
-    </div>
-    <p-divider></p-divider>
-    <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Alloggio</p>
-      <p>
-        {{ hotel }} - dal {{ cart.startDate | customDate }} al
-        {{ cart.endDate | customDate }}
-      </p>
-    </div>
-    <p-divider></p-divider>
-    <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Camere</p>
-      <p-table [value]="rooms">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Tipologia</th>
-            <th>Quantità</th>
-            <th class="text-right">Prezzo</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-room>
-          <tr>
-            <td>{{ room.room.name }}</td>
-            <td>{{ room.quantity }}</td>
-            <td class="text-right">
-              {{ room.room.price | currency : "EUR" : "symbol" }}
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-    <p-divider></p-divider>
-    <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Autonoleggio e tratte</p>
-      <ng-container *ngFor="let r of roads; let i = index">
-        <div class="mb-2">
-          <p class="mb-1">Da {{ r.from }} a {{ r.to }}</p>
-          <p class="mb-1 text-sm">
-            {{ r.startDate | customDate : "showHours" }} -
-            {{ r.endDate | customDate : "showHours" }}
+      <p class="font-semibold mb-2 text-xl">Partecipanti</p>
+      <div class="flex flex-wrap gap-3">
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-3xl font-bold">
+            {{ this.cart.players ?? 0 }}
           </p>
-          <ng-container *ngFor="let v of r.veichles">
-            <div class="px-2">{{ v.quantity }}x {{ v.veichle.name }}</div>
-          </ng-container>
-          <p class="my-1">{{ r.price | currency : "EUR" : "symbol" }}</p>
-          <ng-container *ngIf="i !== roads.length - 1">
-            <p-divider></p-divider>
-          </ng-container>
+          <p>Giocatori</p>
         </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-3xl font-bold">
+            {{ this.cart.staffs ?? 0 }}
+          </p>
+          <p>Staff</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-3xl font-bold">
+            {{ this.cart.managers ?? 0 }}
+          </p>
+          <p>Dirigenti</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-3xl font-bold">
+            {{ this.cart.equipments ?? 0 }}
+          </p>
+          <p>Magazzinieri</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem"
+        >
+          <p class="text-3xl font-bold">
+            {{ this.cart.others ?? 0 }}
+          </p>
+          <p>Altro</p>
+        </div>
+        <div
+          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem ml-auto"
+        >
+          <p class="text-5xl font-bold">
+            {{ totalPax }}
+          </p>
+          <p>Totale</p>
+        </div>
+      </div>
+    </div>
+    <p-divider></p-divider>
+    <div class="flex flex-column mt-1">
+      <p class="font-semibold mb-2 text-xl">Alloggio e camere</p>
+      <ng-container *ngIf="hotel">
+        <ng-container *ngIf="rooms && rooms.length">
+          <p-table [value]="rooms">
+            <ng-template pTemplate="caption">
+              <p>
+                {{ hotel }} - dal {{ cart.startDate | customDate }} al
+                {{ cart.endDate | customDate }}
+              </p>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Tipologia</th>
+                <th>Quantità</th>
+                <th class="text-right">Prezzo</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-room>
+              <tr>
+                <td>{{ room.name | roomName }}</td>
+                <td>{{ room.quantity }}</td>
+                <td class="text-right">
+                  {{ room.price | currency : "EUR" : "symbol" }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!hotel">
+        <p>Nessun hotel selezionato</p>
       </ng-container>
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2">Attività</p>
-      <p-table [value]="activities">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Attività</th>
-            <th>Descrizione</th>
-            <th class="text-right">Prezzo</th>
-            <th>Note</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-activity>
-          <tr>
-            <td>{{ activity.activity.name }}</td>
-            <td>{{ activity.activity.description }}</td>
-            <td class="text-right">
-              {{ activity.activity.price | currency : "EUR" : "symbol" }}
-            </td>
-            <td>{{ activity.note }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
+      <p class="font-semibold mb-2 text-xl">Bus - Auto - Trasporti</p>
+      <ng-container *ngIf="roads && roads.length">
+        <ng-container *ngFor="let r of roads; let i = index">
+          <p-table [value]="r.data">
+            <ng-template pTemplate="caption">
+              <p>{{ r.date | customDate : "showHours" }}</p>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Quantità</th>
+                <th>Veicolo</th>
+                <th>Tratta</th>
+                <th class="text-right">Prezzo</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-road>
+              <tr>
+                <td>{{ road.quantity }}</td>
+                <td>{{ road.road.veichle.name }}</td>
+                <td>{{ road.road.from }} - {{ road.road.to }}</td>
+                <td class="text-right">
+                  {{ road.road.price | currency : "EUR" : "symbol" }}
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="!roads || !roads.length">
+        <p>Nessuna tratta selezionata</p>
+      </ng-container>
+    </div>
+    <p-divider></p-divider>
+    <div class="flex flex-column mt-1">
+      <p class="font-semibold mb-2 text-xl">Attività</p>
+      <ng-container *ngIf="activities && activities.length">
+        <p-table [value]="activities">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Attività</th>
+              <th>Quantità</th>
+              <th>Data</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-activity>
+            <tr>
+              <td>{{ activity.activity.name }}</td>
+              <td>{{ activity.quantity }}</td>
+              <td>{{ activity.startDate | customDate : "showHours" }}</td>
+              <td class="text-right">
+                {{ activity.activity.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
+      <ng-container *ngIf="!activities || !activities.length">
+        <p>Nessuna attività selezionata</p>
+      </ng-container>
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-between">
-      <p class="font-semibold mb-2">TOTALE</p>
-      <p class="text-2xl">{{ total | currency : "EUR" : "symbol" }}</p>
+      <p class="font-semibold mb-2 text-xl">TOTALE</p>
+      <p class="text-3xl">{{ total | currency : "EUR" : "symbol" }}</p>
     </div>
   </div>
 </ng-container>

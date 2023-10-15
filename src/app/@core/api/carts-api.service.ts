@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../models/base.model';
+import { ICart } from '../models/cart.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +19,7 @@ export class CartApiService {
     complete,
     sortField = '',
     sortOrder = 1,
-  }: any): Observable<any> {
+  }: any): Observable<ApiResponse<Partial<ICart>>> {
     return this.httpClient.get(`${environment.apiUrl}/carts`, {
       params: {
         page,
@@ -27,22 +29,41 @@ export class CartApiService {
         ...(complete ? { complete } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
+    }) as any;
+  }
+
+  findOne(cartId: number): Observable<Partial<ICart>> {
+    return this.httpClient.get(`${environment.apiUrl}/carts/${cartId}`);
+  }
+
+  create(cart: Partial<ICart>): Observable<Partial<ICart>> {
+    return this.httpClient.post(`${environment.apiUrl}/carts`, cart);
+  }
+
+  update(id: number, cart: Partial<ICart>): Observable<Partial<ICart>> {
+    return this.httpClient.put(`${environment.apiUrl}/carts/${id}`, cart);
+  }
+
+  delete(id: number): Observable<Partial<ICart>> {
+    return this.httpClient.delete(`${environment.apiUrl}/carts/${id}`);
+  }
+
+  copyLastRooming(team: number): Observable<any> {
+    return this.httpClient.get(`${environment.apiUrl}/carts/last-roomings`, {
+      params: {
+        team,
+      },
     });
   }
 
-  findOne(cityId: number): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/carts/${cityId}`);
-  }
+  downloadPdf(id: number): Observable<any> {
+    const httpOptions = {
+      responseType: 'blob' as 'json',
+    };
 
-  create(city: any): Observable<any> {
-    return this.httpClient.post(`${environment.apiUrl}/carts`, city);
-  }
-
-  update(id: number, city: any): Observable<any> {
-    return this.httpClient.put(`${environment.apiUrl}/carts/${id}`, city);
-  }
-
-  delete(id: number): Observable<any> {
-    return this.httpClient.delete(`${environment.apiUrl}/carts/${id}`);
+    return this.httpClient.get(
+      `${environment.apiUrl}/carts/${id}/pdf`,
+      httpOptions
+    );
   }
 }
