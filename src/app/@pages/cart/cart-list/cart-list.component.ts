@@ -11,6 +11,10 @@ import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { UserApiService } from 'src/app/@core/api/user-api.service';
+import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
+import { ICart } from 'src/app/@core/models/cart.model';
+import { ITeam } from 'src/app/@core/models/team.model';
+import { IUser } from 'src/app/@core/models/user.model';
 
 @Component({
   selector: 'app-cart-list',
@@ -18,15 +22,15 @@ import { UserApiService } from 'src/app/@core/api/user-api.service';
   styleUrls: ['./cart-list.component.scss'],
 })
 export class CartListComponent {
-  carts: any[] = [];
-  teams: any[] = [];
-  users: any[] = [];
+  carts: Partial<ICart>[] = [];
+  teams: Partial<ITeam>[] = [];
+  users: Partial<IUser>[] = [];
 
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
-  sort: any = null;
+  sort: ISort | null = null;
   loading: boolean = false;
   filterActive: boolean = false;
 
@@ -158,26 +162,26 @@ export class CartListComponent {
     this.loadCarts();
   }
 
-  detail(cart: any) {
+  detail(cart: Partial<ICart>) {
     this.router.navigate(['cart', cart.id]);
   }
 
-  update(cart: any) {
+  update(cart: Partial<ICart>) {
     this.router.navigate(['cart', 'edit', cart.id]);
   }
 
-  confirm(cart: any) {
+  confirm(cart: Partial<ICart>) {
     console.log('confirm cart');
   }
 
-  remove(cart: any) {
+  remove(cart: Partial<ICart>) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questa trasferta?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cartApiService
-          .delete(cart.id)
+          .delete(cart.id!)
           .pipe(
             take(1),
             tap(() => {
@@ -206,7 +210,7 @@ export class CartListComponent {
     this.loadCarts();
   }
 
-  onFilterTeam({ filter }: any) {
+  onFilterTeam({ filter }: IDropdownFilters) {
     if (filter && filter.length > 3) {
       this.loadFilteredTeams(filter);
     }
@@ -216,7 +220,7 @@ export class CartListComponent {
     this.teams$.next(name);
   }
 
-  onFilterUser({ filter }: any) {
+  onFilterUser({ filter }: IDropdownFilters) {
     if (filter && filter.length > 3) {
       this.loadFilteredUsers(filter);
     }

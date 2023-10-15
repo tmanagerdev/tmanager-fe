@@ -180,19 +180,19 @@
           <ng-template pTemplate="header">
             <tr>
               <th>Attività</th>
-              <th>Descrizione</th>
+              <th>Quantità</th>
+              <th>Data</th>
               <th class="text-right">Prezzo</th>
-              <th>Note</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-activity>
             <tr>
               <td>{{ activity.activity.name }}</td>
-              <td>{{ activity.activity.description }}</td>
+              <td>{{ activity.quantity }}</td>
+              <td>{{ activity.startDate | customDate : "showHours" }}</td>
               <td class="text-right">
                 {{ activity.activity.price | currency : "EUR" : "symbol" }}
               </td>
-              <td>{{ activity.note }}</td>
             </tr>
           </ng-template>
         </p-table>

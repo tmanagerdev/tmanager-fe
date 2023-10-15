@@ -1,0 +1,113 @@
+<div class="flex flex-column flex-1" [formGroup]="activityForm">
+  <div class="flex flex-column my-2">
+    <div class="flex gap-2">
+      <div class="flex flex-column">
+        <label>Quantità</label>
+        <p-inputNumber
+          inputId="integeronly"
+          formControlName="quantity"
+          class="w-5rem"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-1">
+        <label>Giorno</label>
+        <p-calendar
+          dateFormat="dd/mm/yy"
+          formControlName="startDate"
+        ></p-calendar>
+      </div>
+      <div>
+        <label>Orario</label>
+        <p-calendar
+          dateFormat="hh:MM"
+          formControlName="startDateHour"
+          [timeOnly]="true"
+          class="w-5rem flex justify-content-center"
+        ></p-calendar>
+      </div>
+    </div>
+
+    <p class="font-semibold text-lg my-2">Attività disponibili</p>
+    <div class="py-3">
+      <div class="pb-3">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            type="text"
+            pInputText
+            placeholder="Cerca..."
+            [formControl]="searchControl"
+          />
+        </span>
+      </div>
+      <p-dataView
+        #dv
+        [value]="displayedActivitiesList"
+        [rows]="6"
+        [paginator]="true"
+        [totalRecords]="displayedActivitiesList.length"
+        [lazy]="true"
+      >
+        <ng-template let-activity pTemplate="listItem">
+          <div class="col-12 sm:col-6 lg:col-12 xl:col-4 p-2 border-none">
+            <div
+              class="p-4 border-1 surface-card border-round flex flex-column h-full"
+              [ngClass]="
+                checkIfSelected(activity.id)
+                  ? 'border-primary'
+                  : 'surface-border'
+              "
+            >
+              <div class="flex justify-content-between flex-1">
+                <div class="flex flex-column">
+                  <p class="font-semibold text-xl">{{ activity.name }}</p>
+                  <p class="my-2">
+                    {{ activity.price | currency : "EUR" : "symbol" }}
+                  </p>
+                  <p class="text-sm">{{ activity.description }}</p>
+                </div>
+                <span
+                  *ngIf="checkIfSelected(activity.id)"
+                  class="material-symbols-outlined check-icon"
+                >
+                  check_circle
+                </span>
+              </div>
+
+              <div class="flex justify-content-end">
+                <p-button
+                  *ngIf="!checkIfSelected(activity.id)"
+                  (onClick)="onSelectActivity(activity)"
+                  label="Seleziona"
+                  styleClass="p-button-text"
+                ></p-button>
+                <p-button
+                  *ngIf="checkIfSelected(activity.id)"
+                  (onClick)="onSelectActivity(activity)"
+                  label="Rimuovi"
+                  styleClass="p-button-text p-button-secondary"
+                ></p-button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    </div>
+
+    <div class="flex justify-content-end gap-2 dialog-buttons">
+      <button
+        pButton
+        type="button"
+        label="Annulla"
+        class="p-button-secondary"
+        (click)="ref.close()"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        [label]="isEdit ? 'Aggiorna' : 'Aggiungi'"
+        (click)="onSave()"
+      ></button>
+    </div>
+  </div>
+</div>

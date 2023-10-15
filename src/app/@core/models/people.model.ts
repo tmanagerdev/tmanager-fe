@@ -1,3 +1,6 @@
+import { IRooming } from './rooming.model';
+import { ITeam } from './team.model';
+
 export enum ECategoryPeople {
   PLAYER = 'PLAYER',
   STAFF = 'STAFF',
@@ -14,4 +17,16 @@ export const categoriesPeople = [
   { value: ECategoryPeople.OTHER, label: 'Altro' },
 ];
 
-export interface IPeople {}
+export interface IPeople {
+  id: number;
+  name: string;
+  surname: string;
+  category: string;
+  birthDate: string;
+  birthPlace: string;
+  docNumber: string;
+  docExpiredAt: string;
+  teamId: number;
+  team: ITeam;
+  rooming: IRooming[];
+}

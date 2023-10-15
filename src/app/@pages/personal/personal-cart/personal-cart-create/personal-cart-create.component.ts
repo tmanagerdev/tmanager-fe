@@ -8,12 +8,12 @@ import { EventApiService } from 'src/app/@core/api/events-api.service';
 import { Subject, iif, map, switchMap, takeUntil, tap } from 'rxjs';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { PersonalCartCrateConfirmModalComponent } from './personal-cart-crate-confirm-modal/personal-cart-crate-confirm-modal.component';
 import { CartCreateAccomodationsService } from './cart-create-accomodations/cart-create-accomodations.service';
 import { ECategoryPeople } from 'src/app/@core/models/people.model';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
 import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -51,6 +51,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   hotels: any;
   veichles: any;
   hotelMeals: any;
+  cityActivities: any;
   EStatusCart = EStatusCart;
   status: EStatusCart = EStatusCart.DRAFT;
   messages: Message[] | undefined;
@@ -155,6 +156,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     private eventApiService: EventApiService,
     private hotelApiService: HotelApiService,
     private veichleApiService: VeichleApiService,
+    private activityApiService: ActivityApiService,
     private authService: AuthService,
     private messageService: MessageService,
     public dialogService: DialogService,
@@ -171,8 +173,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.cartApiService.findOne(this.cartId)),
           tap((cart) => this.patchFormEdit(cart)),
           tap((cart) => {
-            this.eventId = cart.event.id;
-            this.status = cart.status;
+            this.eventId = cart.event!.id!;
+            this.status = cart.status!;
           }),
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
@@ -213,7 +215,16 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               city: this.city.id,
             })
           ),
-          tap((veichles: any) => (this.veichles = [...veichles]))
+          tap((veichles: any) => (this.veichles = [...veichles])),
+          switchMap(() =>
+            this.activityApiService.findAll({
+              take: 500,
+              page: 1,
+              city: this.city.id,
+            })
+          ),
+          map((data) => data.data),
+          tap((activities) => (this.cityActivities = [...activities]))
         )
         .subscribe();
     } else {
@@ -245,7 +256,16 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               city: this.city.id,
             })
           ),
-          tap((veichles: any) => (this.veichles = [...veichles]))
+          tap((veichles: any) => (this.veichles = [...veichles])),
+          switchMap(() =>
+            this.activityApiService.findAll({
+              take: 500,
+              page: 1,
+              city: this.city.id,
+            })
+          ),
+          map((data) => data.data),
+          tap((activities) => (this.cityActivities = [...activities]))
         )
         .subscribe();
     }
@@ -342,7 +362,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   }
 
   onChangeSelectedHotel(hotel: any) {
-    console.log('onChangeSelectedHotel', hotel);
     clearFormArray(this.mealForm.get('meals') as FormArray);
     clearFormArray(this.accomodationForm.get('rooms') as FormArray);
 
@@ -485,7 +504,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           name: new FormControl(a.activity.name),
           description: new FormControl(a.activity.description),
           price: new FormControl(a.activity.price),
-          note: new FormControl(a.note),
+          quantity: new FormControl(a.quantity),
+          startDate: new FormControl(new Date(a.startDate)),
         });
         actvitiyActivities.push(activity);
       }
@@ -605,7 +625,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           name: new FormControl(a.name),
           description: new FormControl(a.description),
           price: new FormControl(a.price),
-          note: new FormControl(a.note),
+          quantity: new FormControl(a.quantity),
+          startDate: new FormControl(a.startDate),
         })
       );
     }

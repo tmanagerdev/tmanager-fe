@@ -41,6 +41,7 @@ import { TagRolePeopleComponent } from 'src/app/@shared/tag-role-people/tag-role
 import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
 import { CartCreateMealComponent } from './personal-cart-create/cart-create-meal/cart-create-meal.component';
 import { ModalMealComponent } from './personal-cart-create/cart-create-meal/modal-meal/modal-meal.component';
+import { ModalActivityComponent } from './personal-cart-create/cart-create-activity/modal-activity/modal-activity.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { ModalMealComponent } from './personal-cart-create/cart-create-meal/moda
     AccomodationsPeopleModalComponent,
     CartCreateMealComponent,
     ModalMealComponent,
+    ModalActivityComponent,
   ],
   providers: [DialogService, MessageService, ConfirmationService],
   imports: [

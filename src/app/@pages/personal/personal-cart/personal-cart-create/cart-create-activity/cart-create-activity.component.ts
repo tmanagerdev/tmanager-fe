@@ -5,10 +5,12 @@ import {
   FormGroup,
   UntypedFormGroup,
 } from '@angular/forms';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, debounceTime, map, switchMap, takeUntil, tap } from 'rxjs';
 import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { clearFormArray } from 'src/app/@core/utils';
+import { ModalActivityComponent } from './modal-activity/modal-activity.component';
 
 @Component({
   selector: 'app-cart-create-activity',
@@ -17,7 +19,6 @@ import { clearFormArray } from 'src/app/@core/utils';
 })
 export class CartCreateActivityComponent {
   _event: any;
-  activities: any = [];
   selectedHotel: any = null;
   totalRecords = 0;
   page: number = 0;
@@ -28,27 +29,20 @@ export class CartCreateActivityComponent {
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
 
-  searchFilter = new FormControl('');
-  _activityForm: UntypedFormGroup = new FormGroup({});
+  ref!: DynamicDialogRef;
 
+  searchFilter = new FormControl('');
+  //_activityForm: UntypedFormGroup = new FormGroup({});
+
+  @Input() event: any;
+  @Input() cityActivities: any = [];
+  @Input() activityForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() set status(value: EStatusCart) {
     if (value) {
       this._status = value;
       if (value !== EStatusCart.DRAFT) {
       }
-    }
-  }
-  @Input() set event(event: any) {
-    if (event) {
-      this._event = event;
-      this.loadActivities();
-    }
-  }
-  @Input() set activityForm(value: FormGroup) {
-    if (value) {
-      this._activityForm = value;
-      this.selectedActivities = value.get('activities')?.value;
     }
   }
 
@@ -58,41 +52,15 @@ export class CartCreateActivityComponent {
   activity$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
 
-  get activitiesArray() {
-    return this._activityForm.get('activities') as FormArray;
+  get activities() {
+    return this.activityForm.get('activities') as FormArray;
   }
 
-  constructor(private activityApiService: ActivityApiService) {
-    this.activity$
-      .pipe(
-        takeUntil(this.unsubscribe$),
-        tap(() => (this.loading = true)),
-        switchMap(() =>
-          this.activityApiService.findAll({
-            ...(this.filter ? { name: this.filter } : {}),
-            take: this.size,
-            page: this.page + 1,
-            city: this._event.home.city.id,
-          })
-        ),
-        tap(({ data, total }) => {
-          this.activities = [...data];
-          this.totalRecords = total;
-          this.loading = false;
-        })
-      )
-      .subscribe();
-
-    this.searchFilter.valueChanges
-      .pipe(
-        debounceTime(500),
-        tap((val) => {
-          this.filter = val || '';
-          this.loadActivities();
-        })
-      )
-      .subscribe();
+  get activitiesValue(): any {
+    return this.activityForm.get('activities')?.value;
   }
+
+  constructor(private dialogService: DialogService) {}
 
   ngOnInit(): void {}
 
@@ -106,21 +74,6 @@ export class CartCreateActivityComponent {
   }
 
   onNextStep() {
-    const oldActivities = [...this.activitiesArray.value];
-    clearFormArray(this.activitiesArray);
-    for (const a of this.selectedActivities) {
-      const oldNote =
-        oldActivities.find((act: any) => act.id === a.id).note ?? '';
-      this.activitiesArray.push(
-        new FormGroup({
-          id: new FormControl(a.id),
-          name: new FormControl(a.name),
-          description: new FormControl(a.description),
-          price: new FormControl(a.price),
-          note: new FormControl(oldNote ? oldNote : ''),
-        })
-      );
-    }
     this.nextStep.emit();
   }
 
@@ -128,25 +81,65 @@ export class CartCreateActivityComponent {
     this.prevStep.emit();
   }
 
-  onChangePage(event: any) {
-    this.page = event.first! / event.rows! || 0;
+  onUpdateActivity(index: number) {
+    const activityToUpdate = this.activities.at(index) as FormGroup;
 
-    if (this._event) {
-      this.loadActivities();
-    }
+    this.ref = this.dialogService.open(ModalActivityComponent, {
+      header: 'Aggiorna attività',
+      width: '900px',
+      contentStyle: { overflow: 'visible' },
+      baseZIndex: 10001,
+      data: {
+        activityForm: activityToUpdate,
+        isEdit: true,
+        index: index + 1,
+        activitiesList: this.cityActivities,
+      },
+    });
+
+    this.ref.onClose.subscribe((activity: FormGroup) => {
+      if (activity) {
+        this.activities.at(index).setValue({ ...activity.value });
+      }
+    });
   }
 
-  onSelectActivity(activity: any) {
-    if (this.selectedActivities.find((a: any) => a.id === activity.id)) {
-      this.selectedActivities = this.selectedActivities.filter(
-        (item: any) => item.id !== activity.id
-      );
-    } else {
-      this.selectedActivities.push(activity);
-    }
+  onDeleteActivity(index: number) {
+    this.activities.removeAt(index);
   }
 
-  checkIfSelected(id: number) {
-    return this.selectedActivities.find((a: any) => a.id === id);
+  onAddActivity() {
+    const startDate = new Date(this.event.date);
+    startDate.setDate(startDate.getDate() - 1);
+    startDate.setHours(0, 0, 0, 0);
+
+    const newActivity = new FormGroup({
+      startDate: new FormControl(startDate),
+      startDateHour: new FormControl(startDate),
+      quantity: new FormControl(1),
+      id: new FormControl(null),
+      name: new FormControl(null),
+      description: new FormControl(null),
+      price: new FormControl(null),
+    });
+
+    this.ref = this.dialogService.open(ModalActivityComponent, {
+      header: 'Aggiungi nuova attività',
+      width: '900px',
+      contentStyle: { overflow: 'visible' },
+      baseZIndex: 10001,
+      data: {
+        isEdit: false,
+        activityForm: newActivity,
+        index: this.activities.length + 1,
+        activitiesList: this.cityActivities,
+      },
+    });
+
+    this.ref.onClose.subscribe((activity: FormGroup) => {
+      if (activity) {
+        this.activities.push(activity);
+      }
+    });
   }
 }

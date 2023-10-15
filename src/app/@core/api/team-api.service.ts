@@ -2,6 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
+import { ApiResponse } from '../models/base.model';
+import { ITeam } from '../models/team.model';
+import { IPeople } from '../models/people.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +20,7 @@ export class TeamApiService {
     city = 0,
     sortField = '',
     sortOrder = 1,
-  }: any): Observable<any> {
+  }: any): Observable<ApiResponse<ITeam>> {
     return this.httpClient.get(`${environment.apiUrl}/teams`, {
       params: {
         page,
@@ -27,38 +30,43 @@ export class TeamApiService {
         ...(city ? { city } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
-    });
+    }) as any;
   }
 
-  findOne(teamId: number): Observable<any> {
+  findOne(teamId: number): Observable<Partial<ITeam>> {
     return this.httpClient.get(`${environment.apiUrl}/teams/${teamId}`);
   }
 
-  create(team: any): Observable<any> {
+  create(team: Partial<ITeam>): Observable<Partial<ITeam>> {
     return this.httpClient.post(`${environment.apiUrl}/teams`, team);
   }
 
-  update(id: string, team: any): Observable<any> {
+  update(id: number, team: Partial<ITeam>): Observable<Partial<ITeam>> {
     return this.httpClient.put(`${environment.apiUrl}/teams/${id}`, team);
   }
 
-  delete(id: string): Observable<any> {
+  delete(id: number): Observable<Partial<ITeam>> {
     return this.httpClient.delete(`${environment.apiUrl}/teams/${id}`);
   }
 
-  findPeople(teamId: number): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/teams/${teamId}/people`);
+  findPeople(teamId: number): Observable<ApiResponse<Partial<ITeam>>> {
+    return this.httpClient.get(
+      `${environment.apiUrl}/teams/${teamId}/people`
+    ) as any;
   }
 
-  createPeople(people: any): Observable<any> {
+  createPeople(people: Partial<IPeople>): Observable<Partial<IPeople>> {
     return this.httpClient.post(`${environment.apiUrl}/people`, people);
   }
 
-  updatePeople(id: string, people: any): Observable<any> {
+  updatePeople(
+    id: number,
+    people: Partial<IPeople>
+  ): Observable<Partial<IPeople>> {
     return this.httpClient.put(`${environment.apiUrl}/people/${id}`, people);
   }
 
-  deletePeople(id: string): Observable<any> {
+  deletePeople(id: number): Observable<Partial<IPeople>> {
     return this.httpClient.delete(`${environment.apiUrl}/people/${id}`);
   }
 }

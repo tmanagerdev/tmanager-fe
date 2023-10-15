@@ -11,7 +11,6 @@ import { ModalMealComponent } from './modal-meal/modal-meal.component';
 })
 export class CartCreateMealComponent {
   ref!: DynamicDialogRef;
-  firstIndex: number = 0;
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
 
@@ -72,7 +71,7 @@ export class CartCreateMealComponent {
   }
 
   onDeleteMeal(index: number) {
-    this.meals.removeAt(index + this.firstIndex);
+    this.meals.removeAt(index);
   }
 
   onAddMeal() {

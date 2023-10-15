@@ -10,6 +10,8 @@ import { CalendarModalComponent } from '../calendar-modal/calendar-modal.compone
 import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
+import { ICalendar } from 'src/app/@core/models/calendar.model';
+import { ISort } from 'src/app/@core/models/base.model';
 
 @Component({
   selector: 'app-calendar-list',
@@ -17,12 +19,12 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./calendar-list.component.scss'],
 })
 export class CalendarListComponent {
-  calendars: any[] = [];
+  calendars: Partial<ICalendar>[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
-  sort: any = null;
+  sort: ISort | null = null;
   loading: boolean = false;
 
   searchFilter = new FormControl('');
@@ -115,13 +117,13 @@ export class CalendarListComponent {
       baseZIndex: 10001,
     });
 
-    this.ref.onClose.subscribe((newCalendar: any) => {
+    this.ref.onClose.subscribe((newCalendar: Partial<ICalendar>) => {
       if (newCalendar) {
         this.calendarApiService
           .create(newCalendar)
           .pipe(
             take(1),
-            tap((data) => {
+            tap(() => {
               this.loadCalendars();
               this.messageService.add({
                 severity: 'success',
@@ -135,7 +137,7 @@ export class CalendarListComponent {
     });
   }
 
-  update(calendar: any) {
+  update(calendar: Partial<ICalendar>) {
     this.ref = this.dialogService.open(CalendarModalComponent, {
       header: `Aggiorna ${calendar.name}`,
       width: '450px',
@@ -146,13 +148,13 @@ export class CalendarListComponent {
       },
     });
 
-    this.ref.onClose.subscribe((newCalendar: any) => {
+    this.ref.onClose.subscribe((newCalendar: Partial<ICalendar>) => {
       if (newCalendar) {
         this.calendarApiService
-          .update(calendar.id, newCalendar)
+          .update(calendar.id!, newCalendar)
           .pipe(
             take(1),
-            tap((data) => {
+            tap(() => {
               this.loadCalendars();
               this.messageService.add({
                 severity: 'success',
@@ -166,14 +168,14 @@ export class CalendarListComponent {
     });
   }
 
-  remove(calendar: any) {
+  remove(calendar: Partial<ICalendar>) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questo calendario?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.calendarApiService
-          .delete(calendar.id)
+          .delete(calendar.id!)
           .pipe(
             take(1),
             tap(() => {
@@ -190,7 +192,7 @@ export class CalendarListComponent {
     });
   }
 
-  detail(calendar: any) {
+  detail(calendar: Partial<ICalendar>) {
     this.router.navigate(['calendar', calendar.id]);
   }
 }

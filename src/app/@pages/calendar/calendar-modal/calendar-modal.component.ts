@@ -3,6 +3,9 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
+import { IDropdownFilters } from 'src/app/@core/models/base.model';
+import { ICalendar } from 'src/app/@core/models/calendar.model';
+import { ILeague } from 'src/app/@core/models/league.model';
 
 @Component({
   selector: 'app-calendar-modal',
@@ -10,9 +13,9 @@ import { LeagueApiService } from 'src/app/@core/api/league-api.service';
   styleUrls: ['./calendar-modal.component.scss'],
 })
 export class CalendarModalComponent {
-  calendar: any;
+  calendar!: Partial<ICalendar>;
   isEdit: boolean = false;
-  leagues: any[] = [];
+  leagues: Partial<ILeague>[] = [];
 
   calendarForm: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
@@ -35,8 +38,8 @@ export class CalendarModalComponent {
       this.isEdit = true;
       this.calendarForm.patchValue({
         ...this.calendar,
-        startDate: new Date(this.calendar.startDate),
-        endDate: new Date(this.calendar.endDate),
+        startDate: new Date(this.calendar.startDate!),
+        endDate: new Date(this.calendar.endDate!),
       });
       this.leagues.push({ ...this.calendar.league });
     }
@@ -72,7 +75,7 @@ export class CalendarModalComponent {
     this.leagues$.next(name);
   }
 
-  onFilterLeague({ filter }: any) {
+  onFilterLeague({ filter }: IDropdownFilters) {
     if (filter && filter.length > 3) {
       this.loadFilteredLeagues(filter);
     }

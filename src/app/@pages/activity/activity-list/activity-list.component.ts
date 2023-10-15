@@ -11,6 +11,9 @@ import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
 import { FormControl, UntypedFormControl } from '@angular/forms';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { IActivity } from 'src/app/@core/models/activity.model';
+import { ICity } from 'src/app/@core/models/city.model';
+import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
 
 @Component({
   selector: 'app-activity-list',
@@ -18,13 +21,13 @@ import { OverlayPanel } from 'primeng/overlaypanel';
   styleUrls: ['./activity-list.component.scss'],
 })
 export class ActivityListComponent {
-  activities: any[] = [];
-  cities: any[] = [];
+  activities: Partial<IActivity>[] = [];
+  cities: Partial<ICity>[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
-  sort: any = null;
+  sort?: ISort | null;
   loading: boolean = false;
   filterActive: boolean = false;
 
@@ -148,14 +151,14 @@ export class ActivityListComponent {
       data: {},
     });
 
-    this.ref.onClose.subscribe((newActivity: any) => {
+    this.ref.onClose.subscribe((newActivity: IActivity) => {
       if (newActivity) {
         const { city, ...activityToSave } = newActivity;
         this.activityApiService
           .create({ ...activityToSave, cityId: city.id })
           .pipe(
             take(1),
-            tap((data) => {
+            tap(() => {
               this.loadActivities();
               this.messageService.add({
                 severity: 'success',
@@ -169,7 +172,7 @@ export class ActivityListComponent {
     });
   }
 
-  update(activity: any) {
+  update(activity: IActivity) {
     this.ref = this.dialogService.open(ActivityModalComponent, {
       header: `Aggiorna ${activity.name}`,
       width: '600px',
@@ -181,7 +184,7 @@ export class ActivityListComponent {
       },
     });
 
-    this.ref.onClose.subscribe((newActivity: any) => {
+    this.ref.onClose.subscribe((newActivity: IActivity) => {
       if (newActivity) {
         const { city, ...activityToSave } = newActivity;
         this.activityApiService
@@ -202,14 +205,14 @@ export class ActivityListComponent {
     });
   }
 
-  remove(activity: any) {
+  remove(activity: Partial<IActivity>) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questa attività?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.activityApiService
-          .delete(activity.id)
+          .delete(activity.id!)
           .pipe(
             take(1),
             tap(() => {
@@ -239,7 +242,7 @@ export class ActivityListComponent {
     this.loadActivities();
   }
 
-  onFilterCity({ filter }: any) {
+  onFilterCity({ filter }: IDropdownFilters) {
     if (filter && filter.length > 3) {
       this.loadFilteredCities(filter);
     }
