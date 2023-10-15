@@ -22,6 +22,7 @@ import { ChipModule } from 'primeng/chip';
 import { DividerModule } from 'primeng/divider';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { UserRolePipe } from 'src/app/@core/pipes/user-role.pipe';
 
 @NgModule({
   declarations: [UserListComponent, UserModalComponent],
@@ -47,6 +48,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     DividerModule,
     EntityListComponent,
     OverlayPanelModule,
+    UserRolePipe,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

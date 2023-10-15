@@ -4,6 +4,19 @@
   padding: 4px;
   font-weight: 600;
 
+  &-primary {
+    background-color: var(--primary-200);
+    color: var(--primary-900);
+  }
+  &-success {
+    background-color: var(--green-200);
+    color: var(--green-900);
+  }
+  &-warning {
+    background-color: var(--yellow-200);
+    color: var(--yellow-900);
+  }
+
   &-DRAFT {
     background-color: var(--primary-300);
     color: var(--primary-900);
