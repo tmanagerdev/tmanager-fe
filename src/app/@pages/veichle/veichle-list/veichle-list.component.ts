@@ -234,7 +234,7 @@ export class VeichleListComponent {
   }
 
   onFilterCity({ filter }: any) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredCities(filter);
     }
   }

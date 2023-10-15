@@ -70,7 +70,7 @@ export class HotelModalComponent {
   }
 
   onFilterCities({ filter }: any) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredCities(filter);
     }
   }

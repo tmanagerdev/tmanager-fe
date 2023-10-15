@@ -268,13 +268,13 @@ export class TeamListComponent {
   }
 
   onFilterCity({ filter }: any) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredCities(filter);
     }
   }
 
   onFilterLeague({ filter }: any) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredLeagues(filter);
     }
   }

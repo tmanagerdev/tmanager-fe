@@ -76,7 +76,7 @@ export class CalendarModalComponent {
   }
 
   onFilterLeague({ filter }: IDropdownFilters) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredLeagues(filter);
     }
   }

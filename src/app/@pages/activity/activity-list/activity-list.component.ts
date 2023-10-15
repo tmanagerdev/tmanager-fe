@@ -243,7 +243,7 @@ export class ActivityListComponent {
   }
 
   onFilterCity({ filter }: IDropdownFilters) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredCities(filter);
     }
   }

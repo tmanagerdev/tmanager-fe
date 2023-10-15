@@ -248,7 +248,7 @@ export class HotelListComponent {
   }
 
   onFilterCity({ filter }: any) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredCities(filter);
     }
   }

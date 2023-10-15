@@ -211,7 +211,7 @@ export class CartListComponent {
   }
 
   onFilterTeam({ filter }: IDropdownFilters) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredTeams(filter);
     }
   }
@@ -221,7 +221,7 @@ export class CartListComponent {
   }
 
   onFilterUser({ filter }: IDropdownFilters) {
-    if (filter && filter.length > 3) {
+    if (filter) {
       this.loadFilteredUsers(filter);
     }
   }
