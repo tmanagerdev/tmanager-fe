@@ -4,6 +4,7 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
+import { IDropdownFilters } from 'src/app/@core/models/base.model';
 
 @Component({
   selector: 'app-team-modal',
@@ -94,11 +95,11 @@ export class TeamModalComponent {
     this.leagues$.next(name);
   }
 
-  onFilterCity({ query }: any) {
-    this.loadFilteredCities(query);
+  onFilterCity({ filter }: IDropdownFilters) {
+    this.loadFilteredCities(filter);
   }
 
-  onFilterLeague({ query }: any) {
-    this.loadFilteredLeagues(query);
+  onFilterLeague({ filter }: IDropdownFilters) {
+    this.loadFilteredLeagues(filter);
   }
 }

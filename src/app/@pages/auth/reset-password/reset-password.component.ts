@@ -46,11 +46,11 @@ export class ResetPasswordComponent {
         .pipe(
           take(1),
           tap(() => {
+            this.router.navigate(['/']);
             this.messageService.add({
               severity: 'success',
               summary: 'Password resettata',
             });
-            this.router.navigate(['/auth', '/sign-in']);
           })
         )
         .subscribe();

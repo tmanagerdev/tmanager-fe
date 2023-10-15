@@ -32,7 +32,7 @@ export class AuthApiService {
 
   resetPassword(resetData: any): Observable<any> {
     return this.httpClient.post(
-      `${environment.apiUrl}/auth/recovery-password`,
+      `${environment.apiUrl}/auth/reset-password`,
       resetData
     );
   }

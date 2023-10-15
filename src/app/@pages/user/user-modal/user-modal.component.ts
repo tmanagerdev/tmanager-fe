@@ -9,7 +9,7 @@ import {
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
-import { ROLES } from 'src/app/@core/constant';
+import { ERoleUser, rolesUser } from 'src/app/@core/models/user.model';
 
 @Component({
   selector: 'app-user-modal',
@@ -23,10 +23,10 @@ export class UserModalComponent implements OnInit, OnDestroy {
     email: new FormControl(null, Validators.required),
     firstName: new FormControl(null),
     lastName: new FormControl(null),
-    role: new FormControl(null, Validators.required),
+    role: new FormControl(ERoleUser.USER, Validators.required),
     teams: new FormArray([]),
   });
-  roles = ROLES;
+  roles = rolesUser;
   teams: any[] = [];
 
   teamFilter = new UntypedFormControl(null);
@@ -64,7 +64,7 @@ export class UserModalComponent implements OnInit, OnDestroy {
       this.userForm.patchValue(this.user);
 
       if (this.isEdit) {
-        const role = this.roles.find((r) => r.key === this.user.role);
+        const role = this.roles.find((r) => r.value === this.user.role);
         this.userForm.patchValue({ role });
 
         if (this.user.teams) {
