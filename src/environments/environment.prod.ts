@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://gifted-shirt-pike.cyclic.app',
+  apiUrl: 'https://king-prawn-app-vhc9u.ondigitalocean.app',
 };
