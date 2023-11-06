@@ -1,4 +1,4 @@
 export const environment = {
-  production: false,
-  apiUrl: 'https://king-prawn-app-vhc9u.ondigitalocean.app',
+  production: true,
+  apiUrl: 'https://api.tmanager.it',
 };
