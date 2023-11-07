@@ -209,6 +209,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                 h.id === this.accomodationForm.get('hotel')?.get('id')?.value
             );
             this.hotelMeals = [...this.selectedHotel.meals];
+            console.log('this hotel meals', this.hotelMeals);
           }),
           switchMap(() =>
             this.veichleApiService.findAllRoad({
@@ -458,11 +459,14 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     if (cart.meals && cart.meals.length) {
       const meals = this.mealForm.get('meals') as FormArray;
       for (const m of cart.meals) {
+        console.log('m', m);
         const room = new FormGroup({
           id: new FormControl(m.meal.id),
           name: new FormControl(m.meal.name),
           quantity: new FormControl(m.quantity),
+          description: new FormControl(m.description),
           startDate: new FormControl(new Date(m.startDate)),
+          custom: new FormControl(m.meal.custom),
         });
         meals.push(room);
       }
@@ -641,6 +645,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           quantity: new FormControl(m.quantity),
           startDate: new FormControl(m.startDate),
           name: new FormControl(m.name),
+          description: new FormControl(m.description),
         })
       );
     }

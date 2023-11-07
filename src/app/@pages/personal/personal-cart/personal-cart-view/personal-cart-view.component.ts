@@ -167,6 +167,11 @@ export class PersonalCartViewComponent {
 
   download() {
     this.isDownloading = true;
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Download iniziato',
+      detail: ' Il file verrà scaricato nel browser tra qualche secondo!',
+    });
     this.cartApiService
       .downloadPdf(this.cartId)
       .pipe(
@@ -180,8 +185,10 @@ export class PersonalCartViewComponent {
           link.click();
         })
       )
-      .subscribe((data) => {
-        //this.blob = new Blob([data], {type: 'application/pdf'});
-      });
+      .subscribe();
+  }
+
+  backToCarts() {
+    this.router.navigate(['personal', 'carts']);
   }
 }

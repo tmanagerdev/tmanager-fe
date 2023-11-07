@@ -42,6 +42,9 @@ import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
 import { CartCreateMealComponent } from './personal-cart-create/cart-create-meal/cart-create-meal.component';
 import { ModalMealComponent } from './personal-cart-create/cart-create-meal/modal-meal/modal-meal.component';
 import { ModalActivityComponent } from './personal-cart-create/cart-create-activity/modal-activity/modal-activity.component';
+import { SkeletonModule } from 'primeng/skeleton';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { StatusCartPipe } from '../../../@core/pipes/status-cart.pipe';
 
 @NgModule({
   declarations: [
@@ -91,6 +94,9 @@ import { ModalActivityComponent } from './personal-cart-create/cart-create-activ
     MenuModule,
     TagRolePeopleComponent,
     RoomNamePipe,
+    SkeletonModule,
+    OverlayPanelModule,
+    StatusCartPipe,
   ],
 })
 export class PersonalCartModule {}

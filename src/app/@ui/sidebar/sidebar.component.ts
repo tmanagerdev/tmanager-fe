@@ -56,8 +56,8 @@ export class SidebarComponent implements OnInit {
             routerLink: ['/', 'personal', 'events'],
           },
           {
-            label: 'Mie trasferte',
-            icon: 'shopping_cart',
+            label: 'Trasferte',
+            icon: 'star',
             routerLink: ['/', 'personal', 'carts'],
           },
         ],

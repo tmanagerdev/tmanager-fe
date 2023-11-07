@@ -85,6 +85,8 @@ export class CartCreateMealComponent {
       quantity: new FormControl(1),
       id: new FormControl(null),
       name: new FormControl(null),
+      description: new FormControl(null),
+      custom: new FormControl(false),
     });
 
     this.ref = this.dialogService.open(ModalMealComponent, {

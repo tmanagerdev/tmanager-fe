@@ -1,6 +1,13 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
 <ng-container *ngIf="cart">
+  <div class="flex align-items-center gap-4">
+    <i
+      class="pi pi-angle-left cursor-pointer text-4xl"
+      (click)="backToCarts()"
+    ></i>
+    <p>Torna a lista trasferte</p>
+  </div>
   <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
     <div class="flex justify-content-between">
       <div class="flex flex-column">
@@ -18,17 +25,26 @@
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-end dialog-buttons">
-      <button
-        pButton
-        pRipple
-        icon="pi pi-file-pdf"
-        class="p-button-rounded mr-2"
-        [ngClass]="{ 'p-button-outlined': !isDownloading }"
-        label="PDF"
-        (click)="download()"
-        [loading]="isDownloading"
-        loadingIcon="pi pi-file-pdf"
-      ></button>
+      <ng-container *ngIf="isDownloading">
+        <button
+          pButton
+          pRipple
+          class="p-button-rounded mr-2"
+          label="PDF"
+          [loading]="true"
+        ></button>
+      </ng-container>
+      <ng-container *ngIf="!isDownloading">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-file-pdf"
+          class="p-button-outlined p-button-rounded mr-2"
+          label="PDF"
+          (click)="download()"
+        ></button>
+      </ng-container>
+
       <button
         pButton
         pRipple

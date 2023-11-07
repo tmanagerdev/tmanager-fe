@@ -1,7 +1,9 @@
-<h2 class="mb-2">Le mie prenotazioni</h2>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
 
+<h2 class="mb-2">Trasferte</h2>
 <div
-  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4 dialog-buttons"
 >
   <p-multiSelect
     [options]="currentUser.teams"
@@ -10,18 +12,139 @@
     placeholder="Filtra per squadra"
   ></p-multiSelect>
 
-  <div>
+  <div class="flex align-items-center gap-2">
     <button
       pButton
       pRipple
       label="Applica filtri"
-      class="p-button-primary mr-2"
+      class="p-button-text"
       (click)="onApplyFilters()"
     ></button>
+    <!-- <button
+      pButton
+      pRipple
+      label="Aggiungi trasferta"
+      class="p-button-primary"
+      (click)="onAddCart()"
+    ></button> -->
   </div>
 </div>
 
-<p-dataView
+<p-table
+  #dt
+  [value]="carts"
+  [totalRecords]="totalRecords"
+  [rows]="size"
+  [paginator]="true"
+  [lazy]="true"
+  (onLazyLoad)="onChangePage($event)"
+  dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true"
+  [loading]="loading"
+  class="tman-shadow"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="createdAt">
+        Inizio <p-sortIcon field="startDate"></p-sortIcon>
+      </th>
+      <th pSortableColumn="createdAt">
+        Fine <p-sortIcon field="endDate"></p-sortIcon>
+      </th>
+      <th pSortableColumn="name">Squadra di casa</th>
+      <th pSortableColumn="name">Squadra ospite</th>
+      <th>Stato</th>
+      <th pSortableColumn="name">Campionato</th>
+      <th pSortableColumn="createdAt">
+        Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+      </th>
+      <th>Azioni</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-cart>
+    <tr>
+      <td>{{ cart.startDate | customDate }}</td>
+      <td>{{ cart.endDate | customDate }}</td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="cart.event.home"></app-team-logo>
+          <p>
+            {{ cart.event.home.name }}
+          </p>
+        </div>
+      </td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="cart.event.away"></app-team-logo>
+          <p>
+            {{ cart.event.away.name }}
+          </p>
+        </div>
+      </td>
+      <td>
+        <span class="chips" [ngClass]="'chips-' + cart.status">
+          {{ cart.status | statusCart }}
+        </span>
+      </td>
+      <td>
+        <p class="font-semibold">
+          {{ cart.event.calendar.name }}
+        </p>
+        <p>{{ cart.event.day }}° giornata</p>
+      </td>
+      <td>{{ cart.createdAt | customDate }}</td>
+      <td>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          styleClass="p-button-rounded p-button-secondary p-button-text"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <button
+            pButton
+            pRipple
+            label="Visualizza"
+            class="p-button-text"
+            (click)="openCart(cart)"
+          ></button>
+          <button
+            *ngIf="cart.status === EStatusCart.DRAFT"
+            pButton
+            pRipple
+            label="Conferma"
+            class="p-button-text p-button-success"
+            (click)="complete(cart)"
+          ></button>
+        </p-overlayPanel>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- <p-dataView
   #dv
   [value]="carts"
   [rows]="5"
@@ -86,4 +209,4 @@
       </div>
     </div>
   </ng-template>
-</p-dataView>
+</p-dataView> -->

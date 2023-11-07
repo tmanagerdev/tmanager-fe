@@ -13,6 +13,7 @@ export class HotelMealsModalComponent {
 
   mealForm: FormGroup = new FormGroup({
     name: new FormControl('', Validators.required),
+    custom: new FormControl(false),
   });
 
   constructor(

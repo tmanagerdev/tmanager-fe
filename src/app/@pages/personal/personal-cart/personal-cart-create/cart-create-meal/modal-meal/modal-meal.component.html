@@ -36,6 +36,7 @@
           [filter]="true"
           filterBy="name"
           placeholder="Seleziona pasto"
+          (onChange)="onChangeMeal($event)"
         >
           <ng-template let-meal pTemplate="selectedItem">
             {{ meal.name }}
@@ -45,6 +46,15 @@
           </ng-template>
         </p-dropdown>
       </div>
+    </div>
+    <div class="flex flex-column" *ngIf="isCustom">
+      <label>Menù</label>
+      <textarea
+        rows="5"
+        cols="30"
+        pInputTextarea
+        formControlName="description"
+      ></textarea>
     </div>
   </div>
 

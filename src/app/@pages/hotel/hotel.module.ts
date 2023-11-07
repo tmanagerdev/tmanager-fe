@@ -28,6 +28,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
 import { HotelMealsComponent } from './hotel-meals/hotel-meals.component';
 import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-meals-modal.component';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-
     OverlayPanelModule,
     InputNumberModule,
     RoomNamePipe,
+    ToggleButtonModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })

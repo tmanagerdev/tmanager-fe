@@ -40,6 +40,7 @@
             {{ activity.description }}
           </p>
         </td>
+        <td>{{ activity.price | currency : "EUR" : "symbol" }}</td>
         <td>
           <button
             pButton
