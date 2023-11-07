@@ -208,7 +208,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               (h: any) =>
                 h.id === this.accomodationForm.get('hotel')?.get('id')?.value
             );
-            this.hotelMeals = [...this.selectedHotel.meals];
+            this.hotelMeals = [...(this.selectedHotel.meals ?? [])];
             console.log('this hotel meals', this.hotelMeals);
           }),
           switchMap(() =>
