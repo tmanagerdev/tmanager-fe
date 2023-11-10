@@ -85,12 +85,7 @@
       </th>
       <th>Descrizione</th>
       <th>Città</th>
-      <th pSortableColumn="startDate">
-        Data inizio<p-sortIcon field="startDate"></p-sortIcon>
-      </th>
-      <th pSortableColumn="endDate">
-        Data fine<p-sortIcon field="endDate"></p-sortIcon>
-      </th>
+      <th>Stato</th>
       <th>Prezzo</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -103,8 +98,14 @@
       <td>{{ activity.name }}</td>
       <td>{{ activity.description }}</td>
       <td>{{ activity.city.name }}</td>
-      <td>{{ activity.startDate | customDate }}</td>
-      <td>{{ activity.endDate | customDate }}</td>
+      <td>
+        <span
+          class="chips"
+          [ngClass]="activity.enabled ? 'chips-success' : 'chips-warning'"
+        >
+          {{ activity.enabled ? "ATTIVO" : "NON ATTIVO" }}
+        </span>
+      </td>
       <td>{{ activity.price | currency : "EUR" : "symbol" }}</td>
       <td>{{ activity.createdAt | customDate }}</td>
       <td>

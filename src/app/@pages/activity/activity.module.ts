@@ -24,6 +24,7 @@ import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.com
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 
 @NgModule({
   declarations: [ActivityListComponent, ActivityModalComponent],
@@ -51,6 +52,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     CalendarModule,
     InputNumberModule,
     OverlayPanelModule,
+    ToggleButtonModule,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
 })
