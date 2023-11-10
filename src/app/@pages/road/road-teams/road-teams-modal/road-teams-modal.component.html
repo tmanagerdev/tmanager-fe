@@ -1,0 +1,40 @@
+<form
+  [formGroup]="teamForm"
+  class="flex flex-column gap-3"
+  (ngSubmit)="onSave()"
+>
+  <div class="flex gap-2">
+    <div class="flex-1 flex flex-column gap-2">
+      <label>Squadra</label>
+      <p-dropdown
+        [options]="teams"
+        formControlName="id"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Seleziona la squadra"
+        (onShow)="loadFilteredTeams('')"
+        (onFilter)="onFilterTeam($event)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons mt-4">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Salva"
+      [disabled]="!teamForm.valid"
+    ></button>
+  </div>
+</form>

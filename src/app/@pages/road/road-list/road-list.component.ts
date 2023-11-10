@@ -1,28 +1,28 @@
 import { Component, ViewChild } from '@angular/core';
+import { FormControl, UntypedFormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   ConfirmationService,
   LazyLoadEvent,
   MessageService,
 } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
-import { ActivityModalComponent } from '../activity-modal/activity-modal.component';
-import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
-import { FormControl, UntypedFormControl } from '@angular/forms';
-import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
-import { IActivity } from 'src/app/@core/models/activity.model';
-import { ICity } from 'src/app/@core/models/city.model';
+import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
+import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
-import { Router } from '@angular/router';
+import { ICity } from 'src/app/@core/models/city.model';
+import { IRoad } from 'src/app/@core/models/road.model';
+import { RoadModalComponent } from '../road-modal/road-modal.component';
+import { RoadApiService } from 'src/app/@core/api/road-api.service';
 
 @Component({
-  selector: 'app-activity-list',
-  templateUrl: './activity-list.component.html',
-  styleUrls: ['./activity-list.component.scss'],
+  selector: 'app-road-list',
+  templateUrl: './road-list.component.html',
+  styleUrls: ['./road-list.component.scss'],
 })
-export class ActivityListComponent {
-  activities: Partial<IActivity>[] = [];
+export class RoadListComponent {
+  roads: Partial<IRoad>[] = [];
   cities: Partial<ICity>[] = [];
   totalRecords: number = 0;
   page: number = 0;
@@ -36,7 +36,7 @@ export class ActivityListComponent {
   cityFilter = new UntypedFormControl('');
 
   cities$: Subject<string> = new Subject();
-  activities$: Subject<void> = new Subject();
+  roads$: Subject<void> = new Subject();
   destroy$: Subject<void> = new Subject();
 
   ref!: DynamicDialogRef;
@@ -62,21 +62,21 @@ export class ActivityListComponent {
   constructor(
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private activityApiService: ActivityApiService,
+    private roadApiService: RoadApiService,
     private cityApiService: CityApiService,
     public dialogService: DialogService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.activities$
+    this.roads$
       .pipe(
         takeUntil(this.destroy$),
         switchMap(() =>
-          this.activityApiService.findAll({
+          this.roadApiService.findAll({
             page: this.page + 1,
             take: this.size,
-            ...(this.filter ? { name: this.filter } : {}),
+            ...(this.filter ? { search: this.filter } : {}),
             ...(this.cityFilterId ? { city: this.cityFilterId } : {}),
             ...(this.sort && this.sort.field
               ? { sortField: this.sort.field, sortOrder: this.sort.order }
@@ -84,7 +84,7 @@ export class ActivityListComponent {
           })
         ),
         tap(({ data, total }) => {
-          this.activities = [...data];
+          this.roads = [...data];
           this.totalRecords = total;
           this.loading = false;
         })
@@ -96,7 +96,7 @@ export class ActivityListComponent {
         debounceTime(500),
         tap((val) => {
           this.filter = val || '';
-          this.loadActivities();
+          this.loadRoads();
         })
       )
       .subscribe();
@@ -123,10 +123,10 @@ export class ActivityListComponent {
     this.destroy$.complete();
   }
 
-  loadActivities() {
+  loadRoads() {
     this.loading = true;
-    this.activities = [];
-    this.activities$.next();
+    this.roads = [];
+    this.roads$.next();
   }
 
   onChangePage(event: LazyLoadEvent) {
@@ -141,31 +141,30 @@ export class ActivityListComponent {
       this.sort = null;
     }
 
-    this.loadActivities();
+    this.loadRoads();
   }
 
   create() {
-    this.ref = this.dialogService.open(ActivityModalComponent, {
-      header: `Crea nuova attività`,
+    this.ref = this.dialogService.open(RoadModalComponent, {
+      header: `Crea nuova tratta`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {},
     });
 
-    this.ref.onClose.subscribe((newActivity: IActivity) => {
-      if (newActivity) {
-        const { city, ...activityToSave } = newActivity;
-        this.activityApiService
-          .create({ ...activityToSave, cityId: city.id })
+    this.ref.onClose.subscribe((newRoad: IRoad) => {
+      if (newRoad) {
+        const { city, ...roadToSave } = newRoad;
+        this.roadApiService
+          .create({ ...roadToSave, cityId: city.id })
           .pipe(
             take(1),
             tap(() => {
-              this.loadActivities();
+              this.loadRoads();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Attività creata',
-                detail: activityToSave.name,
+                summary: 'Tratta creata',
               });
             })
           )
@@ -174,31 +173,30 @@ export class ActivityListComponent {
     });
   }
 
-  update(activity: IActivity) {
-    this.ref = this.dialogService.open(ActivityModalComponent, {
-      header: `Aggiorna ${activity.name}`,
+  update(road: IRoad) {
+    this.ref = this.dialogService.open(RoadModalComponent, {
+      header: `Aggiorna tratta`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {
-        activity,
+        road,
         isEdit: true,
       },
     });
 
-    this.ref.onClose.subscribe((newActivity: IActivity) => {
-      if (newActivity) {
-        const { city, ...activityToSave } = newActivity;
-        this.activityApiService
-          .update(activity.id, { ...activityToSave, cityId: city.id })
+    this.ref.onClose.subscribe((newRoad: IRoad) => {
+      if (newRoad) {
+        const { city, ...roadToSave } = newRoad;
+        this.roadApiService
+          .update(road.id, { ...roadToSave, cityId: city.id })
           .pipe(
             take(1),
             tap((data) => {
-              this.loadActivities();
+              this.loadRoads();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Attività aggiornata',
-                detail: activityToSave.name,
+                summary: 'Tratta aggiornata',
               });
             })
           )
@@ -207,22 +205,21 @@ export class ActivityListComponent {
     });
   }
 
-  remove(activity: Partial<IActivity>) {
+  remove(road: Partial<IRoad>) {
     this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questa attività?',
+      message: 'Sei sicuro di voler eliminare questa tratta?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.activityApiService
-          .delete(activity.id!)
+        this.roadApiService
+          .delete(road.id!)
           .pipe(
             take(1),
             tap(() => {
-              this.loadActivities();
+              this.loadRoads();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Attività eliminata',
-                detail: activity.name,
+                summary: 'Tratta eliminata',
               });
             })
           )
@@ -234,14 +231,14 @@ export class ActivityListComponent {
   applyFilters() {
     this.filterActive = true;
     this.filtersPopup.hide();
-    this.loadActivities();
+    this.loadRoads();
   }
 
   resetFilters() {
     this.filterActive = false;
     this.cityFilter.setValue(null);
     this.filtersPopup.hide();
-    this.loadActivities();
+    this.loadRoads();
   }
 
   onFilterCity({ filter }: IDropdownFilters) {
@@ -254,7 +251,7 @@ export class ActivityListComponent {
     this.cities$.next(name);
   }
 
-  teams(activity: IActivity) {
-    this.router.navigate(['activity', activity.id, 'teams']);
+  teams(road: IRoad) {
+    this.router.navigate(['road', road.id, 'teams']);
   }
 }

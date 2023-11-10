@@ -1,0 +1,56 @@
+<form
+  [formGroup]="roadForm"
+  class="flex flex-column gap-3"
+  (ngSubmit)="onSave()"
+>
+  <div class="flex flex-column gap-2">
+    <label>Da</label>
+    <input pInputText placeholder="Da" formControlName="from" />
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>A</label>
+    <input pInputText placeholder="A" formControlName="to" />
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Prezzo</label>
+    <p-inputNumber
+      mode="currency"
+      inputId="currency-italy"
+      formControlName="price"
+      placeholder="Prezzo"
+      currency="EUR"
+      locale="it-IT"
+    ></p-inputNumber>
+  </div>
+  <div class="flex flex-column gap-2">
+    <label>Città</label>
+    <p-dropdown
+      [options]="cities"
+      formControlName="city"
+      optionLabel="name"
+      [filter]="true"
+      filterBy="name"
+      [showClear]="true"
+      placeholder="Seleziona la città"
+      (onShow)="loadFilteredCities('')"
+      (onFilter)="onFilterCities($event)"
+    >
+    </p-dropdown>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons mt-4">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      type="submit"
+      label="Salva"
+      [disabled]="!roadForm.valid"
+    ></button>
+  </div>
+</form>

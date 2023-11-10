@@ -227,11 +227,11 @@ export class HotelListComponent {
   }
 
   rooms(hotel: any) {
-    this.router.navigate(['hotel', hotel.id]);
+    this.router.navigate(['hotel', hotel.id, 'rooms']);
   }
 
-  meals(hotel: any) {
-    this.router.navigate(['hotel', hotel.id, 'meals']);
+  teams(hotel: any) {
+    this.router.navigate(['hotel', hotel.id, 'teams']);
   }
 
   applyFilters() {

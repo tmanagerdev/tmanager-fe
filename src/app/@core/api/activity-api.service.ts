@@ -54,4 +54,19 @@ export class ActivityApiService {
   delete(id: number): Observable<Partial<IActivity>> {
     return this.httpClient.delete(`${environment.apiUrl}/activities/${id}`);
   }
+
+  addTeam(activityId: number, teamId: number): Observable<any> {
+    return this.httpClient.post(
+      `${environment.apiUrl}/activities/${activityId}/add-team`,
+      {
+        teamId,
+      }
+    );
+  }
+
+  removeTeam(activityId: number, activityTeamId: any): Observable<any> {
+    return this.httpClient.delete(
+      `${environment.apiUrl}/activities/${activityId}/remove-team/${activityTeamId}`
+    );
+  }
 }

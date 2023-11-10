@@ -1,20 +1,24 @@
 <form
-  [formGroup]="mealForm"
+  [formGroup]="teamForm"
   class="flex flex-column gap-3"
   (ngSubmit)="onSave()"
 >
   <div class="flex gap-2">
     <div class="flex-1 flex flex-column gap-2">
-      <label>Nome</label>
-      <input pInputText placeholder="Nome" formControlName="name" />
-    </div>
-    <div class="flex flex-column gap-2">
-      <label>Menu sportivo</label>
-      <p-toggleButton
-        formControlName="custom"
-        onLabel="Si"
-        offLabel="No"
-      ></p-toggleButton>
+      <label>Squadra</label>
+      <p-dropdown
+        [options]="teams"
+        formControlName="id"
+        optionLabel="name"
+        optionValue="id"
+        [filter]="true"
+        filterBy="name"
+        [showClear]="true"
+        placeholder="Seleziona la squadra"
+        (onShow)="loadFilteredTeams('')"
+        (onFilter)="onFilterTeam($event)"
+      >
+      </p-dropdown>
     </div>
   </div>
 
@@ -30,7 +34,7 @@
       pButton
       type="submit"
       label="Salva"
-      [disabled]="!mealForm.valid"
+      [disabled]="!teamForm.valid"
     ></button>
   </div>
 </form>

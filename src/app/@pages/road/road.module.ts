@@ -1,49 +1,44 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HotelRoutingModule } from './hotel-routing.module';
+import { RoadListComponent } from './road-list/road-list.component';
+import { RoadModalComponent } from './road-modal/road-modal.component';
+import { RoadTeamsComponent } from './road-teams/road-teams.component';
+import { RoadTeamsModalComponent } from './road-teams/road-teams-modal/road-teams-modal.component';
+import { RoadRoutingModule } from './road-routing.module';
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MessageService, ConfirmationService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
 import { ChipModule } from 'primeng/chip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
-import { DynamicDialogModule, DialogService } from 'primeng/dynamicdialog';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { KeyFilterModule } from 'primeng/keyfilter';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
-import { HotelListComponent } from './hotel-list/hotel-list.component';
-import { HotelModalComponent } from './hotel-modal/hotel-modal.component';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { HotelRoomsComponent } from './hotel-rooms/hotel-rooms.component';
-import { HotelRoomsModalComponent } from './hotel-rooms/hotel-rooms-modal/hotel-rooms-modal.component';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
-import { HotelTeamsComponent } from './hotel-teams/hotel-teams.component';
-import { HotelTeamsModalComponent } from './hotel-teams/hotel-teams-modal/hotel-teams-modal.component';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
+import { TeamLogoComponent } from 'src/app/@shared/team-logo/team-logo.component';
 
 @NgModule({
   declarations: [
-    HotelListComponent,
-    HotelModalComponent,
-    HotelRoomsComponent,
-    HotelRoomsModalComponent,
-    HotelTeamsComponent,
-    HotelTeamsModalComponent,
+    RoadListComponent,
+    RoadModalComponent,
+    RoadTeamsComponent,
+    RoadTeamsModalComponent,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
-    HotelRoutingModule,
+    RoadRoutingModule,
     TableModule,
     ToastModule,
     ToolbarModule,
@@ -62,11 +57,12 @@ import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
     ChipModule,
     DividerModule,
     EntityListComponent,
-    OverlayPanelModule,
+    CalendarModule,
     InputNumberModule,
-    RoomNamePipe,
+    OverlayPanelModule,
     ToggleButtonModule,
     TeamLogoComponent,
   ],
+  providers: [MessageService, ConfirmationService, DialogService],
 })
-export class HotelModule {}
+export class RoadModule {}

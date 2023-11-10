@@ -1,4 +1,5 @@
 import { ICity } from './city.model';
+import { ITeam } from './team.model';
 
 export interface IActivity {
   id: number;
@@ -9,6 +10,7 @@ export interface IActivity {
   city: ICity;
   startDate: string;
   endDate: string;
+  teams: ITeam[];
 }
 
 export interface IActivitiesOnCart {

@@ -1,4 +1,4 @@
-<h2 class="mb-2">Lista Hotel</h2>
+<h2 class="mb-2">Hotel</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
@@ -81,6 +81,7 @@
       <th pSortableColumn="name">
         Name <p-sortIcon field="name"></p-sortIcon>
       </th>
+      <th>Squadre</th>
       <th>Città</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -91,6 +92,15 @@
   <ng-template pTemplate="body" let-hotel>
     <tr>
       <td>{{ hotel.name }}</td>
+      <td>
+        <ng-container *ngIf="hotel.teams && hotel.teams.length; else noTeams">
+          <ng-container *ngFor="let team of hotel.teams; let i = index">
+            <span class="chips chips-primary mr-2">
+              {{ team.team.name }}
+            </span>
+          </ng-container>
+        </ng-container>
+      </td>
       <td>{{ hotel.city.name }}</td>
       <td>{{ hotel.createdAt | customDate }}</td>
       <td>
@@ -117,9 +127,9 @@
           <button
             pButton
             pRipple
-            label="Pasti"
+            label="Gestisci squadre"
             class="p-button-text"
-            (click)="meals(hotel)"
+            (click)="teams(hotel)"
           ></button>
           <button
             pButton

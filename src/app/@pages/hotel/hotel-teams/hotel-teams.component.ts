@@ -4,14 +4,15 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
-import { HotelMealsModalComponent } from './hotel-meals-modal/hotel-meals-modal.component';
+import { HotelTeamsModalComponent } from './hotel-teams-modal/hotel-teams-modal.component';
+import { ITeam } from 'src/app/@core/models/team.model';
 
 @Component({
-  selector: 'app-hotel-meals',
-  templateUrl: './hotel-meals.component.html',
-  styleUrls: ['./hotel-meals.component.scss'],
+  selector: 'app-hotel-teams',
+  templateUrl: './hotel-teams.component.html',
+  styleUrls: ['./hotel-teams.component.scss'],
 })
-export class HotelMealsComponent {
+export class HotelTeamsComponent {
   hotelId: number = 0;
   hotel: any;
   totalRecords: number = 0;
@@ -47,7 +48,7 @@ export class HotelMealsComponent {
         tap((data) => {
           this.loading = false;
           this.hotel = { ...data };
-          this.totalRecords = this.hotel.rooms.length;
+          this.totalRecords = this.hotel.teams.length;
         })
       )
       .subscribe();
@@ -63,34 +64,34 @@ export class HotelMealsComponent {
   }
 
   loadHotel(): void {
-    if (this.hotel && this.hotel.rooms) {
-      this.hotel.meals = [];
+    if (this.hotel && this.hotel.teams) {
+      this.hotel.teams = [];
     }
     this.loading = true;
     this.hotel$.next();
   }
 
   create() {
-    this.ref = this.dialogService.open(HotelMealsModalComponent, {
-      header: `Crea nuovo pasto`,
+    this.ref = this.dialogService.open(HotelTeamsModalComponent, {
+      header: `Associa nuova squadra`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {},
     });
 
-    this.ref.onClose.subscribe((newMeal: any) => {
-      if (newMeal) {
+    this.ref.onClose.subscribe((team: any) => {
+      if (team) {
         this.hotelApiService
-          .createMeal(this.hotelId, newMeal)
+          .addTeam(this.hotelId, team.id)
           .pipe(
             take(1),
             tap((data) => {
               this.loadHotel();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Pasto aggiunto',
-                detail: newMeal.name,
+                summary: 'Squadra aggiunta',
+                detail: data.name,
               });
             })
           )
@@ -99,54 +100,21 @@ export class HotelMealsComponent {
     });
   }
 
-  update(meal: any) {
-    this.ref = this.dialogService.open(HotelMealsModalComponent, {
-      header: `Aggiorna pasto`,
-      width: '600px',
-      contentStyle: { overflow: 'visible' },
-      baseZIndex: 10001,
-      data: {
-        isEdit: true,
-        meal,
-      },
-    });
-
-    this.ref.onClose.subscribe((newMeal: any) => {
-      if (newMeal) {
-        this.hotelApiService
-          .updateMeal(meal.id, newMeal)
-          .pipe(
-            take(1),
-            tap((data) => {
-              this.loadHotel();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Pasto aggiornato',
-                detail: newMeal.name,
-              });
-            })
-          )
-          .subscribe();
-      }
-    });
-  }
-
-  remove(meal: any) {
+  remove(team: ITeam) {
     this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questo pasto?',
+      message: 'Sei sicuro di voler rimuovere questa squadra?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.hotelApiService
-          .deleteMeal(meal.id)
+          .removeTeam(this.hotelId, team.id)
           .pipe(
             take(1),
             tap(() => {
               this.loadHotel();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Pasto eliminato',
-                detail: meal.name,
+                summary: 'Squadra disassociata',
               });
             })
           )

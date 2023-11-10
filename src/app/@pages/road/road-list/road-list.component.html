@@ -1,4 +1,4 @@
-<h2 class="mb-2">Attività</h2>
+<h2 class="mb-2">Tratte</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
@@ -57,7 +57,7 @@
     <button
       pButton
       pRipple
-      label="Crea nuova attività"
+      label="Crea nuova tratta"
       class="p-button-primary mr-2"
       (click)="create()"
     ></button>
@@ -66,7 +66,7 @@
 
 <p-table
   #dt
-  [value]="activities"
+  [value]="roads"
   [totalRecords]="totalRecords"
   [rows]="size"
   [paginator]="true"
@@ -80,12 +80,10 @@
 >
   <ng-template pTemplate="header">
     <tr>
-      <th pSortableColumn="name">
-        Name <p-sortIcon field="name"></p-sortIcon>
-      </th>
-      <th>Squadre</th>
       <th>Città</th>
-      <th>Stato</th>
+      <th>Squadre</th>
+      <th pSortableColumn="from">Da <p-sortIcon field="from"></p-sortIcon></th>
+      <th pSortableColumn="to">A <p-sortIcon field="to"></p-sortIcon></th>
       <th>Prezzo</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -93,38 +91,22 @@
       <th>Azioni</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-activity>
+  <ng-template pTemplate="body" let-road>
     <tr>
+      <td>{{ road.city.name }}</td>
       <td>
-        <p class="font-semibold">
-          {{ activity.name }}
-        </p>
-        <p class="text-sm">
-          {{ activity.description }}
-        </p>
-      </td>
-      <td>
-        <ng-container
-          *ngIf="activity.teams && activity.teams.length; else noTeams"
-        >
-          <ng-container *ngFor="let team of activity.teams; let i = index">
+        <ng-container *ngIf="road.teams && road.teams.length; else noTeams">
+          <ng-container *ngFor="let team of road.teams; let i = index">
             <span class="chips chips-primary mr-2">
               {{ team.team.name }}
             </span>
           </ng-container>
         </ng-container>
       </td>
-      <td>{{ activity.city.name }}</td>
-      <td>
-        <span
-          class="chips"
-          [ngClass]="activity.enabled ? 'chips-success' : 'chips-warning'"
-        >
-          {{ activity.enabled ? "ATTIVO" : "NON ATTIVO" }}
-        </span>
-      </td>
-      <td>{{ activity.price | currency : "EUR" : "symbol" }}</td>
-      <td>{{ activity.createdAt | customDate }}</td>
+      <td>{{ road.from }}</td>
+      <td>{{ road.to }}</td>
+      <td>{{ road.price | currency : "EUR" : "symbol" }}</td>
+      <td>{{ road.createdAt | customDate }}</td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
@@ -137,21 +119,21 @@
             pRipple
             label="Modifica"
             class="p-button-text"
-            (click)="update(activity)"
+            (click)="update(road)"
           ></button>
           <button
             pButton
             pRipple
             label="Gestisci squadre"
             class="p-button-text"
-            (click)="teams(activity)"
+            (click)="teams(road)"
           ></button>
           <button
             pButton
             pRipple
             label="Rimuovi"
             class="p-button-text p-button-danger"
-            (click)="remove(activity)"
+            (click)="remove(road)"
           ></button>
         </p-overlayPanel>
       </td>

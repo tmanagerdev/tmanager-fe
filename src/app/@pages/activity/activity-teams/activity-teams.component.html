@@ -1,15 +1,15 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
-<ng-container *ngIf="hotel">
+<ng-container *ngIf="activity">
   <div class="flex align-items-center gap-4 mb-2">
     <i
       class="pi pi-angle-left cursor-pointer text-4xl"
-      (click)="backToHotels()"
+      (click)="backToActivities()"
     ></i>
     <span>
-      <h2 class="mb-2">Pasti: {{ hotel.name }}</h2>
-      <p>di {{ hotel.city.name }}</p>
+      <h2 class="mb-2">Squadre associate a {{ activity.name }}</h2>
+      <p>di {{ activity.city?.name }}</p>
     </span>
   </div>
 
@@ -21,7 +21,7 @@
       <button
         pButton
         pRipple
-        label="Crea nuovo pasto"
+        label="Associa squadra"
         class="p-button-primary mr-2"
         (click)="create()"
       ></button>
@@ -30,7 +30,7 @@
 
   <p-table
     #dt
-    [value]="hotel.meals"
+    [value]="activity.teams ?? []"
     [totalRecords]="totalRecords"
     dataKey="id"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -43,16 +43,19 @@
         <th pSortableColumn="name">
           Nome <p-sortIcon field="name"></p-sortIcon>
         </th>
-        <th pSortableColumn="createdAt">
-          Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
-        </th>
         <th>Azioni</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-meal>
+    <ng-template pTemplate="body" let-team>
       <tr>
-        <td>{{ meal.name }}</td>
-        <td>{{ meal.createdAt | customDate }}</td>
+        <td>
+          <div class="flex align-items-center gap-2">
+            <app-team-logo [team]="team.team"></app-team-logo>
+            <p>
+              {{ team.team.name }}
+            </p>
+          </div>
+        </td>
         <td>
           <p-button
             icon="pi pi-ellipsis-v"
@@ -63,16 +66,9 @@
             <button
               pButton
               pRipple
-              label="Modifica"
-              class="p-button-text"
-              (click)="update(meal)"
-            ></button>
-            <button
-              pButton
-              pRipple
               label="Rimuovi"
               class="p-button-text p-button-danger"
-              (click)="remove(meal)"
+              (click)="remove(team)"
             ></button>
           </p-overlayPanel>
         </td>

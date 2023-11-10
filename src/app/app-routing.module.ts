@@ -86,6 +86,12 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'road',
+        canActivate: [AuthGuard, AdminGuard],
+        loadChildren: () =>
+          import('./@pages/road/road.module').then((m) => m.RoadModule),
+      },
+      {
         path: '',
         redirectTo: 'personal',
         pathMatch: 'full',
