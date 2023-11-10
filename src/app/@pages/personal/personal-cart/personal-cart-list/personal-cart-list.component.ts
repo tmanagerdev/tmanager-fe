@@ -32,7 +32,7 @@ export class PersonalCartListComponent implements OnInit {
 
   teamHomeFilter = new UntypedFormControl('');
   dateFilter = new UntypedFormControl('');
-  teamsFilter: FormControl = new FormControl([]);
+  teamsFilter: FormControl = new FormControl('');
 
   events$: Subject<void> = new Subject();
   teams$: Subject<string> = new Subject();
