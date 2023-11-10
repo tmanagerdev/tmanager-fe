@@ -1,10 +1,14 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { EventApiService } from 'src/app/@core/api/events-api.service';
+import { TeamApiService } from 'src/app/@core/api/team-api.service';
+import { IDropdownFilters } from 'src/app/@core/models/base.model';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
+import { ITeam } from 'src/app/@core/models/team.model';
 import { AuthService } from 'src/app/@core/services/auth.service';
 
 @Component({
@@ -13,46 +17,81 @@ import { AuthService } from 'src/app/@core/services/auth.service';
   styleUrls: ['./personal-cart-list.component.scss'],
 })
 export class PersonalCartListComponent implements OnInit {
-  carts: any = [];
+  events: any = [];
+  teams: Partial<ITeam>[] = [];
   totalRecords: number = 0;
   page: number = 0;
   size: number = 10;
   filter: string = '';
+  startDateFilter?: Date;
+  endDateFilter?: Date;
   sort: any = null;
   loading: boolean = false;
   currentUser: any;
   EStatusCart = EStatusCart;
 
+  teamHomeFilter = new UntypedFormControl('');
+  dateFilter = new UntypedFormControl('');
   teamsFilter: FormControl = new FormControl([]);
 
-  carts$: Subject<void> = new Subject();
+  events$: Subject<void> = new Subject();
+  teams$: Subject<string> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
+
+  get teamHomeFilterId() {
+    return this.teamHomeFilter.value ? this.teamHomeFilter.value.id : null;
+  }
 
   constructor(
     private cartsApiService: CartApiService,
+    private eventsApiService: EventApiService,
+    private teamApiService: TeamApiService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private router: Router,
     private authService: AuthService,
     private cd: ChangeDetectorRef
   ) {
-    this.carts$
+    this.events$
       .pipe(
         takeUntil(this.unsubscribe$),
         switchMap(() =>
-          this.cartsApiService.findAll({
+          this.eventsApiService.findAll({
             page: this.page + 1,
             take: this.size,
-            ...(this.filter ? { team: this.filter } : {}),
+            ...(this.filter ? { away: this.filter } : {}),
+            ...(this.teamHomeFilterId ? { home: this.teamHomeFilterId } : {}),
+            ...(this.startDateFilter
+              ? { startDate: this.startDateFilter.toISOString() }
+              : {}),
+            ...(this.endDateFilter
+              ? { endDate: this.endDateFilter.toISOString() }
+              : {}),
             ...(this.sort && this.sort.field
               ? { sortField: this.sort.field, sortOrder: this.sort.order }
               : {}),
           })
         ),
         tap(({ data, total }) => {
-          this.carts = [...data];
+          this.events = [...data];
           this.totalRecords = total;
           this.loading = false;
+        })
+      )
+      .subscribe();
+
+    this.teams$
+      .pipe(
+        takeUntil(this.unsubscribe$),
+        switchMap((name) =>
+          this.teamApiService.findAll({
+            page: 1,
+            take: 50,
+            ...(name ? { name } : {}),
+          })
+        ),
+        tap(({ data }) => {
+          this.teams = [...data];
         })
       )
       .subscribe();
@@ -72,13 +111,17 @@ export class PersonalCartListComponent implements OnInit {
   }
 
   loadCarts() {
-    this.carts = [];
+    this.events = [];
     this.loading = true;
-    this.carts$.next();
+    this.events$.next();
   }
 
-  openCart(cart: any) {
+  openViewCart(cart: any) {
     this.router.navigate(['/personal/carts', cart.id]);
+  }
+
+  openCreateCart(event: any) {
+    this.router.navigate(['/personal/carts/new', event.id]);
   }
 
   onChangePage(event: any) {
@@ -97,12 +140,19 @@ export class PersonalCartListComponent implements OnInit {
   }
 
   onApplyFilters() {
-    this.filter = this.teamsFilter.value.map((f: any) => f.id);
+    this.filter = this.teamsFilter.value?.id ?? '';
+    this.startDateFilter =
+      this.dateFilter.value && this.dateFilter.value[0]
+        ? this.dateFilter.value[0]
+        : '';
+    this.endDateFilter =
+      this.dateFilter.value && this.dateFilter.value[1]
+        ? this.dateFilter.value[1]
+        : '';
     this.loadCarts();
   }
 
   complete(cart: any) {
-    console.log('qui??');
     this.confirmationService.confirm({
       message:
         'Una volta confermata la trasferta non potrà più essere modificata e verrà inviata una mail al nostro staff. Si intende procedere?',
@@ -129,5 +179,19 @@ export class PersonalCartListComponent implements OnInit {
 
   onAddCart() {
     console.log('custom cart');
+  }
+
+  onFilterTeam({ filter }: IDropdownFilters) {
+    if (filter) {
+      this.loadFilteredTeams(filter);
+    }
+  }
+
+  loadFilteredTeams(name: string) {
+    this.teams$.next(name);
+  }
+
+  onFilterDate(event: any) {
+    console.log(event);
   }
 }
