@@ -45,6 +45,8 @@ import { ModalActivityComponent } from './personal-cart-create/cart-create-activ
 import { SkeletonModule } from 'primeng/skeleton';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { StatusCartPipe } from '../../../@core/pipes/status-cart.pipe';
+import { QuantityDropdownComponent } from '../../../@shared/quantity-dropdown/quantity-dropdown.component';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 @NgModule({
   declarations: [
@@ -97,6 +99,8 @@ import { StatusCartPipe } from '../../../@core/pipes/status-cart.pipe';
     SkeletonModule,
     OverlayPanelModule,
     StatusCartPipe,
+    QuantityDropdownComponent,
+    RadioButtonModule,
   ],
 })
 export class PersonalCartModule {}

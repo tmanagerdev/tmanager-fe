@@ -53,14 +53,15 @@
           ></app-cart-create-accomodations>
         </ng-container>
         <ng-container *ngSwitchCase="2">
-          <!-- <app-cart-create-meal
+          <app-cart-create-meal
             [event]="event"
             [activeIndex]="activeIndex"
-            [hotelMeals]="hotelMeals"
+            [meals]="meals"
             [mealForm]="mealForm"
+            [maxPax]="people.length"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
-          ></app-cart-create-meal> -->
+          ></app-cart-create-meal>
         </ng-container>
         <ng-container *ngSwitchCase="3">
           <app-cart-create-activity

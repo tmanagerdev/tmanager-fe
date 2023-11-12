@@ -1,0 +1,13 @@
+<div class="flex gap-2">
+  <div class="flex flex-column">
+    <label>Quantità</label>
+    <p-dropdown [options]="options" [formControl]="controlFC">
+      <ng-template let-pax pTemplate="selectedItem">
+        {{ pax }} <ng-container *ngIf="pax === max"> (TUTTI) </ng-container>
+      </ng-template>
+      <ng-template let-pax pTemplate="item">
+        {{ pax }} <ng-container *ngIf="pax === max"> (TUTTI) </ng-container>
+      </ng-template>
+    </p-dropdown>
+  </div>
+</div>

@@ -16,6 +16,7 @@ import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
 import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
 import { IEvent } from 'src/app/@core/models/event.model';
 import { RoadApiService } from 'src/app/@core/api/road-api.service';
+import { MealApiService } from 'src/app/@core/api/meal-api.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -55,6 +56,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   hotelMeals: any;
   activities: any;
   roads: any;
+  meals: any;
   EStatusCart = EStatusCart;
   status: EStatusCart = EStatusCart.DRAFT;
   messages: Message[] | undefined;
@@ -149,9 +151,9 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   //   return this.cartForm.get('roads') as FormArray;
   // }
 
-  get meals() {
-    return this.cartForm.get('meals') as FormArray;
-  }
+  // get meals() {
+  //   return this.cartForm.get('meals') as FormArray;
+  // }
 
   constructor(
     private route: ActivatedRoute,
@@ -162,6 +164,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     private veichleApiService: VeichleApiService,
     private roadApiService: RoadApiService,
     private activityApiService: ActivityApiService,
+    private mealApiService: MealApiService,
     private authService: AuthService,
     private messageService: MessageService,
     public dialogService: DialogService,
@@ -275,12 +278,19 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                   teams: [this.event.home?.id],
                 })
                 .pipe(map((data) => data.data)),
+              meals: this.mealApiService
+                .findAll({
+                  take: 500,
+                  page: 1,
+                })
+                .pipe(map((data) => data.data)),
             }).pipe(
-              tap(({ hotels, veichles, roads, activities }) => {
+              tap(({ hotels, veichles, roads, activities, meals }) => {
                 this.hotels = [...hotels];
                 this.veichles = [...veichles];
                 this.roads = [...roads];
                 this.activities = [...activities];
+                this.meals = [...meals];
               })
             )
           )

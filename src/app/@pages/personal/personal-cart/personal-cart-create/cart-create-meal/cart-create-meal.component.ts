@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { ModalMealComponent } from './modal-meal/modal-meal.component';
@@ -16,8 +16,9 @@ export class CartCreateMealComponent {
 
   @Input() activeIndex: number = 0;
   @Input() event: any;
-  @Input() hotelMeals: FormGroup = new FormGroup({});
+  @Input() meals: any[] = [];
   @Input() mealForm: FormGroup = new FormGroup({});
+  @Input() maxPax = 0;
   @Input() set status(value: EStatusCart) {
     if (value) {
       this._status = value;
@@ -27,7 +28,7 @@ export class CartCreateMealComponent {
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
 
-  get meals(): FormArray {
+  get mealsArray(): FormArray {
     return this.mealForm.get('meals') as FormArray;
   }
 
@@ -48,7 +49,7 @@ export class CartCreateMealComponent {
   }
 
   onUpdateMeal(index: number) {
-    const mealToUpdate = this.meals.at(index) as FormGroup;
+    const mealToUpdate = this.mealsArray.at(index) as FormGroup;
 
     this.ref = this.dialogService.open(ModalMealComponent, {
       header: 'Aggiorna pasto',
@@ -59,22 +60,24 @@ export class CartCreateMealComponent {
         mealForm: mealToUpdate,
         isEdit: true,
         index: index + 1,
-        mealsList: this.hotelMeals,
+        mealsList: this.meals,
+        maxPax: this.maxPax,
       },
     });
 
     this.ref.onClose.subscribe((meal: FormGroup) => {
       if (meal) {
-        this.meals.at(index).setValue({ ...meal.value });
+        this.mealsArray.at(index).setValue({ ...meal.value });
       }
     });
   }
 
   onDeleteMeal(index: number) {
-    this.meals.removeAt(index);
+    this.mealsArray.removeAt(index);
   }
 
   onAddMeal() {
+    console.log('add meal', this.meals);
     const startDate = new Date(this.event.date);
     startDate.setDate(startDate.getDate() - 1);
     startDate.setHours(0, 0, 0, 0);
@@ -82,11 +85,12 @@ export class CartCreateMealComponent {
     const newMeal = new FormGroup({
       startDate: new FormControl(startDate),
       startDateHour: new FormControl(startDate),
-      quantity: new FormControl(1),
+      quantity: new FormControl(this.maxPax),
       id: new FormControl(null),
       name: new FormControl(null),
+      mealId: new FormControl(null, Validators.required),
+      configId: new FormControl(null, Validators.required),
       description: new FormControl(null),
-      custom: new FormControl(false),
     });
 
     this.ref = this.dialogService.open(ModalMealComponent, {
@@ -97,14 +101,15 @@ export class CartCreateMealComponent {
       data: {
         isEdit: false,
         mealForm: newMeal,
-        index: this.meals.length + 1,
-        mealsList: this.hotelMeals,
+        index: this.mealsArray.length + 1,
+        mealsList: this.meals,
+        maxPax: this.maxPax,
       },
     });
 
     this.ref.onClose.subscribe((meal: FormGroup) => {
       if (meal) {
-        this.meals.push(meal);
+        this.mealsArray.push(meal);
       }
     });
   }
