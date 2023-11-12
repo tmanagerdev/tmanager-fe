@@ -1,11 +1,13 @@
 <p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
 <h2>{{ isEdit ? "Aggiorna trasferta" : "Organizza nuova trasferta" }}</h2>
 <ng-container *ngIf="event">
   <div class="my-3">
     <p>{{ event.calendar.name }} - {{ event.day }}° giornata</p>
     <p class="mb-4">
       <span class="font-semibold text-lg">
-        {{ event.home.name }} - {{ event.away.name }}
+        {{ event.home?.name }} - {{ event.away?.name }}
       </span>
       del {{ event.date | customDate }}
     </p>
@@ -28,9 +30,10 @@
         <ng-container *ngSwitchCase="0">
           <app-cart-create-pax
             [activeIndex]="activeIndex"
-            [paxForm]="paxForm"
+            [people]="people"
             [event]="event"
-            [status]="status"
+            (addNewPeople)="onAddNewPax($event)"
+            (removePeople)="onRemovePax($event)"
             (nextStep)="onNextStep()"
           ></app-cart-create-pax>
         </ng-container>
@@ -50,19 +53,19 @@
           ></app-cart-create-accomodations>
         </ng-container>
         <ng-container *ngSwitchCase="2">
-          <app-cart-create-meal
+          <!-- <app-cart-create-meal
             [event]="event"
             [activeIndex]="activeIndex"
             [hotelMeals]="hotelMeals"
             [mealForm]="mealForm"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
-          ></app-cart-create-meal>
+          ></app-cart-create-meal> -->
         </ng-container>
         <ng-container *ngSwitchCase="3">
           <app-cart-create-activity
             [event]="event"
-            [cityActivities]="cityActivities"
+            [cityActivities]="activities"
             [activeIndex]="activeIndex"
             [activityForm]="activityForm"
             [status]="status"

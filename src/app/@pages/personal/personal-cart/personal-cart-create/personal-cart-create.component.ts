@@ -5,15 +5,17 @@ import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { MenuItem, Message, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/@core/services/auth.service';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
-import { Subject, iif, map, switchMap, takeUntil, tap } from 'rxjs';
+import { Subject, forkJoin, iif, map, switchMap, takeUntil, tap } from 'rxjs';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CartCreateAccomodationsService } from './cart-create-accomodations/cart-create-accomodations.service';
-import { ECategoryPeople } from 'src/app/@core/models/people.model';
+import { PeopleRoomingService } from './people-rooming.service';
+import { ECategoryPeople, IPeople } from 'src/app/@core/models/people.model';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
 import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
 import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
+import { IEvent } from 'src/app/@core/models/event.model';
+import { RoadApiService } from 'src/app/@core/api/road-api.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -46,16 +48,18 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   ];
   activeIndex: number = 0;
   currentUser: any;
-  event: any;
+  event!: Partial<IEvent>;
   city: any;
   hotels: any;
   veichles: any;
   hotelMeals: any;
-  cityActivities: any;
+  activities: any;
+  roads: any;
   EStatusCart = EStatusCart;
   status: EStatusCart = EStatusCart.DRAFT;
   messages: Message[] | undefined;
   selectedHotel: any = null;
+  people: IPeople[] = [];
 
   cartForm: FormGroup = new FormGroup({
     team: new FormGroup({
@@ -94,13 +98,13 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     accomodationNotes: new FormControl(null),
     roadNotes: new FormControl(null),
   });
-  paxForm: FormGroup = new FormGroup({
-    players: new FormControl(null),
-    staffs: new FormControl(null),
-    managers: new FormControl(null),
-    equipments: new FormControl(null),
-    others: new FormControl(null),
-  });
+  // paxForm: FormGroup = new FormGroup({
+  //   players: new FormControl(null),
+  //   staffs: new FormControl(null),
+  //   managers: new FormControl(null),
+  //   equipments: new FormControl(null),
+  //   others: new FormControl(null),
+  // });
   accomodationForm: FormGroup = new FormGroup({
     hotel: new FormGroup({
       id: new FormControl(null),
@@ -133,17 +137,17 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
 
   ref!: DynamicDialogRef;
 
-  get activities() {
-    return this.cartForm.get('activities') as FormArray;
-  }
+  // get activities() {
+  //   return this.cartForm.get('activities') as FormArray;
+  // }
 
   get rooms() {
     return this.cartForm.get('rooms') as FormArray;
   }
 
-  get roads() {
-    return this.cartForm.get('roads') as FormArray;
-  }
+  // get roads() {
+  //   return this.cartForm.get('roads') as FormArray;
+  // }
 
   get meals() {
     return this.cartForm.get('meals') as FormArray;
@@ -156,11 +160,12 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     private eventApiService: EventApiService,
     private hotelApiService: HotelApiService,
     private veichleApiService: VeichleApiService,
+    private roadApiService: RoadApiService,
     private activityApiService: ActivityApiService,
     private authService: AuthService,
     private messageService: MessageService,
     public dialogService: DialogService,
-    public accomodationService: CartCreateAccomodationsService
+    public peopleRoomingService: PeopleRoomingService
   ) {
     this.isEdit = route.snapshot.data['isEdit'];
     this.currentUser = this.authService.currentUser;
@@ -179,7 +184,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
             this.event = { ...event };
-            this.city = { ...this.event.home.city };
+            this.city = { ...this.event.home?.city };
             let roomings: any = [];
             for (const room of (this.accomodationForm.get('rooms') as FormArray)
               .value) {
@@ -189,43 +194,43 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                 }
               }
             }
-            this.accomodationService.initPeople(
-              this.event.away.people ?? [],
-              roomings
-            );
-          }),
-          switchMap(() =>
-            this.hotelApiService.findAll({
-              take: 200,
-              page: 1,
-              city: this.event.home.city.id,
-            })
-          ),
-          map((data) => data.data),
-          tap((hotels) => {
-            this.hotels = [...hotels];
-            this.selectedHotel = this.hotels.find(
-              (h: any) =>
-                h.id === this.accomodationForm.get('hotel')?.get('id')?.value
-            );
-            this.hotelMeals = [...(this.selectedHotel.meals ?? [])];
-            console.log('this hotel meals', this.hotelMeals);
-          }),
-          switchMap(() =>
-            this.veichleApiService.findAllRoad({
-              city: this.city.id,
-            })
-          ),
-          tap((veichles: any) => (this.veichles = [...veichles])),
-          switchMap(() =>
-            this.activityApiService.findAll({
-              take: 500,
-              page: 1,
-              city: this.city.id,
-            })
-          ),
-          map((data) => data.data),
-          tap((activities) => (this.cityActivities = [...activities]))
+            // this.accomodationService.initPeople(
+            //   this.event.away?.people ?? [],
+            //   roomings
+            // );
+          })
+          // switchMap(() =>
+          //   this.hotelApiService.findAll({
+          //     take: 200,
+          //     page: 1,
+          //     city: this.event.home?.city.id,
+          //   })
+          // ),
+          // map((data) => data.data),
+          // tap((hotels) => {
+          //   this.hotels = [...hotels];
+          //   this.selectedHotel = this.hotels.find(
+          //     (h: any) =>
+          //       h.id === this.accomodationForm.get('hotel')?.get('id')?.value
+          //   );
+          //   this.hotelMeals = [...(this.selectedHotel.meals ?? [])];
+          //   console.log('this hotel meals', this.hotelMeals);
+          // }),
+          // switchMap(() =>
+          //   this.veichleApiService.findAll({
+          //     city: this.city.id,
+          //   })
+          // ),
+          // tap((veichles: any) => (this.veichles = [...veichles])),
+          // switchMap(() =>
+          //   this.activityApiService.findAll({
+          //     take: 500,
+          //     page: 1,
+          //     city: this.city.id,
+          //   })
+          // ),
+          // map((data) => data.data),
+          // tap((activities) => (this.cityActivities = [...activities]))
         )
         .subscribe();
     } else {
@@ -236,37 +241,72 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.eventApiService.findOne(this.eventId)),
           tap((event) => {
             this.event = { ...event };
-            this.city = { ...this.event.home.city };
-            this.accomodationService.initPeople(
-              this.event.away.people ?? [],
+            this.city = { ...this.event.home?.city };
+            this.people = [...(this.event.away?.people ?? [])];
+            this.peopleRoomingService.initPeople(
+              this.event.away?.people ?? [],
               []
             );
-            this.setPax();
+            // this.setPax();
           }),
           switchMap(() =>
-            this.hotelApiService.findAll({
-              take: 200,
-              page: 1,
-              city: this.event.home.city.id,
-            })
-          ),
-          map((data) => data.data),
-          tap((hotels) => (this.hotels = [...hotels])),
-          switchMap(() =>
-            this.veichleApiService.findAllRoad({
-              city: this.city.id,
-            })
-          ),
-          tap((veichles: any) => (this.veichles = [...veichles])),
-          switchMap(() =>
-            this.activityApiService.findAll({
-              take: 500,
-              page: 1,
-              city: this.city.id,
-            })
-          ),
-          map((data) => data.data),
-          tap((activities) => (this.cityActivities = [...activities]))
+            forkJoin({
+              hotels: this.hotelApiService
+                .findAll({
+                  take: 500,
+                  page: 1,
+                  teams: [this.event.home?.id],
+                })
+                .pipe(map((data) => data.data)),
+              veichles: this.veichleApiService
+                .findAll({ take: 500, page: 1 })
+                .pipe(map((data) => data.data)),
+              roads: this.roadApiService
+                .findAll({
+                  take: 500,
+                  page: 1,
+                  teams: [this.event.home?.id],
+                })
+                .pipe(map((data) => data.data)),
+              activities: this.activityApiService
+                .findAll({
+                  take: 500,
+                  page: 1,
+                  teams: [this.event.home?.id],
+                })
+                .pipe(map((data) => data.data)),
+            }).pipe(
+              tap(({ hotels, veichles, roads, activities }) => {
+                this.hotels = [...hotels];
+                this.veichles = [...veichles];
+                this.roads = [...roads];
+                this.activities = [...activities];
+              })
+            )
+          )
+          // switchMap(() =>
+          //   this.hotelApiService.findAll({
+          //     take: 200,
+          //     page: 1,
+          //     teams: [this.event.home?.id],
+          //   })
+          // ),
+          // map((data) => data.data),
+          // tap((hotels) => (this.hotels = [...hotels])),
+          // switchMap(() =>
+          //   this.veichleApiService.findAll({ take: 200, page: 1 })
+          // ),
+          // map((data) => data.data),
+          // tap((veichles: any) => (this.veichles = [...veichles])),
+          // switchMap(() =>
+          //   this.activityApiService.findAll({
+          //     take: 500,
+          //     page: 1,
+          //     teams: [this.event.home?.id],
+          //   })
+          // ),
+          // map((data) => data.data),
+          // tap((activities) => (this.cityActivities = [...activities]))
         )
         .subscribe();
     }
@@ -343,22 +383,36 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  setPax() {
-    const keyBinding = [
-      { key: 'players', category: ECategoryPeople.PLAYER },
-      { key: 'staffs', category: ECategoryPeople.STAFF },
-      { key: 'managers', category: ECategoryPeople.MANAGER },
-      { key: 'equipments', category: ECategoryPeople.EQUIPMENT },
-      { key: 'others', category: ECategoryPeople.OTHER },
-    ];
+  onAddNewPax(pax: IPeople) {
+    const peopleCopy = [...this.people, pax];
+    this.people = [...peopleCopy];
+    this.peopleRoomingService.updatePeople(pax, 'ADD');
+  }
 
-    for (const k of keyBinding) {
-      this.paxForm
-        .get(k.key)
-        ?.setValue(
-          this.event.away.people.filter((p: any) => p.category === k.category)
-            .length ?? 0
-        );
+  onRemovePax(pax: IPeople) {
+    const peopleCopy = this.people.filter(
+      (p) => !this.peopleRoomingService.checkPaxAreEquals(p, pax)
+    );
+    this.people = [...peopleCopy];
+    this.peopleRoomingService.updatePeople(pax, 'REMOVE');
+
+    const rooms = (this.accomodationForm.get('rooms') as FormArray).value;
+    const indexRoom = rooms.findIndex((room: any) =>
+      room.rooming.some((r: any) =>
+        this.peopleRoomingService.checkPaxAreEquals(r, pax)
+      )
+    );
+
+    if (indexRoom > -1) {
+      const indexRooming = rooms[indexRoom].rooming.findIndex((r: any) =>
+        this.peopleRoomingService.checkPaxAreEquals(r, pax)
+      );
+
+      (
+        (this.accomodationForm.get('rooms') as FormArray)
+          .at(indexRoom)
+          .get('rooming') as FormArray
+      ).removeAt(indexRooming);
     }
   }
 
@@ -366,30 +420,13 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     clearFormArray(this.mealForm.get('meals') as FormArray);
     clearFormArray(this.accomodationForm.get('rooms') as FormArray);
 
-    this.hotelMeals = [...hotel.meals];
+    this.selectedHotel = { ...hotel };
   }
 
   onSaveCart() {
     const cart = { ...this.cartForm.value };
-
-    // this.ref = this.dialogService.open(PersonalCartCrateConfirmModalComponent, {
-    //   header: this.isEdit ? 'Aggiornamento trasferta' : 'Creazione trasferta',
-    //   width: '450px',
-    //   contentStyle: { overflow: 'visible' },
-    //   baseZIndex: 10001,
-    // });
-
-    // this.ref.onClose.subscribe((action: string) => {
-    //   switch (action) {
-    //     case 'confirm':
-    //       cart.isCompleted = true;
-    //       break;
-    //     default:
-    //       break;
-    //   }
-
-    this.save$.next(cart);
-    //});
+    console.log('SAVE CART', cart);
+    //this.save$.next(cart);
   }
 
   /**
@@ -402,8 +439,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     // PATCH CART FORM
     this.cartForm.get('genericNotes')?.setValue(cart.genericNotes);
     // PATCH PAX FORM
-    const { players, managers, staffs, equipments, others } = cart;
-    this.paxForm.patchValue({ players, managers, staffs, equipments, others });
+    // const { players, managers, staffs, equipments, others } = cart;
+    // this.paxForm.patchValue({ players, managers, staffs, equipments, others });
 
     // PATCH ACCOMODATION FORM
     const startDate = cart.startDate ? new Date(cart.startDate) : null;
@@ -524,8 +561,23 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
    * il form principale del carrello
    */
   populateCartForm() {
-    console.log('populate cart form');
-    this.cartForm.patchValue(this.paxForm.value);
+    this.cartForm.patchValue({
+      players: (
+        this.people.filter((p) => p.category == ECategoryPeople.PLAYER) ?? []
+      ).length,
+      staffs: (
+        this.people.filter((p) => p.category == ECategoryPeople.STAFF) ?? []
+      ).length,
+      managers: (
+        this.people.filter((p) => p.category == ECategoryPeople.MANAGER) ?? []
+      ).length,
+      equipments: (
+        this.people.filter((p) => p.category == ECategoryPeople.EQUIPMENT) ?? []
+      ).length,
+      others: (
+        this.people.filter((p) => p.category == ECategoryPeople.OTHER) ?? []
+      ).length,
+    });
 
     this.cartForm.get('event')?.get('id')?.setValue(this.event.id);
     this.cartForm.get('event')?.get('date')?.setValue(this.event.date);
@@ -533,38 +585,38 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       .get('event')
       ?.get('home')
       ?.get('id')
-      ?.setValue(this.event.home.id);
+      ?.setValue(this.event.home?.id);
     this.cartForm
       .get('event')
       ?.get('home')
       ?.get('name')
-      ?.setValue(this.event.home.name);
+      ?.setValue(this.event.home?.name);
     this.cartForm
       .get('event')
       ?.get('away')
       ?.get('id')
-      ?.setValue(this.event.away.id);
+      ?.setValue(this.event.away?.id);
     this.cartForm
       .get('event')
       ?.get('away')
       ?.get('name')
-      ?.setValue(this.event.away.name);
+      ?.setValue(this.event.away?.name);
 
-    this.cartForm.get('team')?.get('id')?.setValue(this.event.away.id);
-    this.cartForm.get('team')?.get('name')?.setValue(this.event.away.name);
+    this.cartForm.get('team')?.get('id')?.setValue(this.event.away?.id);
+    this.cartForm.get('team')?.get('name')?.setValue(this.event.away?.name);
 
     this.cartForm
       .get('event')
       ?.get('home')
       ?.get('city')
       ?.get('id')
-      ?.setValue(this.event.home.city.id);
+      ?.setValue(this.event.home?.city.id);
     this.cartForm
       .get('event')
       ?.get('home')
       ?.get('city')
       ?.get('name')
-      ?.setValue(this.event.home.city.name);
+      ?.setValue(this.event.home?.city.name);
 
     const { startDate, endDate, accomodationNotes } =
       this.accomodationForm.value;

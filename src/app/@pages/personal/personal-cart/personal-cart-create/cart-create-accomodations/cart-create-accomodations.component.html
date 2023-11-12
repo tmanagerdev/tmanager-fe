@@ -52,12 +52,6 @@
           Gestisci le stanze
           <span class="text-xs">(Tariffa colazione inclusa)</span>
         </p>
-        <p-button
-          *ngIf="!isEdit"
-          (onClick)="onCloneLast()"
-          label="Copia da ultima trasferta"
-          styleClass="p-button-text"
-        ></p-button>
       </div>
       <p-accordion>
         <ng-container *ngFor="let hotelRoom of selectedHotel.rooms">
@@ -105,13 +99,7 @@
                               [people]="p"
                             ></app-tag-role-people>
                           </span>
-
-                          <ng-container *ngIf="p.people.id">
-                            <p>{{ p.people.name }} {{ p.people.surname }}</p>
-                          </ng-container>
-                          <ng-container *ngIf="!p.people.id">
-                            <p>{{ p.name }} {{ p.surname }}</p>
-                          </ng-container>
+                          <p>{{ p.name }} {{ p.surname }}</p>
                         </div>
                       </ng-container>
                       <div class="p-2 flex justify-content-center">

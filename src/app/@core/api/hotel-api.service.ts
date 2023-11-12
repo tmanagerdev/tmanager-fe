@@ -14,6 +14,7 @@ export class HotelApiService {
     take,
     name,
     city,
+    teams,
     sortField = '',
     sortOrder = 1,
   }: any): Observable<any> {
@@ -23,6 +24,7 @@ export class HotelApiService {
         take,
         ...(name ? { name } : null),
         ...(city ? { city } : null),
+        ...(teams ? { teams } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     });
