@@ -7,6 +7,7 @@ import {
   MessageService,
 } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
@@ -147,13 +148,13 @@ export class CartListComponent {
     this.carts$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;

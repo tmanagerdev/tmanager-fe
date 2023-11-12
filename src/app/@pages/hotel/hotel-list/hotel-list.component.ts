@@ -12,6 +12,7 @@ import { HotelModalComponent } from '../hotel-modal/hotel-modal.component';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { Router } from '@angular/router';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-hotel-list',
@@ -126,7 +127,7 @@ export class HotelListComponent {
     this.hotels$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {

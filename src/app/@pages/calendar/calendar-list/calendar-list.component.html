@@ -70,7 +70,9 @@
         <p-button
           icon="pi pi-ellipsis-v"
           (click)="op.toggle($event)"
-          styleClass="p-button-rounded p-button-secondary p-button-text"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
         ></p-button>
         <p-overlayPanel #op [style]="{ width: '160px' }">
           <button

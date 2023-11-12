@@ -79,7 +79,7 @@
                   *ngIf="!checkIfSelected(activity.id)"
                   (onClick)="onSelectActivity(activity)"
                   label="Seleziona"
-                  styleClass="p-button-text"
+                  [text]="true"
                 ></p-button>
                 <p-button
                   *ngIf="checkIfSelected(activity.id)"

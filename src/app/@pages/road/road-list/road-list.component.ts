@@ -15,6 +15,7 @@ import { ICity } from 'src/app/@core/models/city.model';
 import { IRoad } from 'src/app/@core/models/road.model';
 import { RoadModalComponent } from '../road-modal/road-modal.component';
 import { RoadApiService } from 'src/app/@core/api/road-api.service';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-road-list',
@@ -129,13 +130,13 @@ export class RoadListComponent {
     this.roads$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;
