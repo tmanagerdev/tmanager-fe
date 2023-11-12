@@ -39,12 +39,12 @@ const routes: Routes = [
         loadChildren: () =>
           import('./@pages/cart/cart.module').then((m) => m.CartModule),
       },
-      {
-        path: 'city',
-        canActivate: [AuthGuard, AdminGuard],
-        loadChildren: () =>
-          import('./@pages/city/city.module').then((m) => m.CityModule),
-      },
+      // {
+      //   path: 'city',
+      //   canActivate: [AuthGuard, AdminGuard],
+      //   loadChildren: () =>
+      //     import('./@pages/city/city.module').then((m) => m.CityModule),
+      // },
       {
         path: 'hotel',
         canActivate: [AuthGuard, AdminGuard],
