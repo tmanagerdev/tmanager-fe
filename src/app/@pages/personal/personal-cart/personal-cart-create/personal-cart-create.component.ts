@@ -430,6 +430,60 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     this.selectedHotel = { ...hotel };
   }
 
+  onCopyRooming(data: any) {
+    console.log('onCopyRooming', data);
+    clearFormArray(this.rooms);
+
+    let setHotel = false;
+
+    for (const d of data.rooming) {
+      if (!setHotel) {
+        setHotel = true;
+        const hotel = this.hotels.find((h: any) => h.id === d.hotelId);
+        this.selectedHotel = { ...hotel };
+      }
+
+      const room = this.selectedHotel.rooms.find(
+        (r: any) => r.name === d.roomName
+      );
+      const newRoom = new FormGroup({
+        id: new FormControl(room.id),
+        hotelId: new FormControl(this.selectedHotel.id),
+        hotelName: new FormControl(this.selectedHotel.name),
+        name: new FormControl(room.name),
+        price: new FormControl(room.price),
+        numPax: new FormControl(room.numPax),
+        rooming: new FormArray([]),
+        uuid: new FormControl(uuidv4()),
+      });
+      for (let p of d.people) {
+        const newPeople = new FormGroup({
+          name: new FormControl(p.name),
+          surname: new FormControl(p.surname),
+          category: new FormControl(p.category),
+        });
+        (newRoom.get('rooming') as FormArray).push(newPeople);
+      }
+      (this.accomodationForm.get('rooms') as FormArray).push(newRoom);
+    }
+
+    this.people = [...data.people];
+
+    let roomings: any = [];
+    for (const room of (this.accomodationForm.get('rooms') as FormArray)
+      .value) {
+      for (const rooming of room.rooming) {
+        roomings = [...roomings, rooming];
+      }
+    }
+    this.peopleRoomingService.initPeople(this.people ?? [], roomings);
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Rooming copiata da ultima trasferta',
+    });
+  }
+
   onSaveCart() {
     const cart = { ...this.cartForm.value };
     console.log('SAVE CART', cart);

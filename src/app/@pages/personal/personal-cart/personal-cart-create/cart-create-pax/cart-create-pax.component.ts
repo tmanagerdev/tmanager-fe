@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { take, tap } from 'rxjs';
+import { combineLatestWith, take, tap } from 'rxjs';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { ECategoryPeople, IPeople } from 'src/app/@core/models/people.model';
 import { TeamPeopleModalComponent } from 'src/app/@pages/team/team-people/team-people-modal/team-people-modal.component';
 import { PeopleRoomingService } from '../people-rooming.service';
+import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { clearFormArray } from 'src/app/@core/utils';
 
 @Component({
   selector: 'app-cart-create-pax',
@@ -24,6 +26,7 @@ export class CartCreatePaxComponent {
 
   @Output() addNewPeople: EventEmitter<IPeople> = new EventEmitter();
   @Output() removePeople: EventEmitter<IPeople> = new EventEmitter();
+  @Output() copyRoomings: EventEmitter<IPeople> = new EventEmitter();
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
 
   get players() {
@@ -66,7 +69,8 @@ export class CartCreatePaxComponent {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public dialogService: DialogService,
-    private peopleRoomingService: PeopleRoomingService
+    private peopleRoomingService: PeopleRoomingService,
+    private cartApiService: CartApiService
   ) {}
 
   onNextStep() {
@@ -101,52 +105,14 @@ export class CartCreatePaxComponent {
   }
 
   onCloneLast() {
-    //   this.cartApiService
-    //     .copyLastRooming(this.team)
-    //     .pipe(
-    //       take(1),
-    //       combineLatestWith(this.peopleRoomingService.people$),
-    //       tap(([{ data }, people]) => {
-    //         clearFormArray(this.rooms);
-    //         for (const d of data) {
-    //           const room = this.selectedHotel.rooms.find(
-    //             (r: any) => r.name === d.roomName
-    //           );
-    //           const newRoom = new FormGroup({
-    //             id: new FormControl(room.id),
-    //             hotelId: new FormControl(this.selectedHotel.id),
-    //             hotelName: new FormControl(this.selectedHotel.name),
-    //             name: new FormControl(room.name),
-    //             price: new FormControl(room.price),
-    //             numPax: new FormControl(room.numPax),
-    //             rooming: new FormArray([]),
-    //             uuid: new FormControl(uuidv4()),
-    //           });
-    //           for (let p of d.people) {
-    //             if (p.peopleId) {
-    //               p = people.find((person: any) => person.id === p.peopleId);
-    //             }
-    //             const newPeople = new FormGroup({
-    //               people: new FormGroup({
-    //                 id: new FormControl(p.id ? p.id : null),
-    //                 name: new FormControl(p.id ? p.name : null),
-    //                 surname: new FormControl(p.id ? p.surname : null),
-    //                 category: new FormControl(p.id ? p.category : null),
-    //               }),
-    //               name: new FormControl(!p.id ? p.name : null),
-    //               surname: new FormControl(!p.id ? p.surname : null),
-    //               category: new FormControl(!p.id ? p.category : null),
-    //             });
-    //             (newRoom.get('rooming') as FormArray).push(newPeople);
-    //           }
-    //           this.rooms.push(newRoom);
-    //         }
-    //         this.messageService.add({
-    //           severity: 'success',
-    //           summary: 'Rooming copiata da ultima trasferta',
-    //         });
-    //       })
-    //     )
-    //     .subscribe();
+    this.cartApiService
+      .copyLastRooming(this.event.away.id)
+      .pipe(
+        take(1),
+        tap(({ data }) => {
+          this.copyRoomings.emit(data);
+        })
+      )
+      .subscribe();
   }
 }
