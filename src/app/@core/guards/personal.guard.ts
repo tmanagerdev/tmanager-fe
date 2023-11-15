@@ -10,6 +10,6 @@ export const PersonalGuard = () => {
   if (user && user.role === 'USER') {
     return true;
   } else {
-    return router.createUrlTree(['/city']);
+    return router.createUrlTree(['/league']);
   }
 };

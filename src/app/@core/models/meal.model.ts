@@ -4,15 +4,21 @@ import { IHotel } from './hotel.model';
 export interface IMeal {
   id: number;
   name: string;
-  hotelId: number;
-  hotel: Partial<IHotel>;
+  price: number;
+  maxConfigActive: number;
+  config: IMealConfig[];
+}
+
+export interface IMealConfig {
+  id: number;
+  name: string;
+  active: boolean;
+  requireDescription: boolean;
 }
 
 export interface IMealsOnCarts {
   id: number;
-  cartId: number;
-  mealId: number;
   quantity: number;
   startDate: string;
-  cart: Partial<ICart>;
+  description: string;
 }

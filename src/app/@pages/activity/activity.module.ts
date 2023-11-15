@@ -24,9 +24,19 @@ import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.com
 import { CalendarModule } from 'primeng/calendar';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ActivityTeamsComponent } from './activity-teams/activity-teams.component';
+import { ActivityTeamsModalComponent } from './activity-teams/activity-teams-modal/activity-teams-modal.component';
+import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
 
 @NgModule({
-  declarations: [ActivityListComponent, ActivityModalComponent],
+  declarations: [
+    ActivityListComponent,
+    ActivityModalComponent,
+    ActivityTeamsComponent,
+    ActivityTeamsModalComponent,
+  ],
+  providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
     ActivityRoutingModule,
@@ -51,7 +61,8 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     CalendarModule,
     InputNumberModule,
     OverlayPanelModule,
+    ToggleButtonModule,
+    TeamLogoComponent,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class ActivityModule {}

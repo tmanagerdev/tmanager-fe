@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { CartCreateAccomodationsService } from '../cart-create-accomodations.service';
-import { Subject, map, takeUntil, tap } from 'rxjs';
+import { PeopleRoomingService } from '../../people-rooming.service';
+import { Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-accomodations-people-modal',
@@ -34,29 +34,24 @@ export class AccomodationsPeopleModalComponent {
   constructor(
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-    private accomodationService: CartCreateAccomodationsService
+    private peopleRoomingService: PeopleRoomingService
   ) {
     if (this.config.data) {
       for (const r of this.config.data.rooming) {
         this.selectedPeople.push({
-          id: r.people.id ?? null,
-          name: r.people.name ?? r.name,
-          surname: r.people.surname ?? r.surname,
-          category: r.people.category ?? r.category,
+          name: r.name,
+          surname: r.surname,
+          category: r.category,
         });
       }
     }
 
-    this.accomodationService.people$
+    this.peopleRoomingService.peopleOb$
       .pipe(
         takeUntil(this.destroy$),
-        //map((people) => people.filter((p: any) => p.available)),
         tap((people) => {
-          console.log('inside map');
           this.people = [...people];
           this.peopleViewed = [...people];
-
-          console.log(this.people);
         })
       )
       .subscribe();
@@ -69,23 +64,19 @@ export class AccomodationsPeopleModalComponent {
 
   onAddGuest(people: any) {
     this.selectedPeople = [...this.selectedPeople, people];
-    //this.peopleViewed = this.peopleViewed?.filter((p) => p.id !== people.id);
 
-    if (people && people.id) {
-      this.accomodationService.updatePeple(people.id, 'ADD');
+    if (people) {
+      this.peopleRoomingService.updateRooming(people, 'ADD');
     }
   }
 
   onRemoveGuest(people: any) {
-    //const originalIndex = this.people.findIndex((p) => p.id === people.id);
-    //this.peopleViewed.splice(originalIndex, 0, people);
     this.selectedPeople = this.selectedPeople?.filter(
-      (p) => p.id !== people.id
+      (p) => !this.peopleRoomingService.checkPaxAreEquals(p, people)
     );
 
-    if (people && people.id) {
-      console.log('call update people');
-      this.accomodationService.updatePeple(people.id, 'REMOVE');
+    if (people) {
+      this.peopleRoomingService.updateRooming(people, 'REMOVE');
     }
   }
 

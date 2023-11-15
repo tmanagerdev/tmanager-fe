@@ -16,6 +16,7 @@ export class ActivityApiService {
     take,
     name,
     city,
+    teams,
     startDate,
     endDate,
     sortField = '',
@@ -27,6 +28,7 @@ export class ActivityApiService {
         take,
         ...(name ? { name } : null),
         ...(city ? { city } : null),
+        ...(teams ? { teams } : null),
         ...(startDate ? { startDate } : null),
         ...(endDate ? { endDate } : null),
         ...(sortField ? { sortField, sortOrder } : null),
@@ -53,5 +55,20 @@ export class ActivityApiService {
 
   delete(id: number): Observable<Partial<IActivity>> {
     return this.httpClient.delete(`${environment.apiUrl}/activities/${id}`);
+  }
+
+  addTeam(activityId: number, teamId: number): Observable<any> {
+    return this.httpClient.post(
+      `${environment.apiUrl}/activities/${activityId}/add-team`,
+      {
+        teamId,
+      }
+    );
+  }
+
+  removeTeam(activityId: number, activityTeamId: any): Observable<any> {
+    return this.httpClient.delete(
+      `${environment.apiUrl}/activities/${activityId}/remove-team/${activityTeamId}`
+    );
   }
 }

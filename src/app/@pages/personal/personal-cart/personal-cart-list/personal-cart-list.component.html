@@ -5,12 +5,43 @@
 <div
   class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4 dialog-buttons"
 >
-  <p-multiSelect
-    [options]="currentUser.teams"
-    [formControl]="teamsFilter"
-    optionLabel="name"
-    placeholder="Filtra per squadra"
-  ></p-multiSelect>
+  <div class="flex gap-2">
+    <div class="flex flex-column">
+      <label class="font-semibold mb-2">Casa</label>
+      <p-dropdown
+        [options]="teams"
+        [formControl]="teamHomeFilter"
+        optionLabel="name"
+        [filter]="true"
+        [showClear]="true"
+        placeholder="Squadra di casa"
+        (onShow)="loadFilteredTeams('')"
+        (onFilter)="onFilterTeam($event)"
+      >
+      </p-dropdown>
+    </div>
+    <div class="flex flex-column">
+      <label class="font-semibold mb-2">Trasferta</label>
+      <p-dropdown
+        [options]="currentUser.teams"
+        [formControl]="teamsFilter"
+        [filter]="true"
+        [showClear]="true"
+        optionLabel="name"
+        placeholder="Squadra in trasferta"
+      ></p-dropdown>
+    </div>
+    <div class="flex flex-column">
+      <label class="font-semibold mb-2">Da - A</label>
+      <p-calendar
+        [formControl]="dateFilter"
+        selectionMode="range"
+        dateFormat="dd/mm/yy"
+        [readonlyInput]="true"
+        (onSelect)="onFilterDate($event)"
+      ></p-calendar>
+    </div>
+  </div>
 
   <div class="flex align-items-center gap-2">
     <button
@@ -20,19 +51,12 @@
       class="p-button-text"
       (click)="onApplyFilters()"
     ></button>
-    <!-- <button
-      pButton
-      pRipple
-      label="Aggiungi trasferta"
-      class="p-button-primary"
-      (click)="onAddCart()"
-    ></button> -->
   </div>
 </div>
 
 <p-table
   #dt
-  [value]="carts"
+  [value]="events"
   [totalRecords]="totalRecords"
   [rows]="size"
   [paginator]="true"
@@ -47,75 +71,89 @@
   <ng-template pTemplate="header">
     <tr>
       <th pSortableColumn="createdAt">
-        Inizio <p-sortIcon field="startDate"></p-sortIcon>
+        Data partita <p-sortIcon field="date"></p-sortIcon>
       </th>
-      <th pSortableColumn="createdAt">
-        Fine <p-sortIcon field="endDate"></p-sortIcon>
-      </th>
-      <th pSortableColumn="name">Squadra di casa</th>
-      <th pSortableColumn="name">Squadra ospite</th>
+      <th>Squadra di casa</th>
+      <th>Squadra ospite</th>
+      <th>Campionato</th>
       <th>Stato</th>
-      <th pSortableColumn="name">Campionato</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
       <th>Azioni</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-cart>
+  <ng-template pTemplate="body" let-event>
     <tr>
-      <td>{{ cart.startDate | customDate }}</td>
-      <td>{{ cart.endDate | customDate }}</td>
+      <td>{{ event.date | customDate }}</td>
       <td>
         <div class="flex align-items-center gap-2">
-          <app-team-logo [team]="cart.event.home"></app-team-logo>
+          <app-team-logo [team]="event.home"></app-team-logo>
           <p>
-            {{ cart.event.home.name }}
+            {{ event.home.name }}
           </p>
         </div>
       </td>
       <td>
         <div class="flex align-items-center gap-2">
-          <app-team-logo [team]="cart.event.away"></app-team-logo>
+          <app-team-logo [team]="event.away"></app-team-logo>
           <p>
-            {{ cart.event.away.name }}
+            {{ event.away.name }}
           </p>
         </div>
-      </td>
-      <td>
-        <span class="chips" [ngClass]="'chips-' + cart.status">
-          {{ cart.status | statusCart }}
-        </span>
       </td>
       <td>
         <p class="font-semibold">
-          {{ cart.event.calendar.name }}
+          {{ event.calendar.name }}
         </p>
-        <p>{{ cart.event.day }}° giornata</p>
+        <p>{{ event.day }}° giornata</p>
       </td>
-      <td>{{ cart.createdAt | customDate }}</td>
+      <td>
+        <ng-container *ngIf="event.cart">
+          <span class="chips" [ngClass]="'chips-' + event.cart.status">
+            {{ event.cart.status | statusCart }}
+          </span>
+        </ng-container>
+        <ng-container *ngIf="!event.cart">
+          <span class="chips chips-warning"> Da organizzare </span>
+        </ng-container>
+      </td>
+      <td>{{ event.createdAt | customDate }}</td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
           (click)="op.toggle($event)"
-          styleClass="p-button-rounded p-button-secondary p-button-text"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
         ></p-button>
         <p-overlayPanel #op [style]="{ width: '160px' }">
-          <button
-            pButton
-            pRipple
-            label="Visualizza"
-            class="p-button-text"
-            (click)="openCart(cart)"
-          ></button>
-          <button
-            *ngIf="cart.status === EStatusCart.DRAFT"
-            pButton
-            pRipple
-            label="Conferma"
-            class="p-button-text p-button-success"
-            (click)="complete(cart)"
-          ></button>
+          <ng-container *ngIf="!event.cart">
+            <button
+              pButton
+              pRipple
+              label="Organizza"
+              class="p-button-text"
+              (click)="openCreateCart(event)"
+            ></button
+          ></ng-container>
+          <ng-container *ngIf="event.cart">
+            <button
+              pButton
+              pRipple
+              label="Visualizza"
+              class="p-button-text"
+              (click)="openViewCart(event.cart)"
+            ></button>
+            <button
+              *ngIf="event.cart.status === EStatusCart.DRAFT"
+              pButton
+              pRipple
+              label="Conferma"
+              class="p-button-text p-button-success"
+              (click)="complete(event.cart)"
+            ></button>
+          </ng-container>
         </p-overlayPanel>
       </td>
     </tr>
@@ -143,70 +181,3 @@
     </tr>
   </ng-template>
 </p-table>
-
-<!-- <p-dataView
-  #dv
-  [value]="carts"
-  [rows]="5"
-  [paginator]="true"
-  [totalRecords]="totalRecords"
-  [lazy]="true"
-  (onLazyLoad)="onChangePage($event)"
->
-  <ng-template let-cart pTemplate="listItem">
-    <div class="col-12">
-      <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-        <div
-          class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
-        >
-          <div
-            class="flex flex-column align-items-center sm:align-items-start gap-3"
-          >
-            <div class="flex align-items-center gap-2">
-              <app-team-logo [team]="cart.event.home"></app-team-logo>
-              <p class="text-xl text-900">
-                {{ cart.event.home.name }}
-              </p>
-              -
-              <p class="text-xl text-900">
-                {{ cart.event.away.name }}
-              </p>
-              <app-team-logo [team]="cart.event.away"></app-team-logo>
-            </div>
-
-            <div class="flex align-items-center gap-3">
-              <span class="flex align-items-center gap-2">
-                <span class="material-symbols-outlined"> table_rows </span>
-                <span
-                  ><span class="font-semibold">{{
-                    cart.event.calendar.name
-                  }}</span>
-                  {{ cart.event.day }}° giornata</span
-                >
-              </span>
-            </div>
-            <div class="flex align-items-center gap-3">
-              <span class="flex align-items-center gap-2">
-                <span class="material-symbols-outlined"> calendar_today </span>
-                <span class="font-semibold">{{
-                  cart.event.date | customDate
-                }}</span>
-              </span>
-            </div>
-          </div>
-          <div
-            class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
-          >
-            <p-button
-              icon="pi pi-arrow-circle-right"
-              label="Visualizza trasferta"
-              class="md:align-self-end mb-2 p-button-rounded"
-              styleClass="p-button-secondary"
-              (click)="openCart(cart)"
-            ></p-button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
-</p-dataView> -->

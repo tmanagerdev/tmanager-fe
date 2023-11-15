@@ -1,4 +1,4 @@
-<h2 class="mb-2">Lista Squadre</h2>
+<h2 class="mb-2">Squadre</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
@@ -35,12 +35,13 @@
     <div class="w-full flex justify-content-edn gap-2 mt-4">
       <p-button
         label="Reset"
-        styleClass="p-button-secondary p-button-text"
+        [severity]="'secondary'"
+        [text]="true"
         (click)="resetFilters()"
       ></p-button>
       <p-button
         label="Applica filtri"
-        styleClass="p-button-text"
+        [text]="true"
         (click)="applyFilters()"
       ></p-button>
     </div>
@@ -61,7 +62,10 @@
       />
     </span>
     <p-button
-      styleClass="p-button-outlined p-button-secondary"
+      [severity]="'secondary'"
+      [outlined]="true"
+      [severity]="'secondary'"
+      [outlined]="true"
       (click)="filters.toggle($event)"
       [icon]="filterIcon"
     ></p-button>
@@ -120,7 +124,9 @@
         <p-button
           icon="pi pi-ellipsis-v"
           (click)="op.toggle($event)"
-          styleClass="p-button-rounded p-button-secondary p-button-text"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
         ></p-button>
         <p-overlayPanel #op [style]="{ width: '160px' }">
           <button

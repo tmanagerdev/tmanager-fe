@@ -129,7 +129,7 @@
               <ng-template pTemplate="body" let-road>
                 <tr>
                   <td>{{ road.quantity }}</td>
-                  <td>{{ road.veichleName }}</td>
+                  <td>{{ road.veichle }}</td>
                   <td>{{ road.from }} - {{ road.to }}</td>
                   <td class="text-right">
                     {{ road.price | currency : "EUR" : "symbol" }}
@@ -199,7 +199,7 @@
     styleClass="p-button-secondary"
   ></p-button>
   <p-button
-    label="Completa"
+    label="Salva"
     (onClick)="onNextStep()"
     icon="pi pi-check"
     iconPos="right"

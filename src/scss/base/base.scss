@@ -35,8 +35,24 @@ h6 {
   box-shadow: #919eab4d 0 0 2px, #919eab1f 0 12px 24px -4px;
 }
 
+.tman-flat-table {
+  .p-datatable.p-component {
+    box-shadow: none;
+    border: 1px solid rgba(145, 158, 171, 0.3019607843);
+  }
+  .p-datatable-tbody {
+    tr {
+      &:last-child {
+        td {
+          border: none;
+        }
+      }
+    }
+  }
+}
+
 :root {
-  --primary-color: #5d87ff !important;
+  --primary-color: #3b82f6 !important;
 }
 
 .flex-50 {

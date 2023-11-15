@@ -11,6 +11,7 @@ import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { CityModalComponent } from '../city-modal/city-modal.component';
 import { ICity } from 'src/app/@core/models/city.model';
 import { ISort } from 'src/app/@core/models/base.model';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-city-list',
@@ -84,13 +85,13 @@ export class CityListComponent implements OnInit {
     this.cities$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;

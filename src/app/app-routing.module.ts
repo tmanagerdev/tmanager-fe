@@ -39,12 +39,12 @@ const routes: Routes = [
         loadChildren: () =>
           import('./@pages/cart/cart.module').then((m) => m.CartModule),
       },
-      {
-        path: 'city',
-        canActivate: [AuthGuard, AdminGuard],
-        loadChildren: () =>
-          import('./@pages/city/city.module').then((m) => m.CityModule),
-      },
+      // {
+      //   path: 'city',
+      //   canActivate: [AuthGuard, AdminGuard],
+      //   loadChildren: () =>
+      //     import('./@pages/city/city.module').then((m) => m.CityModule),
+      // },
       {
         path: 'hotel',
         canActivate: [AuthGuard, AdminGuard],
@@ -84,6 +84,18 @@ const routes: Routes = [
           import('./@pages/veichle/veichle.module').then(
             (m) => m.VeichleModule
           ),
+      },
+      {
+        path: 'road',
+        canActivate: [AuthGuard, AdminGuard],
+        loadChildren: () =>
+          import('./@pages/road/road.module').then((m) => m.RoadModule),
+      },
+      {
+        path: 'meal',
+        canActivate: [AuthGuard, AdminGuard],
+        loadChildren: () =>
+          import('./@pages/meal/meal.module').then((m) => m.MealModule),
       },
       {
         path: '',

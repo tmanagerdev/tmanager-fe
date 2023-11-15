@@ -26,9 +26,10 @@ import { HotelRoomsComponent } from './hotel-rooms/hotel-rooms.component';
 import { HotelRoomsModalComponent } from './hotel-rooms/hotel-rooms-modal/hotel-rooms-modal.component';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
-import { HotelMealsComponent } from './hotel-meals/hotel-meals.component';
-import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-meals-modal.component';
+import { HotelTeamsComponent } from './hotel-teams/hotel-teams.component';
+import { HotelTeamsModalComponent } from './hotel-teams/hotel-teams-modal/hotel-teams-modal.component';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
 
 @NgModule({
   declarations: [
@@ -36,9 +37,10 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     HotelModalComponent,
     HotelRoomsComponent,
     HotelRoomsModalComponent,
-    HotelMealsComponent,
-    HotelMealsModalComponent,
+    HotelTeamsComponent,
+    HotelTeamsModalComponent,
   ],
+  providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
     HotelRoutingModule,
@@ -64,7 +66,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     InputNumberModule,
     RoomNamePipe,
     ToggleButtonModule,
+    TeamLogoComponent,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class HotelModule {}

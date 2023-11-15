@@ -49,7 +49,7 @@ export class CartApiService {
   }
 
   copyLastRooming(team: number): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/carts/last-roomings`, {
+    return this.httpClient.get(`${environment.apiUrl}/carts/last-rooming`, {
       params: {
         team,
       },

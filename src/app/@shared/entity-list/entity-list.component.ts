@@ -10,6 +10,7 @@ import {
   tap,
 } from 'rxjs';
 import { LazyLoadEvent } from 'primeng/api';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-entity-list',
@@ -77,7 +78,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
     this.loadData$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = (event.first || 0) / (event.rows || 1) || 0;
 
     if (event.sortField) {

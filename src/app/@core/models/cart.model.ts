@@ -1,6 +1,7 @@
 import { IActivitiesOnCart } from './activity.model';
 import { IEvent } from './event.model';
 import { IMealsOnCarts } from './meal.model';
+import { IPeople } from './people.model';
 import { IRoadsOnCarts } from './road.model';
 import { IRoomsOnCarts } from './room.model';
 import { ITeam } from './team.model';
@@ -34,7 +35,7 @@ export interface ICart {
   genericNotes: string;
   id: number;
   managers: number;
-  meals: Partial<IMealsOnCarts>;
+  meals: Partial<IMealsOnCarts>[];
   others: number;
   pendingAt: string;
   players: number;
@@ -46,4 +47,5 @@ export interface ICart {
   status: EStatusCart;
   team: Partial<ITeam>;
   userId: number;
+  people: IPeople[];
 }

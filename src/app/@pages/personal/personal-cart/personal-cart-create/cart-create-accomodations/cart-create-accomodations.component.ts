@@ -9,19 +9,11 @@ import {
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import {
-  Subject,
-  combineLatestWith,
-  map,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { Subject } from 'rxjs';
 import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
 import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/accomodations-people-modal.component';
-import { CartCreateAccomodationsService } from './cart-create-accomodations.service';
+import { PeopleRoomingService } from '../people-rooming.service';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 
@@ -42,7 +34,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
 
   @Input() selectedHotel: any = null;
   @Input() accomodationForm: FormGroup = new FormGroup({});
-  @Input() mealForm: FormGroup = new FormGroup({});
+  //@Input() mealForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() isEdit: boolean = false;
   @Input() set status(value: EStatusCart) {
@@ -122,8 +114,8 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
           (r: any) => r.uuid === this.coordRoomToDelete.uuid
         );
         for (const p of this.rooms.at(index).value.rooming) {
-          if (p.people && p.people.id) {
-            this.accomodationService.updatePeple(p.people.id, 'REMOVE');
+          if (p) {
+            this.peopleRoomingService.updateRooming(p, 'REMOVE');
           }
         }
         this.rooms.removeAt(index);
@@ -135,7 +127,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     private hotelApiService: HotelApiService,
     private cartApiService: CartApiService,
     public dialogService: DialogService,
-    private accomodationService: CartCreateAccomodationsService,
+    private peopleRoomingService: PeopleRoomingService,
     private messageService: MessageService
   ) {}
 
@@ -215,17 +207,13 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
 
         clearFormArray(roomGroup.get('rooming') as FormArray);
 
+        console.log('people', people);
+
         for (const p of people) {
           const newPeople = new FormGroup({
-            people: new FormGroup({
-              id: new FormControl(p.id ? p.id : null),
-              name: new FormControl(p.id ? p.name : null),
-              surname: new FormControl(p.id ? p.surname : null),
-              category: new FormControl(p.id ? p.category : null),
-            }),
-            name: new FormControl(!p.id ? p.name : null),
-            surname: new FormControl(!p.id ? p.surname : null),
-            category: new FormControl(!p.id ? p.category : null),
+            name: new FormControl(p.name ?? null),
+            surname: new FormControl(p.surname ?? null),
+            category: new FormControl(p.category ?? null),
           });
           (roomGroup.get('rooming') as FormArray).push(newPeople);
         }
@@ -236,58 +224,5 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   onToggleMenu(room: any, menu: any, event: any) {
     this.coordRoomToDelete = room;
     menu.toggle(event);
-  }
-
-  onCloneLast() {
-    this.cartApiService
-      .copyLastRooming(this.team)
-      .pipe(
-        take(1),
-        combineLatestWith(this.accomodationService.people$),
-        tap(([{ data }, people]) => {
-          clearFormArray(this.rooms);
-          for (const d of data) {
-            const room = this.selectedHotel.rooms.find(
-              (r: any) => r.name === d.roomName
-            );
-            const newRoom = new FormGroup({
-              id: new FormControl(room.id),
-              hotelId: new FormControl(this.selectedHotel.id),
-              hotelName: new FormControl(this.selectedHotel.name),
-              name: new FormControl(room.name),
-              price: new FormControl(room.price),
-              numPax: new FormControl(room.numPax),
-              rooming: new FormArray([]),
-              uuid: new FormControl(uuidv4()),
-            });
-
-            for (let p of d.people) {
-              if (p.peopleId) {
-                p = people.find((person: any) => person.id === p.peopleId);
-              }
-              const newPeople = new FormGroup({
-                people: new FormGroup({
-                  id: new FormControl(p.id ? p.id : null),
-                  name: new FormControl(p.id ? p.name : null),
-                  surname: new FormControl(p.id ? p.surname : null),
-                  category: new FormControl(p.id ? p.category : null),
-                }),
-                name: new FormControl(!p.id ? p.name : null),
-                surname: new FormControl(!p.id ? p.surname : null),
-                category: new FormControl(!p.id ? p.category : null),
-              });
-              (newRoom.get('rooming') as FormArray).push(newPeople);
-            }
-
-            this.rooms.push(newRoom);
-          }
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Rooming copiata da ultima trasferta',
-          });
-        })
-      )
-      .subscribe();
   }
 }

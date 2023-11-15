@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject } from 'rxjs';
 import { ModalRoadComponent } from './modal-road/modal-road.component';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 
@@ -15,13 +14,14 @@ export class CartCreateRoadComponent implements OnInit {
   firstIndex: number = 0;
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
-
   searchControl = new FormControl('');
 
   @Input() event: any;
   @Input() activeIndex: number = 0;
   @Input() veichles: any = [];
+  @Input() roads: any = [];
   @Input() roadForm: FormGroup = new FormGroup({});
+  @Input() maxPax = 0;
   @Input() set status(value: EStatusCart) {
     if (value) {
       this._status = value;
@@ -34,10 +34,7 @@ export class CartCreateRoadComponent implements OnInit {
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
 
-  veichle$: Subject<void> = new Subject();
-  unsubscribe$: Subject<void> = new Subject();
-
-  get roads(): FormArray {
+  get roadsArray(): FormArray {
     return this.roadForm.get('roads') as FormArray;
   }
 
@@ -63,7 +60,7 @@ export class CartCreateRoadComponent implements OnInit {
 
   onUpdateRoad(indexRoads: number) {
     const index = indexRoads + this.firstIndex;
-    const roadToUpdate = this.roads.at(index) as FormGroup;
+    const roadToUpdate = this.roadsArray.at(index) as FormGroup;
 
     this.ref = this.dialogService.open(ModalRoadComponent, {
       header: 'Aggiorna tratta',
@@ -75,18 +72,20 @@ export class CartCreateRoadComponent implements OnInit {
         isEdit: true,
         index: indexRoads + 1,
         veichlesList: this.veichles,
+        roadsList: this.roads,
+        maxPax: this.maxPax,
       },
     });
 
     this.ref.onClose.subscribe((road: FormGroup) => {
       if (road) {
-        this.roads.at(index).setValue({ ...road.value });
+        this.roadsArray.at(index).setValue({ ...road.value });
       }
     });
   }
 
   onDeleteRoad(indexRoads: number) {
-    this.roads.removeAt(indexRoads + this.firstIndex);
+    this.roadsArray.removeAt(indexRoads + this.firstIndex);
   }
 
   onAddRoad() {
@@ -100,10 +99,7 @@ export class CartCreateRoadComponent implements OnInit {
       veichle: new FormControl(null),
       quantity: new FormControl(1),
       id: new FormControl(null),
-      price: new FormControl(null),
-      from: new FormControl(null),
-      to: new FormControl(null),
-      veichleId: new FormControl(null),
+      road: new FormControl(null),
       createdAt: new FormControl(null),
       updatedAt: new FormControl(null),
     });
@@ -116,14 +112,16 @@ export class CartCreateRoadComponent implements OnInit {
       data: {
         isEdit: false,
         roadForm: newRoad,
-        index: this.roads.length + 1,
+        index: this.roadsArray.length + 1,
         veichlesList: this.veichles,
+        roadsList: this.roads,
+        maxPax: this.maxPax,
       },
     });
 
     this.ref.onClose.subscribe((road: FormGroup) => {
       if (road) {
-        this.roads.push(road);
+        this.roadsArray.push(road);
       }
     });
   }

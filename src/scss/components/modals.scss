@@ -1,5 +1,6 @@
 .p-dialog-mask.p-component-overlay.p-dialog-mask-scrollblocker {
   z-index: 11000 !important;
+  overflow-y: auto;
 
   .p-confirm-dialog-reject.p-button {
     background: #64748b;

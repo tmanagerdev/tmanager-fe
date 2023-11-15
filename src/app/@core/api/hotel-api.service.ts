@@ -14,6 +14,7 @@ export class HotelApiService {
     take,
     name,
     city,
+    teams,
     sortField = '',
     sortOrder = 1,
   }: any): Observable<any> {
@@ -23,6 +24,7 @@ export class HotelApiService {
         take,
         ...(name ? { name } : null),
         ...(city ? { city } : null),
+        ...(teams ? { teams } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     });
@@ -64,18 +66,18 @@ export class HotelApiService {
     );
   }
 
-  createMeal(hotel: number, meal: any): Observable<any> {
-    return this.httpClient.post(`${environment.apiUrl}/meals`, {
-      ...meal,
-      hotel,
-    });
+  addTeam(hotelId: number, teamId: number): Observable<any> {
+    return this.httpClient.post(
+      `${environment.apiUrl}/hotels/${hotelId}/add-team`,
+      {
+        teamId,
+      }
+    );
   }
 
-  updateMeal(mealId: any, meal: any): Observable<any> {
-    return this.httpClient.put(`${environment.apiUrl}/meals/${mealId}`, meal);
-  }
-
-  deleteMeal(mealId: any): Observable<any> {
-    return this.httpClient.delete(`${environment.apiUrl}/meals/${mealId}`);
+  removeTeam(hotelId: number, hotelTeamId: any): Observable<any> {
+    return this.httpClient.delete(
+      `${environment.apiUrl}/hotels/${hotelId}/remove-team/${hotelTeamId}`
+    );
   }
 }

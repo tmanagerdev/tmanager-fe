@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  {
-    path: 'events',
-    loadChildren: () =>
-      import('./personal-event/personal-event.module').then(
-        (m) => m.PersonalEventModule
-      ),
-  },
+  // {
+  //   path: 'events',
+  //   loadChildren: () =>
+  //     import('./personal-event/personal-event.module').then(
+  //       (m) => m.PersonalEventModule
+  //     ),
+  // },
   {
     path: 'carts',
     loadChildren: () =>
@@ -18,7 +18,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'events',
+    redirectTo: 'carts',
     pathMatch: 'full',
   },
 ];
