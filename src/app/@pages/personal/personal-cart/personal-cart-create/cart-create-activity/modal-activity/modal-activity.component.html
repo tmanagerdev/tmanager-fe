@@ -1,14 +1,14 @@
 <div class="flex flex-column flex-1" [formGroup]="activityForm">
   <div class="flex flex-column my-2">
     <div class="flex gap-2">
-      <div class="flex flex-column">
+      <!-- <div class="flex flex-column">
         <label>Quantità</label>
         <p-inputNumber
           inputId="integeronly"
           formControlName="quantity"
           class="w-5rem"
         ></p-inputNumber>
-      </div>
+      </div> -->
       <div class="flex-1">
         <label>Giorno</label>
         <p-calendar
@@ -74,19 +74,24 @@
                 </span>
               </div>
 
-              <div class="flex justify-content-end">
+              <div class="flex justify-content-between align-items-end mt-5">
                 <p-button
-                  *ngIf="!checkIfSelected(activity.id)"
                   (onClick)="onSelectActivity(activity)"
-                  label="Seleziona"
+                  [icon]="
+                    !checkIfSelected(activity.id) ? 'pi pi-plus' : 'pi pi-trash'
+                  "
                   [text]="true"
+                  [severity]="
+                    !checkIfSelected(activity.id) ? 'primary' : 'secondary'
+                  "
                 ></p-button>
-                <p-button
-                  *ngIf="checkIfSelected(activity.id)"
-                  (onClick)="onSelectActivity(activity)"
-                  label="Rimuovi"
-                  styleClass="p-button-text p-button-secondary"
-                ></p-button>
+                <ng-container *ngIf="checkIfSelected(activity.id)">
+                  <app-quantity-dropdown
+                    [control]="activityForm.get('quantity')!"
+                    [max]="maxPax"
+                    [forPax]="true"
+                  />
+                </ng-container>
               </div>
             </div>
           </div>
@@ -107,6 +112,7 @@
         type="submit"
         [label]="isEdit ? 'Aggiorna' : 'Aggiungi'"
         (click)="onSave()"
+        [disabled]="!activityForm.valid"
       ></button>
     </div>
   </div>

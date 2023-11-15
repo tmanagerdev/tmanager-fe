@@ -18,9 +18,7 @@ export class HotelTeamsModalComponent {
   teams$: Subject<string> = new Subject();
   destroy$: Subject<void> = new Subject();
 
-  teamForm: FormGroup = new FormGroup({
-    id: new FormControl('', Validators.required),
-  });
+  teamControl: FormControl = new FormControl('', Validators.required);
 
   constructor(
     public ref: DynamicDialogRef,
@@ -29,7 +27,7 @@ export class HotelTeamsModalComponent {
   ) {
     if (this.config.data) {
       this.team = this.config.data.team;
-      this.teamForm.patchValue(this.team);
+      this.teamControl.patchValue(this.team);
     }
 
     this.teams$
@@ -55,8 +53,8 @@ export class HotelTeamsModalComponent {
   }
 
   onSave() {
-    if (this.teamForm.valid) {
-      const team = { ...this.teamForm.value };
+    if (this.teamControl.valid) {
+      const team = { ...this.teamControl.value };
       this.ref.close(team);
     }
   }

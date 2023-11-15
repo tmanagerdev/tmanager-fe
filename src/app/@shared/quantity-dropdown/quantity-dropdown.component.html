@@ -2,11 +2,13 @@
   <div class="flex flex-column">
     <label>Quantità</label>
     <p-dropdown [options]="options" [formControl]="controlFC">
-      <ng-template let-pax pTemplate="selectedItem">
-        {{ pax }} <ng-container *ngIf="pax === max"> (TUTTI) </ng-container>
+      <ng-template let-number pTemplate="selectedItem">
+        {{ number }}
+        <ng-container *ngIf="number === max && forPax"> (TUTTI) </ng-container>
       </ng-template>
-      <ng-template let-pax pTemplate="item">
-        {{ pax }} <ng-container *ngIf="pax === max"> (TUTTI) </ng-container>
+      <ng-template let-number pTemplate="item">
+        {{ number }}
+        <ng-container *ngIf="number === max && forPax"> (TUTTI) </ng-container>
       </ng-template>
     </p-dropdown>
   </div>

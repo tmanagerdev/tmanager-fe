@@ -16,7 +16,7 @@ export interface IActivity {
 export interface IActivitiesOnCart {
   id: number;
   cartId: number;
-  activityId: number;
+  activity: IActivity;
   startDate: string;
   quantity: number;
 }

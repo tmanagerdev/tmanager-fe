@@ -4,6 +4,7 @@ import {
   FormControl,
   FormGroup,
   UntypedFormGroup,
+  Validators,
 } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, debounceTime, map, switchMap, takeUntil, tap } from 'rxjs';
@@ -38,6 +39,7 @@ export class CartCreateActivityComponent {
   @Input() cityActivities: any = [];
   @Input() activityForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
+  @Input() maxPax = 0;
   @Input() set status(value: EStatusCart) {
     if (value) {
       this._status = value;
@@ -94,6 +96,7 @@ export class CartCreateActivityComponent {
         isEdit: true,
         index: index + 1,
         activitiesList: this.cityActivities,
+        maxPax: this.maxPax,
       },
     });
 
@@ -117,7 +120,7 @@ export class CartCreateActivityComponent {
       startDate: new FormControl(startDate),
       startDateHour: new FormControl(startDate),
       quantity: new FormControl(1),
-      id: new FormControl(null),
+      id: new FormControl(null, Validators.required),
       name: new FormControl(null),
       description: new FormControl(null),
       price: new FormControl(null),
@@ -133,6 +136,7 @@ export class CartCreateActivityComponent {
         activityForm: newActivity,
         index: this.activities.length + 1,
         activitiesList: this.cityActivities,
+        maxPax: this.maxPax,
       },
     });
 

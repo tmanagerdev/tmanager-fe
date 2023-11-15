@@ -47,6 +47,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { StatusCartPipe } from '../../../@core/pipes/status-cart.pipe';
 import { QuantityDropdownComponent } from '../../../@shared/quantity-dropdown/quantity-dropdown.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @NgModule({
   declarations: [
@@ -101,6 +102,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
     StatusCartPipe,
     QuantityDropdownComponent,
     RadioButtonModule,
+    CheckboxModule,
   ],
 })
 export class PersonalCartModule {}

@@ -14,8 +14,10 @@ export interface IRoad {
 
 export interface IRoadsOnCarts {
   id: number;
-  cartId: number;
-  roadId: number;
+  road: IRoad;
+  veichle: IVeichle;
   quantity: number;
   startDate: string;
+  createdAt: string;
+  updatedAt: string;
 }

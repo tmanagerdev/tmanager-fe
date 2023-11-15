@@ -127,7 +127,7 @@ export class RecapComponent implements OnInit {
         severity: 'info',
         summary: 'Ci siamo quasi!',
         detail:
-          'Ricontrolla tutti i dati inseriti a aggiungi delle note sulle attività se necessario',
+          'Ricontrolla tutti i dati inseriti a aggiungi delle note extra se necessario',
       },
     ];
   }

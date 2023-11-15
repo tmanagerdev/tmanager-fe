@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';
@@ -10,7 +10,17 @@ import { tap } from 'rxjs';
   styleUrls: ['./modal-meal.component.scss'],
 })
 export class ModalMealComponent {
-  mealForm: FormGroup = new FormGroup({});
+  mealForm: FormGroup = new FormGroup({
+    startDate: new FormControl(null),
+    startDateHour: new FormControl(null),
+    quantity: new FormControl(null),
+    id: new FormControl(null),
+    name: new FormControl(null),
+    mealId: new FormControl(null, Validators.required),
+    configId: new FormControl(null),
+    configIds: new FormControl([]),
+    description: new FormControl(null),
+  });
   isEdit: boolean = false;
   index: number = 0;
   maxPax: number = 0;
@@ -19,12 +29,22 @@ export class ModalMealComponent {
   private destroyRef = inject(DestroyRef);
   selectedMeal: any;
   selectedConfig: any;
+  selectedConfigs: any = [];
 
   get mealIdControl() {
     return this.mealForm.get('mealId') as FormControl;
   }
   get configIdControl() {
     return this.mealForm.get('configId') as FormControl;
+  }
+  get configIdsControl() {
+    return this.mealForm.get('configIds') as FormControl;
+  }
+  get isConfigIdsError() {
+    return (
+      this.mealForm.get('configIds')?.value?.length >
+      this.selectedMeal?.maxConfigActive
+    );
   }
 
   constructor(
@@ -33,7 +53,7 @@ export class ModalMealComponent {
   ) {
     if (this.config.data) {
       const { mealForm, mealsList, index, isEdit, maxPax } = this.config.data;
-      this.mealForm = mealForm;
+      this.mealForm.patchValue({ ...mealForm.value });
       this.mealsList = mealsList;
       this.index = index;
       this.maxPax = maxPax;
@@ -42,15 +62,13 @@ export class ModalMealComponent {
       if (this.isEdit) {
         const meal = this.mealForm.value;
         const startDateHour = new Date(meal.startDate);
+
         startDateHour.setHours(
           new Date(meal.startDate).getHours(),
           new Date(meal.startDate).getMinutes()
         );
 
-        this.mealForm.addControl(
-          'startDateHour',
-          new FormControl(startDateHour)
-        );
+        this.mealForm.get('startDateHour')?.setValue(startDateHour);
 
         if (this.mealIdControl.value) {
           this.selectedMeal = this.mealsList.find(
@@ -72,6 +90,7 @@ export class ModalMealComponent {
         tap((v) => {
           this.selectedConfig = null;
           this.configIdControl.reset();
+          this.configIdsControl.reset();
           if (v) {
             this.selectedMeal = this.mealsList.find((ml: any) => ml.id === v);
           } else {
@@ -91,6 +110,24 @@ export class ModalMealComponent {
             );
           } else {
             this.selectedConfig = null;
+            this.selectedConfigs = [];
+          }
+        })
+      )
+      .subscribe();
+
+    this.configIdsControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((v) => {
+          if (v && this.selectedMeal) {
+            this.selectedConfigs = [...v].map((idConfig) =>
+              this.selectedMeal.mealConfigs.find(
+                (mc: any) => mc.id === idConfig
+              )
+            );
+          } else {
+            this.selectedConfigs = [];
           }
         })
       )
@@ -98,18 +135,23 @@ export class ModalMealComponent {
   }
 
   onSave() {
-    console.log('this.mealForm.value', this.mealForm.value);
     // const { name, id } = this.mealControl.value;
     const meal = this.mealForm.value;
     const startDateHour = new Date(meal.startDateHour).getHours();
     const startDateMinute = new Date(meal.startDateHour).getMinutes();
     const startDate = new Date(meal.startDate);
     startDate.setHours(startDateHour, startDateMinute);
+
+    this.mealForm.removeControl('startDateHour');
     this.mealForm.patchValue({
-      ...meal,
-      name: `${this.selectedMeal.name} - ${this.selectedConfig.name}`,
+      startDate,
+      name: `${this.selectedMeal.name} - ${
+        this.selectedMeal.maxConfigActive === 1
+          ? this.selectedConfig.name
+          : this.selectedConfigs.map((sc: any) => sc.name).join(', ')
+      }`,
     });
-    console.log(this.mealForm.value);
+
     this.ref.close(this.mealForm);
   }
 }

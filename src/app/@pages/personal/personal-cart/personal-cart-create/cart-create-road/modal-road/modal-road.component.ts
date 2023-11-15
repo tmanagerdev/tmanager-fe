@@ -14,18 +14,17 @@ export class ModalRoadComponent {
     veichle: new FormControl(null),
     quantity: new FormControl(1),
     id: new FormControl(null),
-    price: new FormControl(null),
-    from: new FormControl(null),
-    to: new FormControl(null),
-    veichleId: new FormControl(null),
+    road: new FormControl(null),
     createdAt: new FormControl(null),
     updatedAt: new FormControl(null),
   });
   isEdit: boolean = false;
   index: number = 0;
   veichlesList: any = [];
+  roadsList: any = [];
 
   veichleControl = new FormControl();
+  roadControl = new FormControl();
 
   get veichles() {
     return this.roadForm.get('veichles') as FormArray;
@@ -35,36 +34,27 @@ export class ModalRoadComponent {
     public config: DynamicDialogConfig
   ) {
     if (this.config.data) {
-      const { roadForm, veichlesList, index, isEdit } = this.config.data;
-      this.roadForm = roadForm;
-      console.log(veichlesList);
+      const { roadForm, veichlesList, index, isEdit, roadsList } =
+        this.config.data;
+      this.roadForm.patchValue({ ...roadForm.value });
       this.veichlesList = veichlesList;
+      this.roadsList = roadsList;
       this.index = index;
       this.isEdit = isEdit;
 
       if (this.isEdit) {
-        const road = this.roadForm.value;
-        console.log('road', road);
-        const startDateHour = new Date(road.startDate);
+        const formValue = this.roadForm.value;
+        const startDateHour = new Date(formValue.startDate);
         startDateHour.setHours(
-          new Date(road.startDate).getHours(),
-          new Date(road.startDate).getMinutes()
+          new Date(formValue.startDate).getHours(),
+          new Date(formValue.startDate).getMinutes()
         );
 
-        this.roadForm.addControl(
-          'startDateHour',
-          new FormControl(startDateHour)
-        );
+        this.roadForm.get('startDateHour')?.setValue(startDateHour);
 
         this.veichleControl.setValue({
-          veichle: road.veichle,
-          id: road.id,
-          price: road.price,
-          from: road.from,
-          to: road.to,
-          veichleId: road.veichleId,
-          createdAt: road.createdAt,
-          updatedAt: road.updatedAt,
+          veichle: formValue.veichleName,
+          id: formValue.veichle,
         });
 
         console.log('settato', this.veichleControl.value);
@@ -73,18 +63,17 @@ export class ModalRoadComponent {
   }
 
   onSave() {
-    const veichle = this.veichleControl.value;
-
-    console.log('on save veichle', veichle);
-
-    const road = this.roadForm.value;
-    const startDateHour = new Date(road.startDateHour).getHours();
-    const startDateMinute = new Date(road.startDateHour).getMinutes();
-    const startDate = new Date(road.startDate);
+    const formValue = this.roadForm.value;
+    const startDateHour = new Date(formValue.startDateHour).getHours();
+    const startDateMinute = new Date(formValue.startDateHour).getMinutes();
+    const startDate = new Date(formValue.startDate);
     startDate.setHours(startDateHour, startDateMinute);
-    this.roadForm.patchValue({ startDate, ...veichle });
 
-    console.log(this.roadForm.value);
+    this.roadForm.removeControl('startDateHour');
+    this.roadForm.patchValue({
+      startDate,
+    });
+
     this.ref.close(this.roadForm);
   }
 }

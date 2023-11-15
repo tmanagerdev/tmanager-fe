@@ -70,6 +70,7 @@
             [activeIndex]="activeIndex"
             [activityForm]="activityForm"
             [status]="status"
+            [maxPax]="people.length"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-activity>
@@ -80,7 +81,9 @@
             [roadForm]="roadForm"
             [event]="event"
             [veichles]="veichles"
+            [roads]="roads"
             [status]="status"
+            [maxPax]="people.length"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
           ></app-cart-create-road>

@@ -17,6 +17,7 @@ import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 })
 export class QuantityDropdownComponent {
   @Input() control: AbstractControl = new FormControl();
+  @Input() forPax = false;
   @Input() set max(value: number) {
     this._max = value ?? 30;
     this.options = [...Array(this._max).keys()]

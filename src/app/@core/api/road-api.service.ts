@@ -17,6 +17,7 @@ export class RoadApiService {
     take,
     search,
     city,
+    teams,
     sortField = '',
     sortOrder = 1,
   }: any): Observable<ApiResponse<IRoad>> {
@@ -26,6 +27,7 @@ export class RoadApiService {
         take,
         ...(search ? { search } : null),
         ...(city ? { city } : null),
+        ...(teams ? { teams } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     }) as any;

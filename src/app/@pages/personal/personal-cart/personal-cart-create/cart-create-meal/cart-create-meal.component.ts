@@ -50,6 +50,7 @@ export class CartCreateMealComponent {
 
   onUpdateMeal(index: number) {
     const mealToUpdate = this.mealsArray.at(index) as FormGroup;
+    console.log('mealToUpdate', mealToUpdate);
 
     this.ref = this.dialogService.open(ModalMealComponent, {
       header: 'Aggiorna pasto',
@@ -67,6 +68,7 @@ export class CartCreateMealComponent {
 
     this.ref.onClose.subscribe((meal: FormGroup) => {
       if (meal) {
+        console.log('save??', meal.value);
         this.mealsArray.at(index).setValue({ ...meal.value });
       }
     });
@@ -89,7 +91,8 @@ export class CartCreateMealComponent {
       id: new FormControl(null),
       name: new FormControl(null),
       mealId: new FormControl(null, Validators.required),
-      configId: new FormControl(null, Validators.required),
+      configId: new FormControl(null),
+      configIds: new FormControl([]),
       description: new FormControl(null),
     });
 

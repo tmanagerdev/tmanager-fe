@@ -1,16 +1,11 @@
-<form
-  [formGroup]="teamForm"
-  class="flex flex-column gap-3"
-  (ngSubmit)="onSave()"
->
+<div class="flex flex-column gap-3">
   <div class="flex gap-2">
     <div class="flex-1 flex flex-column gap-2">
       <label>Squadra</label>
       <p-dropdown
         [options]="teams"
-        formControlName="id"
+        [formControl]="teamControl"
         optionLabel="name"
-        optionValue="id"
         [filter]="true"
         filterBy="name"
         [showClear]="true"
@@ -32,9 +27,9 @@
     ></button>
     <button
       pButton
-      type="submit"
+      (click)="onSave()"
       label="Salva"
-      [disabled]="!teamForm.valid"
+      [disabled]="!teamControl.valid"
     ></button>
   </div>
-</form>
+</div>
