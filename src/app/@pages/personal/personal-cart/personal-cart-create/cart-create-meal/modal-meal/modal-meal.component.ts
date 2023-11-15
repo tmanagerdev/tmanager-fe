@@ -39,8 +39,6 @@ export class ModalMealComponent {
       this.maxPax = maxPax;
       this.isEdit = isEdit;
 
-      console.log(this.mealsList);
-
       if (this.isEdit) {
         const meal = this.mealForm.value;
         const startDateHour = new Date(meal.startDate);
@@ -72,6 +70,8 @@ export class ModalMealComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap((v) => {
+          this.selectedConfig = null;
+          this.configIdControl.reset();
           if (v) {
             this.selectedMeal = this.mealsList.find((ml: any) => ml.id === v);
           } else {
@@ -92,7 +92,6 @@ export class ModalMealComponent {
           } else {
             this.selectedConfig = null;
           }
-          console.log('selectedConfig', this.selectedConfig);
         })
       )
       .subscribe();
