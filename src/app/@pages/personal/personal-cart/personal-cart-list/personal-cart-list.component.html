@@ -3,9 +3,9 @@
 
 <h2 class="mb-2">Trasferte</h2>
 <div
-  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4 dialog-buttons"
+  class="flex flex-column xl:flex-row xl:justify-content-between w-full tman-shadow px-5 py-3 border-round my-4 dialog-buttons"
 >
-  <div class="flex gap-2">
+  <div class="flex flex-column xl:flex-row gap-2">
     <div class="flex flex-column">
       <label class="font-semibold mb-2">Ospitante</label>
       <p-dropdown
@@ -49,7 +49,7 @@
       pButton
       pRipple
       label="Applica filtri"
-      class="p-button-text"
+      class="p-button-text mt-5 lg:mt-0"
       (click)="onApplyFilters()"
     ></button>
   </div>
@@ -110,14 +110,9 @@
         <p>{{ event.day }}° giornata</p>
       </td>
       <td>
-        <ng-container *ngIf="event.cart">
-          <span class="chips" [ngClass]="'chips-' + event.cart.status">
-            {{ event.cart.status | statusCart }}
-          </span>
-        </ng-container>
-        <ng-container *ngIf="!event.cart">
-          <span class="chips chips-warning"> Da organizzare </span>
-        </ng-container>
+        <app-tag-status-cart
+          [status]="event.cart?.status"
+        ></app-tag-status-cart>
       </td>
       <td>{{ event.createdAt | customDate }}</td>
       <td>

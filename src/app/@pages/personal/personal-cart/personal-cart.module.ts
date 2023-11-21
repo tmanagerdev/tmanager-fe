@@ -48,6 +48,7 @@ import { StatusCartPipe } from '../../../@core/pipes/status-cart.pipe';
 import { QuantityDropdownComponent } from '../../../@shared/quantity-dropdown/quantity-dropdown.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
+import { TagStatusCartComponent } from '../../../@shared/tag-status-cart/tag-status-cart.component';
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     QuantityDropdownComponent,
     RadioButtonModule,
     CheckboxModule,
+    TagStatusCartComponent,
   ],
 })
 export class PersonalCartModule {}

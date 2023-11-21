@@ -25,9 +25,11 @@ import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.com
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { StatusCartPipe } from 'src/app/@core/pipes/status-cart.pipe';
+import { TagStatusCartComponent } from '../../@shared/tag-status-cart/tag-status-cart.component';
 
 @NgModule({
   declarations: [CartListComponent],
+  providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
     CartRoutingModule,
@@ -54,7 +56,7 @@ import { StatusCartPipe } from 'src/app/@core/pipes/status-cart.pipe';
     OverlayPanelModule,
     InputSwitchModule,
     StatusCartPipe,
+    TagStatusCartComponent,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class CartModule {}

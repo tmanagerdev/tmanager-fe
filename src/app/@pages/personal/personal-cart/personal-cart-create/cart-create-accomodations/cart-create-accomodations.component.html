@@ -93,8 +93,10 @@
                         </div>
                       </ng-template>
                       <ng-container *ngFor="let p of r.rooming; let ip = index">
-                        <div class="p-2 flex align-items-center room-user">
-                          <span class="mr-2">
+                        <div
+                          class="p-2 flex flex-column-reverse xl:flex-row xl:align-items-center room-user"
+                        >
+                          <span class="mt-2 mr-0 xl:mt-0 xl:mr-2">
                             <app-tag-role-people
                               [people]="p"
                             ></app-tag-role-people>

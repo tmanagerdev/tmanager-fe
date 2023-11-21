@@ -88,9 +88,7 @@
       <td>{{ cart.endDate | customDate }}</td>
       <td>{{ cart.user.email }}</td>
       <td>
-        <span class="chips" [ngClass]="'chips-' + cart.status">
-          {{ cart.status | statusCart }}
-        </span>
+        <app-tag-status-cart [status]="cart.status"></app-tag-status-cart>
       </td>
       <td>{{ cart.createdAt | customDate }}</td>
       <td>
