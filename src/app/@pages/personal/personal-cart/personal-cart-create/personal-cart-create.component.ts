@@ -41,7 +41,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       label: 'Attività',
     },
     {
-      label: 'Bus-Auto-Trasporti',
+      label: 'Trasporti',
     },
     {
       label: 'Riepilogo',
