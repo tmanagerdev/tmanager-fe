@@ -19,6 +19,7 @@ export class CartCreateMealComponent {
   @Input() meals: any[] = [];
   @Input() mealForm: FormGroup = new FormGroup({});
   @Input() maxPax = 0;
+  @Input() isEdit: boolean = false;
   @Input() set status(value: EStatusCart) {
     if (value) {
       this._status = value;

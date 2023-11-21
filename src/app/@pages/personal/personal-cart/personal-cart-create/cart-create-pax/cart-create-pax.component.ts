@@ -19,6 +19,11 @@ export class CartCreatePaxComponent {
   @Input() event: any;
   @Input() people: IPeople[] = [];
   @Input() isEdit = false;
+  @Input() set status(value: EStatusCart) {
+    if (value) {
+      this._status = value;
+    }
+  }
 
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
