@@ -7,14 +7,14 @@
 >
   <div class="flex gap-2">
     <div class="flex flex-column">
-      <label class="font-semibold mb-2">Casa</label>
+      <label class="font-semibold mb-2">Ospitante</label>
       <p-dropdown
         [options]="teams"
         [formControl]="teamHomeFilter"
         optionLabel="name"
         [filter]="true"
         [showClear]="true"
-        placeholder="Squadra di casa"
+        placeholder="Squadra ospitante"
         (onShow)="loadFilteredTeams('')"
         (onFilter)="onFilterTeam($event)"
       >
@@ -32,13 +32,14 @@
       ></p-dropdown>
     </div>
     <div class="flex flex-column">
-      <label class="font-semibold mb-2">Da - A</label>
+      <label class="font-semibold mb-2">Data trasferta</label>
       <p-calendar
         [formControl]="dateFilter"
         selectionMode="range"
         dateFormat="dd/mm/yy"
         [readonlyInput]="true"
         (onSelect)="onFilterDate($event)"
+        class="range-date"
       ></p-calendar>
     </div>
   </div>

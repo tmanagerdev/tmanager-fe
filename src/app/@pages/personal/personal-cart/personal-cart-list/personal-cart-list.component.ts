@@ -31,7 +31,7 @@ export class PersonalCartListComponent implements OnInit {
   EStatusCart = EStatusCart;
 
   teamHomeFilter = new UntypedFormControl('');
-  dateFilter = new UntypedFormControl('');
+  dateFilter = new UntypedFormControl([new Date(), null]);
   teamsFilter: FormControl = new FormControl('');
 
   events$: Subject<void> = new Subject();
@@ -140,16 +140,17 @@ export class PersonalCartListComponent implements OnInit {
   }
 
   onApplyFilters() {
-    this.filter = this.teamsFilter.value?.id ?? '';
-    this.startDateFilter =
-      this.dateFilter.value && this.dateFilter.value[0]
-        ? this.dateFilter.value[0]
-        : '';
-    this.endDateFilter =
-      this.dateFilter.value && this.dateFilter.value[1]
-        ? this.dateFilter.value[1]
-        : '';
-    this.loadCarts();
+    // this.filter = this.teamsFilter.value?.id ?? '';
+    // this.startDateFilter =
+    //   this.dateFilter.value && this.dateFilter.value[0]
+    //     ? this.dateFilter.value[0]
+    //     : '';
+    // this.endDateFilter =
+    //   this.dateFilter.value && this.dateFilter.value[1]
+    //     ? this.dateFilter.value[1]
+    //     : '';
+    // this.loadCarts();
+    console.log('this.dateFilter.value', this.dateFilter.value);
   }
 
   complete(cart: any) {
