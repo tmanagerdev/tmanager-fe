@@ -37,7 +37,7 @@ export class RecapComponent implements OnInit {
     }, 0);
     const totalActivity = this.activities.value.reduce(
       (acc: any, activity: any) => {
-        return acc + activity.price * 100;
+        return acc + activity.quantity * activity.price * 100;
       },
       0
     );

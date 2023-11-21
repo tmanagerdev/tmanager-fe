@@ -94,7 +94,7 @@ export class PersonalCartViewComponent {
           }, 0);
           const totalActivity = this.activities.reduce(
             (acc: any, activity: any) => {
-              return acc + activity.activity.price * 100;
+              return acc + activity.quantity * activity.activity.price * 100;
             },
             0
           );
