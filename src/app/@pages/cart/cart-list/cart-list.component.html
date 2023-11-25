@@ -6,7 +6,7 @@
 >
   <div class="flex align-items-center gap-3">
     <div class="w-full flex flex-column gap-2">
-      <label>Squadra</label>
+      <label>Squadra ospite</label>
       <p-dropdown
         [options]="teams"
         [formControl]="teamFilter"
@@ -30,6 +30,17 @@
         placeholder="Filtra per utente"
         (onShow)="loadFilteredUsers('')"
         (onFilter)="onFilterUser($event)"
+      >
+      </p-dropdown>
+    </div>
+    <div class="w-full flex flex-column gap-2">
+      <label>Stato</label>
+      <p-dropdown
+        [options]="statusCart"
+        [formControl]="statusFilter"
+        optionLabel="label"
+        [showClear]="true"
+        placeholder="Filtra per stato"
       >
       </p-dropdown>
     </div>

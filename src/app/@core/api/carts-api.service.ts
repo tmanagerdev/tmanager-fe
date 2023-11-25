@@ -16,6 +16,7 @@ export class CartApiService {
     take,
     team,
     user,
+    status,
     complete,
     sortField = '',
     sortOrder = 1,
@@ -27,6 +28,7 @@ export class CartApiService {
         ...(team ? { team } : null),
         ...(user ? { user } : null),
         ...(complete ? { complete } : null),
+        ...(status ? { status } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     }) as any;

@@ -13,7 +13,7 @@ import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { UserApiService } from 'src/app/@core/api/user-api.service';
 import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
-import { ICart } from 'src/app/@core/models/cart.model';
+import { ICart, statusCart } from 'src/app/@core/models/cart.model';
 import { ITeam } from 'src/app/@core/models/team.model';
 import { IUser } from 'src/app/@core/models/user.model';
 
@@ -34,9 +34,11 @@ export class CartListComponent {
   sort: ISort | null = null;
   loading: boolean = false;
   filterActive: boolean = false;
+  statusCart = statusCart;
 
   teamFilter = new UntypedFormControl('');
   userFilter = new UntypedFormControl('');
+  statusFilter = new UntypedFormControl('');
   completeFilter = new UntypedFormControl(false);
 
   cities$: Subject<string> = new Subject();
@@ -61,6 +63,10 @@ export class CartListComponent {
 
   get userFilterId() {
     return this.userFilter.value ? this.userFilter.value.id : null;
+  }
+
+  get statusFilterValue() {
+    return this.statusFilter.value ? this.statusFilter.value.value : null;
   }
 
   get filterIcon(): string {
@@ -88,6 +94,9 @@ export class CartListComponent {
             ...(this.filter ? { name: this.filter } : {}),
             ...(this.userFilterId ? { user: this.userFilterId } : {}),
             ...(this.teamFilterId ? { team: this.teamFilterId } : {}),
+            ...(this.statusFilterValue
+              ? { status: this.statusFilterValue }
+              : {}),
             ...(this.completeFilter.value
               ? { complete: this.completeFilter.value }
               : {}),
