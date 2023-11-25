@@ -12,6 +12,7 @@ export enum EStatusCart {
   CONFIRMED = 'CONFIRMED',
   DEPOSIT = 'DEPOSIT',
   COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
 }
 
 export const statusCart = [
@@ -20,6 +21,7 @@ export const statusCart = [
   { value: EStatusCart.CONFIRMED, label: 'Confermata' },
   { value: EStatusCart.DEPOSIT, label: 'Acconto pagato' },
   { value: EStatusCart.COMPLETED, label: 'Completata' },
+  { value: EStatusCart.CANCELLED, label: 'Annullata' },
 ];
 
 export interface ICart {

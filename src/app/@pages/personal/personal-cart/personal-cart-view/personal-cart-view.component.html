@@ -14,8 +14,22 @@
         <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
         <span class="mt-2">
-          <p-tag severity="Primary" *ngIf="status === EStatusCart.PENDING">
-            <p>Presa in carico il {{ cart.pendingAt | customDate }}</p>
+          <p-tag
+            [classList]="status | lowercase"
+            *ngIf="status !== EStatusCart.DRAFT"
+          >
+            <p *ngIf="status === EStatusCart.PENDING">
+              Presa in carico il {{ cart.pendingAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.CONFIRMED">
+              Confermata il {{ cart.confirmedAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.DEPOSIT">
+              Acconto pagato il {{ cart.depositedAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.COMPLETED">
+              Completata il {{ cart.completedAt | customDate }}
+            </p>
           </p-tag>
         </span>
       </div>
@@ -51,6 +65,10 @@
         icon="pi pi-pencil"
         class="p-button-rounded p-button-outlined mr-2"
         label="Modifica"
+        *ngIf="
+          cart.status === EStatusCart.DRAFT ||
+          cart.status === EStatusCart.PENDING
+        "
         (click)="update()"
       ></button>
       <button

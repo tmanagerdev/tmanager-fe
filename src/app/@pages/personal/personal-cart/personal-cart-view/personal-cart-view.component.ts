@@ -26,6 +26,7 @@ export class PersonalCartViewComponent {
   total: number = 0;
   isDownloading: boolean = false;
   EStatusCart = EStatusCart;
+  fromBackoffice = false;
 
   get awayTeam() {
     return this.cart?.event.away;
@@ -59,6 +60,7 @@ export class PersonalCartViewComponent {
     private messageService: MessageService
   ) {
     this.cartId = this.route.snapshot.params['id'];
+    this.fromBackoffice = this.route.snapshot.data['fromBackoffice'];
 
     this.cart$
       .pipe(
@@ -137,7 +139,9 @@ export class PersonalCartViewComponent {
   }
 
   update() {
-    this.router.navigate(['personal', 'carts', 'edit', this.cart.id]);
+    this.fromBackoffice
+      ? this.router.navigate(['cart', 'edit', this.cart.id])
+      : this.router.navigate(['personal', 'carts', 'edit', this.cart.id]);
   }
 
   complete() {
@@ -189,6 +193,8 @@ export class PersonalCartViewComponent {
   }
 
   backToCarts() {
-    this.router.navigate(['personal', 'carts']);
+    this.fromBackoffice
+      ? this.router.navigate(['cart'])
+      : this.router.navigate(['personal', 'carts']);
   }
 }
