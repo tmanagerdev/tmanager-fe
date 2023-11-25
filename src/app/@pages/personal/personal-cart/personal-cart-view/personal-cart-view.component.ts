@@ -22,6 +22,7 @@ export class PersonalCartViewComponent {
   hotel: string = '';
   rooms: any = [];
   roads: any = [];
+  meals: any = [];
   roadsGroupByDate: any[] = [];
   total: number = 0;
   isDownloading: boolean = false;
@@ -91,6 +92,28 @@ export class PersonalCartViewComponent {
             return group;
           }, []);
 
+          this.meals = this.cart.meals.reduce((group: any, meal: any) => {
+            const { quantity, startDate, description, price } = meal;
+            const { id: configId, name: configName } = meal.meal;
+
+            const { id: mealId, name: mealName } = meal.meal.meal;
+            const index = group.findIndex((g: any) => g.mealId === mealId);
+            if (index > -1) {
+              group[index].configIds.push({ configId, configName });
+            } else {
+              group.push({
+                mealId,
+                mealName,
+                configIds: [{ configId, configName }],
+                quantity,
+                startDate,
+                description,
+                price,
+              });
+            }
+            return group;
+          }, []);
+
           const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
             return acc + room.price * room.quantity * 100;
           }, 0);
@@ -103,23 +126,17 @@ export class PersonalCartViewComponent {
           const totalRoads = this.cart?.roads.reduce((acc: any, road: any) => {
             return acc + road.road.price * road.quantity * 100;
           }, 0);
+          const totalMeal = this.meals.reduce((acc: any, meal: any) => {
+            return acc + meal.quantity * meal.price * 100;
+          }, 0);
 
           this.total =
-            totalAccomodation / 100 + totalActivity / 100 + totalRoads / 100;
+            totalAccomodation / 100 +
+            totalActivity / 100 +
+            totalRoads / 100 +
+            totalMeal / 100;
 
-          this.roads = this.cart?.roads.reduce((group: any, road: any) => {
-            const index = group.findIndex((g: any) =>
-              g.data.some(
-                (el: any) => !compareDates(el.startDate, road.startDate)
-              )
-            );
-            if (index > -1) {
-              group[index].data.push(road);
-            } else {
-              group.push({ date: road.startDate, data: [road] });
-            }
-            return group;
-          }, []);
+          this.roads = this.cart?.roads;
         })
       )
       .subscribe();

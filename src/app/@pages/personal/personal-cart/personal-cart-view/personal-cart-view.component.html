@@ -176,33 +176,59 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
+      <p class="font-semibold mb-2 text-2xl">Pasti</p>
+      <ng-container *ngIf="meals && meals.length">
+        <p-table [value]="meals">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data</th>
+              <th>Quantità</th>
+              <th>Pasto</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-meal>
+            <tr>
+              <td>{{ meal.startDate | customDate : "showHours" }}</td>
+              <td>{{ meal.quantity }}</td>
+              <td>{{ meal.mealName }}</td>
+              <td class="text-right">
+                {{ meal.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
+      <ng-container *ngIf="!meals || !meals.length">
+        <p>Nessun pasto selezionato</p>
+      </ng-container>
+    </div>
+    <p-divider></p-divider>
+    <div class="flex flex-column mt-1">
       <p class="font-semibold mb-2 text-xl">Bus - Auto - Trasporti</p>
       <ng-container *ngIf="roads && roads.length">
-        <ng-container *ngFor="let r of roads; let i = index">
-          <p-table [value]="r.data">
-            <ng-template pTemplate="caption">
-              <p>{{ r.date | customDate : "showHours" }}</p>
-            </ng-template>
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Quantità</th>
-                <th>Veicolo</th>
-                <th>Tratta</th>
-                <th class="text-right">Prezzo</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-road>
-              <tr>
-                <td>{{ road.quantity }}</td>
-                <td>{{ road.veichle.name }}</td>
-                <td>{{ road.road.from }} - {{ road.road.to }}</td>
-                <td class="text-right">
-                  {{ road.road.price | currency : "EUR" : "symbol" }}
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </ng-container>
+        <p-table [value]="roads">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data</th>
+              <th>Quantità</th>
+              <th>Veicolo</th>
+              <th>Tratta</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-road>
+            <tr>
+              <td>{{ road.startDate | customDate : "showHours" }}</td>
+              <td>{{ road.quantity }}</td>
+              <td>{{ road.veichle.name }}</td>
+              <td>{{ road.road.from }} - {{ road.road.to }}</td>
+              <td class="text-right">
+                {{ road.road.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </ng-container>
       <ng-container *ngIf="!roads || !roads.length">
         <p>Nessuna tratta selezionata</p>

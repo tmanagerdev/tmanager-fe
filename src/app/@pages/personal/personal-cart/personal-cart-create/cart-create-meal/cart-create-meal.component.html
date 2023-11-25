@@ -23,6 +23,7 @@
         <th>Data</th>
         <th>Quantità</th>
         <th>Pasto</th>
+        <th>Prezzo</th>
         <th></th>
       </tr>
     </ng-template>
@@ -31,6 +32,7 @@
         <td>{{ meal.startDate | customDate : "showHours" }}</td>
         <td>{{ meal.quantity }}</td>
         <td>{{ meal.name }}</td>
+        <td>{{ meal.price | currency : "EUR" : "symbol" }}</td>
         <td>
           <button
             pButton

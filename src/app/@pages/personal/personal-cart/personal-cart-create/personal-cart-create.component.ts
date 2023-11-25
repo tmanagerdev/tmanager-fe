@@ -431,7 +431,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   }
 
   onCopyRooming(data: any) {
-    console.log('onCopyRooming', data);
     clearFormArray(this.rooms);
 
     let setHotel = false;
@@ -553,7 +552,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     // PATCH MEAL FORM
     if (this.cart.meals && this.cart.meals.length) {
       const mealsOnCarts = this.cart.meals.reduce((group: any, meal: any) => {
-        const { quantity, startDate, description } = meal;
+        const { quantity, startDate, description, price } = meal;
         const { id: configId, name: configName } = meal.meal;
 
         const { id: mealId, name: mealName } = meal.meal.meal;
@@ -568,6 +567,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
             quantity,
             startDate,
             description,
+            price,
           });
         }
         return group;
@@ -578,6 +578,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
         const room = new FormGroup({
           id: new FormControl(m.mealId),
           quantity: new FormControl(m.quantity),
+          price: new FormControl(m.price),
           startDate: new FormControl(new Date(m.startDate)),
           mealId: new FormControl(m.mealId),
           ...(m.configIds.length < 2
@@ -828,6 +829,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               startDate: new FormControl(m.startDate),
               name: new FormControl(m.name),
               description: new FormControl(m.description),
+              price: new FormControl(m.price),
             })
           );
         }
@@ -840,6 +842,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
             startDate: new FormControl(m.startDate),
             name: new FormControl(m.name),
             description: new FormControl(m.description),
+            price: new FormControl(m.price),
           })
         );
       }
