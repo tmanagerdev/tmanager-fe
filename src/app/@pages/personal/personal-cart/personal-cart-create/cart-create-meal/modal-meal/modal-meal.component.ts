@@ -20,6 +20,7 @@ export class ModalMealComponent {
     configId: new FormControl(null),
     configIds: new FormControl([]),
     description: new FormControl(null),
+    price: new FormControl(null),
   });
   isEdit: boolean = false;
   index: number = 0;
@@ -150,8 +151,10 @@ export class ModalMealComponent {
           ? this.selectedConfig.name
           : this.selectedConfigs.map((sc: any) => sc.name).join(', ')
       }`,
+      price: this.selectedMeal.price,
     });
 
+    console.log('this.mealForm', this.mealForm.value);
     this.ref.close(this.mealForm);
   }
 }

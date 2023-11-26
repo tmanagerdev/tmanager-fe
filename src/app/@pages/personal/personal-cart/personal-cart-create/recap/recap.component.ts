@@ -32,6 +32,36 @@ export class RecapComponent implements OnInit {
         return group;
       }, []);
 
+    this.meals = this.cartForm
+      ?.get('meals')
+      ?.value.reduce((group: any, meal: any) => {
+        const {
+          quantity,
+          startDate,
+          description,
+          price,
+          configId,
+          mealId,
+          name,
+        } = meal;
+
+        const index = group.findIndex((g: any) => g.mealId === mealId);
+        if (index > -1) {
+          group[index].configIds.push({ configId });
+        } else {
+          group.push({
+            mealId,
+            name,
+            configIds: [{ configId }],
+            quantity,
+            startDate,
+            description,
+            price,
+          });
+        }
+        return group;
+      }, []);
+
     const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
       return acc + room.price * room.quantity * 100;
     }, 0);
@@ -47,23 +77,19 @@ export class RecapComponent implements OnInit {
         return acc + road.price * road.quantity * 100;
       }, 0);
 
-    this.total =
-      totalAccomodation / 100 + totalActivity / 100 + totalRoads / 100;
+    const totalMeal = this.meals.reduce((acc: any, meal: any) => {
+      return acc + meal.quantity * meal.price * 100;
+    }, 0);
 
-    this.roads = this.cartForm
-      ?.get('roads')
-      ?.value.reduce((group: any, road: any) => {
-        const index = group.findIndex((g: any) =>
-          g.data.some((el: any) => !compareDates(el.startDate, road.startDate))
-        );
-        if (index > -1) {
-          group[index].data.push(road);
-        } else {
-          group.push({ date: road.startDate, data: [road] });
-        }
-        return group;
-      }, []);
+    this.total =
+      totalAccomodation / 100 +
+      totalActivity / 100 +
+      totalRoads / 100 +
+      totalMeal / 100;
+
+    this.roads = this.cartForm?.get('roads')?.value;
   }
+
   @Input() activeIndex: number = 0;
   @Input() set status(value: EStatusCart) {
     if (value) {
@@ -81,6 +107,7 @@ export class RecapComponent implements OnInit {
   totalPax: number = 0;
   rooms: any[] = [];
   roads: any[] = [];
+  meals: any[] = [];
   total: number = 0;
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;

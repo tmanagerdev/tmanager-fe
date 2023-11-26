@@ -101,6 +101,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     genericNotes: new FormControl(null),
     accomodationNotes: new FormControl(null),
     roadNotes: new FormControl(null),
+    total: new FormControl(null),
   });
   accomodationForm: FormGroup = new FormGroup({
     hotel: new FormGroup({
@@ -217,44 +218,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               })
             )
           )
-          //switchMap(() => this.eventApiService.findOne(this.eventId)),
-          //tap((event) => {
-          //this.event = { ...event };
-          //this.city = { ...this.event.home?.city };
-
-          //})
-          // switchMap(() =>
-          //   this.hotelApiService.findAll({
-          //     take: 200,
-          //     page: 1,
-          //     city: this.event.home?.city.id,
-          //   })
-          // ),
-          // map((data) => data.data),
-          // tap((hotels) => {
-          //   this.hotels = [...hotels];
-          //   this.selectedHotel = this.hotels.find(
-          //     (h: any) =>
-          //       h.id === this.accomodationForm.get('hotel')?.get('id')?.value
-          //   );
-          //   this.hotelMeals = [...(this.selectedHotel.meals ?? [])];
-          //   console.log('this hotel meals', this.hotelMeals);
-          // }),
-          // switchMap(() =>
-          //   this.veichleApiService.findAll({
-          //     city: this.city.id,
-          //   })
-          // ),
-          // tap((veichles: any) => (this.veichles = [...veichles])),
-          // switchMap(() =>
-          //   this.activityApiService.findAll({
-          //     take: 500,
-          //     page: 1,
-          //     city: this.city.id,
-          //   })
-          // ),
-          // map((data) => data.data),
-          // tap((activities) => (this.cityActivities = [...activities]))
         )
         .subscribe();
     } else {
@@ -431,7 +394,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   }
 
   onCopyRooming(data: any) {
-    console.log('onCopyRooming', data);
     clearFormArray(this.rooms);
 
     let setHotel = false;
@@ -555,8 +517,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       const mealsOnCarts = this.cart.meals.reduce((group: any, meal: any) => {
         const { quantity, startDate, description } = meal;
         const { id: configId, name: configName } = meal.meal;
-
-        const { id: mealId, name: mealName } = meal.meal.meal;
+        const { id: mealId, name: mealName, price: mealPrice } = meal.meal.meal;
+        console.log(mealPrice);
         const index = group.findIndex((g: any) => g.mealId === mealId);
         if (index > -1) {
           group[index].configIds.push({ configId, configName });
@@ -568,6 +530,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
             quantity,
             startDate,
             description,
+            price: mealPrice,
           });
         }
         return group;
@@ -578,6 +541,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
         const room = new FormGroup({
           id: new FormControl(m.mealId),
           quantity: new FormControl(m.quantity),
+          price: new FormControl(m.price),
           startDate: new FormControl(new Date(m.startDate)),
           mealId: new FormControl(m.mealId),
           ...(m.configIds.length < 2
@@ -604,7 +568,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                     .join(', ')}`
                 ),
               }),
-          description: new FormControl(null),
+          description: new FormControl(m.description),
         });
         meals.push(room);
       }
@@ -828,6 +792,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               startDate: new FormControl(m.startDate),
               name: new FormControl(m.name),
               description: new FormControl(m.description),
+              price: new FormControl(m.price),
             })
           );
         }
@@ -840,6 +805,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
             startDate: new FormControl(m.startDate),
             name: new FormControl(m.name),
             description: new FormControl(m.description),
+            price: new FormControl(m.price),
           })
         );
       }

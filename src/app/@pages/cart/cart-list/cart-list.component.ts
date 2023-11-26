@@ -13,7 +13,11 @@ import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { UserApiService } from 'src/app/@core/api/user-api.service';
 import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
-import { ICart, statusCart } from 'src/app/@core/models/cart.model';
+import {
+  EStatusCart,
+  ICart,
+  statusCart,
+} from 'src/app/@core/models/cart.model';
 import { ITeam } from 'src/app/@core/models/team.model';
 import { IUser } from 'src/app/@core/models/user.model';
 
@@ -35,6 +39,7 @@ export class CartListComponent {
   loading: boolean = false;
   filterActive: boolean = false;
   statusCart = statusCart;
+  EStatusCart = EStatusCart;
 
   teamFilter = new UntypedFormControl('');
   userFilter = new UntypedFormControl('');
@@ -180,10 +185,6 @@ export class CartListComponent {
     this.router.navigate(['cart', 'edit', cart.id]);
   }
 
-  confirm(cart: Partial<ICart>) {
-    console.log('confirm cart');
-  }
-
   remove(cart: Partial<ICart>) {
     this.confirmationService.confirm({
       message: 'Sei sicuro di voler eliminare questa trasferta?',
@@ -199,6 +200,41 @@ export class CartListComponent {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Trasferta eliminata',
+              });
+            })
+          )
+          .subscribe();
+      },
+    });
+  }
+
+  updateStatus(cart: Partial<ICart>, status: EStatusCart) {
+    const messages = {
+      [EStatusCart.CANCELLED]:
+        'Sei sicuro di voler annullare questa trasferta?',
+      [EStatusCart.CONFIRMED]:
+        'Sei sicuro di voler confermare questa trasferta?',
+      [EStatusCart.DEPOSIT]:
+        "Sei sicuro di voler confermare il pagamento dell' acconto?",
+      [EStatusCart.COMPLETED]:
+        'Sei sicuro di voler completare questa trasferta?',
+      [EStatusCart.DRAFT]: '',
+      [EStatusCart.PENDING]: '',
+    };
+    this.confirmationService.confirm({
+      message: messages[status],
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.cartApiService
+          .update(cart.id!, { status })
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadCarts();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Operazione completata',
               });
             })
           )

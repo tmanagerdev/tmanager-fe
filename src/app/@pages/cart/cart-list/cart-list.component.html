@@ -87,6 +87,7 @@
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
+      <th>Totale</th>
       <th>Azioni</th>
     </tr>
   </ng-template>
@@ -102,6 +103,7 @@
         <app-tag-status-cart [status]="cart.status"></app-tag-status-cart>
       </td>
       <td>{{ cart.createdAt | customDate }}</td>
+      <td>{{ cart.total | currency : "EUR" : "symbol" }}</td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
@@ -118,21 +120,70 @@
             class="p-button-text"
             (click)="detail(cart)"
           ></button>
-          <button
-            pButton
-            pRipple
-            label="Modifica"
-            class="p-button-text"
-            (click)="update(cart)"
-          ></button>
-
-          <button
-            pButton
-            pRipple
-            label="Rimuovi"
-            class="p-button-text p-button-danger"
-            (click)="remove(cart)"
-          ></button>
+          <ng-container *ngIf="cart.status === EStatusCart.DRAFT">
+            <button
+              pButton
+              pRipple
+              label="Modifica"
+              class="p-button-text"
+              (click)="update(cart)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              label="Rimuovi"
+              class="p-button-text p-button-danger"
+              (click)="remove(cart)"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="cart.status === EStatusCart.PENDING">
+            <button
+              pButton
+              pRipple
+              label="Conferma"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.CONFIRMED)"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="cart.status === EStatusCart.CONFIRMED">
+            <button
+              pButton
+              pRipple
+              label="Acconto pagato"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.DEPOSIT)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              label="Completa"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.COMPLETED)"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="cart.status === EStatusCart.DEPOSIT">
+            <button
+              pButton
+              pRipple
+              label="Completa"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.COMPLETED)"
+            ></button>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              cart.status !== EStatusCart.DRAFT &&
+              cart.status !== EStatusCart.COMPLETED
+            "
+          >
+            <button
+              pButton
+              pRipple
+              label="Annulla"
+              class="p-button-text p-button-danger"
+              (click)="updateStatus(cart, EStatusCart.CANCELLED)"
+            ></button>
+          </ng-container>
         </p-overlayPanel>
       </td>
     </tr>

@@ -14,8 +14,22 @@
         <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
         <span class="mt-2">
-          <p-tag severity="Primary" *ngIf="status === EStatusCart.PENDING">
-            <p>Presa in carico il {{ cart.pendingAt | customDate }}</p>
+          <p-tag
+            [classList]="status | lowercase"
+            *ngIf="status !== EStatusCart.DRAFT"
+          >
+            <p *ngIf="status === EStatusCart.PENDING">
+              Presa in carico il {{ cart.pendingAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.CONFIRMED">
+              Confermata il {{ cart.confirmedAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.DEPOSIT">
+              Acconto pagato il {{ cart.depositedAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.COMPLETED">
+              Completata il {{ cart.completedAt | customDate }}
+            </p>
           </p-tag>
         </span>
       </div>
@@ -51,6 +65,10 @@
         icon="pi pi-pencil"
         class="p-button-rounded p-button-outlined mr-2"
         label="Modifica"
+        *ngIf="
+          cart.status === EStatusCart.DRAFT ||
+          cart.status === EStatusCart.PENDING
+        "
         (click)="update()"
       ></button>
       <button
@@ -158,33 +176,70 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
+      <p class="font-semibold mb-2 text-2xl">Pasti</p>
+      <ng-container *ngIf="meals && meals.length">
+        <p-table [value]="meals">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data</th>
+              <th>Quantità</th>
+              <th>Pasto</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-meal>
+            <tr>
+              <td>{{ meal.startDate | customDate : "showHours" }}</td>
+              <td>{{ meal.quantity }}</td>
+              <td>
+                {{ meal.mealName }}
+                <ng-container *ngIf="meal.description">
+                  <i
+                    class="pi pi-info-circle cursor-pointer"
+                    (click)="op.toggle($event)"
+                  ></i>
+                  <p-overlayPanel #op>
+                    {{ meal.description }}
+                  </p-overlayPanel>
+                </ng-container>
+              </td>
+              <td class="text-right">
+                {{ meal.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
+      <ng-container *ngIf="!meals || !meals.length">
+        <p>Nessun pasto selezionato</p>
+      </ng-container>
+    </div>
+    <p-divider></p-divider>
+    <div class="flex flex-column mt-1">
       <p class="font-semibold mb-2 text-xl">Bus - Auto - Trasporti</p>
       <ng-container *ngIf="roads && roads.length">
-        <ng-container *ngFor="let r of roads; let i = index">
-          <p-table [value]="r.data">
-            <ng-template pTemplate="caption">
-              <p>{{ r.date | customDate : "showHours" }}</p>
-            </ng-template>
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Quantità</th>
-                <th>Veicolo</th>
-                <th>Tratta</th>
-                <th class="text-right">Prezzo</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-road>
-              <tr>
-                <td>{{ road.quantity }}</td>
-                <td>{{ road.veichle.name }}</td>
-                <td>{{ road.road.from }} - {{ road.road.to }}</td>
-                <td class="text-right">
-                  {{ road.road.price | currency : "EUR" : "symbol" }}
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </ng-container>
+        <p-table [value]="roads">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data</th>
+              <th>Quantità</th>
+              <th>Veicolo</th>
+              <th>Tratta</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-road>
+            <tr>
+              <td>{{ road.startDate | customDate : "showHours" }}</td>
+              <td>{{ road.quantity }}</td>
+              <td>{{ road.veichle.name }}</td>
+              <td>{{ road.road.from }} - {{ road.road.to }}</td>
+              <td class="text-right">
+                {{ road.road.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </ng-container>
       <ng-container *ngIf="!roads || !roads.length">
         <p>Nessuna tratta selezionata</p>
@@ -222,7 +277,7 @@
     <p-divider></p-divider>
     <div class="flex justify-content-between">
       <p class="font-semibold mb-2 text-xl">TOTALE</p>
-      <p class="text-3xl">{{ total | currency : "EUR" : "symbol" }}</p>
+      <p class="text-3xl">{{ cart.total | currency : "EUR" : "symbol" }}</p>
     </div>
   </div>
 </ng-container>
