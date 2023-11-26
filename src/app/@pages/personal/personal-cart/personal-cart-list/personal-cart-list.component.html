@@ -74,13 +74,13 @@
       <th pSortableColumn="createdAt">
         Data partita <p-sortIcon field="date"></p-sortIcon>
       </th>
-      <th>Squadra di casa</th>
-      <th>Squadra ospite</th>
+      <th>Ospitante</th>
+      <th>Ospite</th>
       <th>Campionato</th>
       <th>Stato</th>
-      <th pSortableColumn="createdAt">
+      <!-- <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
-      </th>
+      </th> -->
       <th>Azioni</th>
     </tr>
   </ng-template>
@@ -114,7 +114,7 @@
           [status]="event.cart?.status"
         ></app-tag-status-cart>
       </td>
-      <td>{{ event.createdAt | customDate }}</td>
+      <!-- <td>{{ event.createdAt | customDate }}</td> -->
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
