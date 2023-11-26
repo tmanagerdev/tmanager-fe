@@ -89,6 +89,7 @@ export class RecapComponent implements OnInit {
 
     this.roads = this.cartForm?.get('roads')?.value;
   }
+
   @Input() activeIndex: number = 0;
   @Input() set status(value: EStatusCart) {
     if (value) {

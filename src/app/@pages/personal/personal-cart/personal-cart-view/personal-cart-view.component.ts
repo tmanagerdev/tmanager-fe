@@ -93,10 +93,14 @@ export class PersonalCartViewComponent {
           }, []);
 
           this.meals = this.cart.meals.reduce((group: any, meal: any) => {
-            const { quantity, startDate, description, price } = meal;
+            const { quantity, startDate, description } = meal;
             const { id: configId, name: configName } = meal.meal;
 
-            const { id: mealId, name: mealName } = meal.meal.meal;
+            const {
+              id: mealId,
+              name: mealName,
+              price: mealPrice,
+            } = meal.meal.meal;
             const index = group.findIndex((g: any) => g.mealId === mealId);
             if (index > -1) {
               group[index].configIds.push({ configId, configName });
@@ -108,11 +112,20 @@ export class PersonalCartViewComponent {
                 quantity,
                 startDate,
                 description,
-                price,
+                price: mealPrice,
               });
             }
             return group;
           }, []);
+
+          this.meals = this.meals.map((m: any) => ({
+            ...m,
+            mealName: `${m.mealName} - ${m.configIds
+              .map((c: any) => c.configName)
+              .join(', ')}`,
+          }));
+
+          console.log(this.meals);
 
           const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
             return acc + room.price * room.quantity * 100;

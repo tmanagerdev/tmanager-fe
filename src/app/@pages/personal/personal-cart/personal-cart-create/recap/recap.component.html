@@ -126,7 +126,18 @@
               <tr>
                 <td>{{ meal.startDate | customDate : "showHours" }}</td>
                 <td>{{ meal.quantity }}</td>
-                <td>{{ meal.name }}</td>
+                <td>
+                  {{ meal.name }}
+                  <ng-container *ngIf="meal.description">
+                    <i
+                      class="pi pi-info-circle cursor-pointer"
+                      (click)="op.toggle($event)"
+                    ></i>
+                    <p-overlayPanel #op>
+                      {{ meal.description }}
+                    </p-overlayPanel>
+                  </ng-container>
+                </td>
                 <td class="text-right">
                   {{ meal.price | currency : "EUR" : "symbol" }}
                 </td>

@@ -191,7 +191,18 @@
             <tr>
               <td>{{ meal.startDate | customDate : "showHours" }}</td>
               <td>{{ meal.quantity }}</td>
-              <td>{{ meal.mealName }}</td>
+              <td>
+                {{ meal.mealName }}
+                <ng-container *ngIf="meal.description">
+                  <i
+                    class="pi pi-info-circle cursor-pointer"
+                    (click)="op.toggle($event)"
+                  ></i>
+                  <p-overlayPanel #op>
+                    {{ meal.description }}
+                  </p-overlayPanel>
+                </ng-container>
+              </td>
               <td class="text-right">
                 {{ meal.price | currency : "EUR" : "symbol" }}
               </td>
@@ -266,7 +277,7 @@
     <p-divider></p-divider>
     <div class="flex justify-content-between">
       <p class="font-semibold mb-2 text-xl">TOTALE</p>
-      <p class="text-3xl">{{ total | currency : "EUR" : "symbol" }}</p>
+      <p class="text-3xl">{{ cart.total | currency : "EUR" : "symbol" }}</p>
     </div>
   </div>
 </ng-container>

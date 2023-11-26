@@ -87,6 +87,7 @@
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
+      <th>Totale</th>
       <th>Azioni</th>
     </tr>
   </ng-template>
@@ -102,6 +103,7 @@
         <app-tag-status-cart [status]="cart.status"></app-tag-status-cart>
       </td>
       <td>{{ cart.createdAt | customDate }}</td>
+      <td>{{ cart.total | currency : "EUR" : "symbol" }}</td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
