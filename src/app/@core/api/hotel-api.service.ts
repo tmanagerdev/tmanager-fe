@@ -80,4 +80,17 @@ export class HotelApiService {
       `${environment.apiUrl}/hotels/${hotelId}/remove-team/${hotelTeamId}`
     );
   }
+
+  createService(hotelId: number, name: string): Observable<any> {
+    return this.httpClient.post(`${environment.apiUrl}/hotels/service`, {
+      hotelId,
+      name,
+    });
+  }
+
+  deleteService(serviceId: number): Observable<any> {
+    return this.httpClient.delete(
+      `${environment.apiUrl}/hotels/service/${serviceId}`
+    );
+  }
 }

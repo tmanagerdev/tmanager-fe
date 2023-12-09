@@ -30,6 +30,8 @@ import { HotelTeamsComponent } from './hotel-teams/hotel-teams.component';
 import { HotelTeamsModalComponent } from './hotel-teams/hotel-teams-modal/hotel-teams-modal.component';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
+import { HotelServiceComponent } from './hotel-service/hotel-service.component';
+import { HotelServiceModalComponent } from './hotel-service/hotel-service-modal/hotel-service-modal.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
     HotelRoomsModalComponent,
     HotelTeamsComponent,
     HotelTeamsModalComponent,
+    HotelServiceComponent,
+    HotelServiceModalComponent,
   ],
   providers: [MessageService, ConfirmationService, DialogService],
   imports: [

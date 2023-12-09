@@ -33,6 +33,8 @@
           'cursor-pointer': _status === EStatusCart.DRAFT
         }"
         (click)="onSelectHotel(h)"
+        [pTooltip]="tooltipContent"
+        tooltipPosition="top"
       >
         <p class="font-semibold">{{ h.name }}</p>
         <span
@@ -42,6 +44,13 @@
           check_circle
         </span>
       </div>
+      <ng-template #tooltipContent>
+        <div class="flex flex-column">
+          <ng-container *ngFor="let s of h.services">
+            <p>- {{ s.name }}</p>
+          </ng-container>
+        </div>
+      </ng-template>
     </ng-container>
   </div>
   <p-divider></p-divider>

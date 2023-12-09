@@ -235,6 +235,10 @@ export class HotelListComponent {
     this.router.navigate(['hotel', hotel.id, 'teams']);
   }
 
+  services(hotel: any) {
+    this.router.navigate(['hotel', hotel.id, 'services']);
+  }
+
   applyFilters() {
     this.filterActive = true;
     this.filtersPopup.hide();
