@@ -56,6 +56,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   hotelMeals: any;
   activities: any;
   roads: any;
+  //roadsGroupByName: any;
   meals: any;
   EStatusCart = EStatusCart;
   status: EStatusCart = EStatusCart.DRAFT;
@@ -139,6 +140,10 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     return this.cartForm.get('rooms') as FormArray;
   }
 
+  get roadsFormArray() {
+    return this.roadForm.get('roads') as FormArray;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -165,7 +170,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           switchMap(() => this.cartApiService.findOne(this.cartId)),
           tap((cart) => {
             this.cart = { ...cart };
-            this.patchFormEdit();
             this.event = { ...cart.event };
             this.status = cart.status!;
             this.city = { ...this.event.home?.city };
@@ -215,6 +219,19 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                     h.id ===
                     this.accomodationForm.get('hotel')?.get('id')?.value
                 );
+
+                for (const r of roads) {
+                  const rGroup = new FormGroup({
+                    id: new FormControl(r.id),
+                    from: new FormControl(r.from),
+                    to: new FormControl(r.to),
+                    roadsVeichles: new FormControl(r.roadsVeichles),
+                    roads: new FormArray([]),
+                  });
+                  this.roadsFormArray.push(rGroup);
+                }
+
+                this.patchFormEdit();
               })
             )
           )
@@ -274,6 +291,17 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                 this.roads = [...roads];
                 this.activities = [...activities];
                 this.meals = [...meals];
+
+                for (const r of roads) {
+                  const rGroup = new FormGroup({
+                    id: new FormControl(r.id),
+                    from: new FormControl(r.from),
+                    to: new FormControl(r.to),
+                    roadsVeichles: new FormControl(r.roadsVeichles),
+                    roads: new FormArray([]),
+                  });
+                  this.roadsFormArray.push(rGroup);
+                }
               })
             )
           )
@@ -458,7 +486,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
    * carrello recuperato dalle API
    */
   patchFormEdit() {
-    console.log('patchFormEdit', this.cart);
     // PATCH CART FORM
     this.cartForm.get('genericNotes')?.setValue(this.cart.genericNotes);
     // PATCH PAX FORM
@@ -518,7 +545,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
         const { quantity, startDate, description } = meal;
         const { id: configId, name: configName } = meal.meal;
         const { id: mealId, name: mealName, price: mealPrice } = meal.meal.meal;
-        console.log(mealPrice);
         const index = group.findIndex((g: any) => g.mealId === mealId);
         if (index > -1) {
           group[index].configIds.push({ configId, configName });
@@ -537,7 +563,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
       }, []);
       const meals = this.mealForm.get('meals') as FormArray;
       for (const m of mealsOnCarts) {
-        console.log('m', m);
         const room = new FormGroup({
           id: new FormControl(m.mealId),
           quantity: new FormControl(m.quantity),
@@ -581,25 +606,96 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     if (this.cart.roads && this.cart.roads.length) {
       const roads = this.roadForm.get('roads') as FormArray;
       for (const r of this.cart.roads) {
-        const road = new FormGroup({
-          startDate: new FormControl(new Date(r.startDate!)),
-          startDateHour: new FormControl(new Date(r.startDate!)),
-          quantity: new FormControl(r.quantity),
-          road: new FormGroup({
-            price: new FormControl(r.road?.price),
-            from: new FormControl(r.road?.from),
-            to: new FormControl(r.road?.to),
-            id: new FormControl(r.road?.id),
-          }),
-          veichle: new FormGroup({
-            id: new FormControl(r.veichle?.id),
-            name: new FormControl(r.veichle?.name),
-          }),
-          createdAt: new FormControl(r.createdAt!),
-          updatedAt: new FormControl(r.updatedAt!),
-        });
-
-        roads.push(road);
+        console.log('R', r);
+        const roadId = r.roadsVeichles.road.id;
+        const road = roads.value.find((road: any) => road.id === roadId);
+        const roadIndex = roads.value.findIndex(
+          (road: any) => road.id === roadId
+        );
+        if (road.roads && road.roads.length) {
+          const roadsArray = roads.at(roadIndex).get('roads') as FormArray;
+          const roadInThisDate = roadsArray.value.findIndex((ra: any) => {
+            console.log('ra.startDate', ra.startDate);
+            console.log(
+              'new Date(r.startDate as string)',
+              new Date(r.startDate as string)
+            );
+            return (
+              ra.startDate.getTime() ===
+              new Date(r.startDate as string).getTime()
+            );
+          });
+          if (roadInThisDate > -1) {
+            const roadsDate = roadsArray.at(roadInThisDate);
+            const veichleIndex = roadsDate.value.veichles.findIndex(
+              (v: any) => v.veichleId === r.roadsVeichles.veichle.id
+            );
+            const veichlesArray = roadsDate.get('veichles') as FormArray;
+            veichlesArray.at(veichleIndex).patchValue({ quantity: r.quantity });
+          } else {
+            const newRoad = new FormGroup({
+              startDate: new FormControl(new Date(r.startDate as string)),
+              startDateHour: new FormControl(new Date(r.startDate as string)),
+              roadId: new FormControl(roadId),
+              veichles: new FormArray([]),
+            });
+            const veichlesArray = newRoad.get('veichles') as FormArray;
+            for (const rv of road.roadsVeichles) {
+              const group = new FormGroup({
+                veichle: new FormControl(rv.veichle.name),
+                veichleId: new FormControl(rv.veichle.id),
+                roadVeichleId: new FormControl(rv.id),
+                price: new FormControl(rv.price),
+                quantity: new FormControl(
+                  r.roadsVeichles.veichle.id === rv.veichle.id ? r.quantity : 0
+                ),
+              });
+              veichlesArray.push(group);
+            }
+            const roadsArray = roads.at(roadIndex).get('roads') as FormArray;
+            roadsArray.push(newRoad);
+          }
+        } else {
+          const newRoad = new FormGroup({
+            startDate: new FormControl(new Date(r.startDate as string)),
+            startDateHour: new FormControl(new Date(r.startDate as string)),
+            roadId: new FormControl(roadId),
+            veichles: new FormArray([]),
+          });
+          const veichlesArray = newRoad.get('veichles') as FormArray;
+          for (const rv of road.roadsVeichles) {
+            const group = new FormGroup({
+              veichle: new FormControl(rv.veichle.name),
+              veichleId: new FormControl(rv.veichle.id),
+              roadVeichleId: new FormControl(rv.id),
+              price: new FormControl(rv.price),
+              quantity: new FormControl(
+                r.roadsVeichles.veichle.id === rv.veichle.id ? r.quantity : 0
+              ),
+            });
+            veichlesArray.push(group);
+          }
+          const roadsArray = roads.at(roadIndex).get('roads') as FormArray;
+          roadsArray.push(newRoad);
+        }
+        // const road = new FormGroup({
+        //   startDate: new FormControl(new Date(r.startDate!)),
+        //   startDateHour: new FormControl(new Date(r.startDate!)),
+        //   quantity: new FormControl(r.quantity),
+        //   road: new FormGroup({
+        //     price: new FormControl(r.road?.price),
+        //     from: new FormControl(r.road?.from),
+        //     to: new FormControl(r.road?.to),
+        //     id: new FormControl(r.road?.id),
+        //     veichle: new FormGroup({
+        //       id: new FormControl(r.road?.veichle?.id),
+        //       name: new FormControl(r.road?.veichle?.name),
+        //     }),
+        //   }),
+        //   createdAt: new FormControl(r.createdAt!),
+        //   updatedAt: new FormControl(r.updatedAt!),
+        // });
+        // roads.push(road);
       }
     }
 
@@ -629,7 +725,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Chiamato prima di salvare il carrello
+   * Chiamato quando apro lo step del recap
    * prende i sotto form delle tab e popola
    * il form principale del carrello
    */
@@ -747,19 +843,30 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     clearFormArray(this.cartForm.get('roads') as FormArray);
     for (const r of roadRoads.value) {
       console.log('R', r);
-      const cartRoads = this.cartForm.get('roads') as FormArray;
-      cartRoads.push(
-        new FormGroup({
-          roadId: new FormControl(r.road.id),
-          quantity: new FormControl(r.quantity),
-          startDate: new FormControl(r.startDate),
-          veichleId: new FormControl(r.veichle.id),
-          veichle: new FormControl(r.veichle.name),
-          from: new FormControl(r.road.from),
-          to: new FormControl(r.road.to),
-          price: new FormControl(r.road.price),
-        })
-      );
+      if (r.roads && r.roads.length) {
+        for (const road of r.roads) {
+          for (const roadVeichle of road.veichles) {
+            if (roadVeichle.quantity) {
+              const cartRoads = this.cartForm.get('roads') as FormArray;
+              const startDateHour = new Date(road.startDateHour).getHours();
+              const startDateMinute = new Date(road.startDateHour).getMinutes();
+              const startDate = new Date(road.startDate);
+              startDate.setHours(startDateHour, startDateMinute);
+              cartRoads.push(
+                new FormGroup({
+                  roadVeichleId: new FormControl(roadVeichle.roadVeichleId),
+                  quantity: new FormControl(roadVeichle.quantity),
+                  startDate: new FormControl(startDate),
+                  veichle: new FormControl(roadVeichle.veichle),
+                  from: new FormControl(r.from),
+                  to: new FormControl(r.to),
+                  price: new FormControl(roadVeichle.price),
+                })
+              );
+            }
+          }
+        }
+      }
     }
 
     // POPULATE ACTIVITIES

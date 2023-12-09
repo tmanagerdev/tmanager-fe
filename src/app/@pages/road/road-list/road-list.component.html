@@ -86,7 +86,6 @@
       <th>Squadre</th>
       <th pSortableColumn="from">Da <p-sortIcon field="from"></p-sortIcon></th>
       <th pSortableColumn="to">A <p-sortIcon field="to"></p-sortIcon></th>
-      <th>Prezzo</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
@@ -107,7 +106,6 @@
       </td>
       <td>{{ road.from }}</td>
       <td>{{ road.to }}</td>
-      <td>{{ road.price | currency : "EUR" : "symbol" }}</td>
       <td>{{ road.createdAt | customDate }}</td>
       <td>
         <p-button
@@ -124,6 +122,13 @@
             label="Modifica"
             class="p-button-text"
             (click)="update(road)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Gestisci veicoli"
+            class="p-button-text"
+            (click)="veichles(road)"
           ></button>
           <button
             pButton

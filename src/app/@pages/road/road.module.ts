@@ -28,6 +28,8 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { CustomDatePipe } from 'src/app/@core/pipes/custom-date.pipe';
 import { EntityListComponent } from 'src/app/@shared/entity-list/entity-list.component';
 import { TeamLogoComponent } from 'src/app/@shared/team-logo/team-logo.component';
+import { RoadVeichlesComponent } from './road-veichles/road-veichles.component';
+import { RoadVeichlesModalComponent } from './road-veichles/road-veichles-modal/road-veichles-modal.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { TeamLogoComponent } from 'src/app/@shared/team-logo/team-logo.component
     RoadModalComponent,
     RoadTeamsComponent,
     RoadTeamsModalComponent,
+    RoadVeichlesComponent,
+    RoadVeichlesModalComponent,
   ],
   imports: [
     CommonModule,

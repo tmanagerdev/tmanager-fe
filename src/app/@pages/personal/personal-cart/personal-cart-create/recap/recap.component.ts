@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Message } from 'primeng/api';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
-import { compareDates } from 'src/app/@core/utils';
 
 @Component({
   selector: 'app-recap',
@@ -62,6 +61,8 @@ export class RecapComponent implements OnInit {
         return group;
       }, []);
 
+    this.roads = this.cartForm?.get('roads')?.value;
+
     const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
       return acc + room.price * room.quantity * 100;
     }, 0);
@@ -87,7 +88,7 @@ export class RecapComponent implements OnInit {
       totalRoads / 100 +
       totalMeal / 100;
 
-    this.roads = this.cartForm?.get('roads')?.value;
+    this.cartForm.patchValue({ total: this.total });
   }
 
   @Input() activeIndex: number = 0;

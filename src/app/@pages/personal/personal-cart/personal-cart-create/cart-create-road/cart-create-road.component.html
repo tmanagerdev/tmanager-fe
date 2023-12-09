@@ -2,89 +2,109 @@
   <div class="flex justify-content-between">
     <div class="flex flex-column">
       <p class="text-sm pb-1">Seleziona le tratte della trasferta</p>
-      <p class="font-semibold text-lg my-2">Bus - Auto - Trasporti</p>
+      <p class="font-semibold text-lg my-2">Trasporti</p>
     </div>
-    <p-button
-      (onClick)="onAddRoad()"
-      icon="pi pi-plus"
-      iconPos="right"
-      styleClass="p-button-rounded"
-      *ngIf="_status === EStatusCart.DRAFT"
-    ></p-button>
   </div>
-  <p-table #dv [value]="roadsValue" [totalRecords]="roadsValue.length">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Data</th>
-        <th>Quantità</th>
-        <th>Veicolo</th>
-        <th>Tratta</th>
-        <th>Prezzo</th>
-        <th></th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-road let-index="rowIndex">
-      <tr>
-        <td>{{ road.startDate | customDate : "showHours" }}</td>
-        <td>{{ road.quantity }}</td>
-        <td>{{ road.veichle.name }}</td>
-        <td>{{ road.road.from }} - {{ road.road.to }}</td>
-        <td>{{ road.road.price | currency : "EUR" : "symbol" }}</td>
-        <td>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-outlined mr-2"
-            (click)="onUpdateRoad(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
-          ></button>
-          <button
-            pButton
-            pRipple
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-outlined p-button-danger"
-            (click)="onDeleteRoad(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
-          ></button>
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <p class="p-3">Nessuna tratta selezionata</p>
-    </ng-template>
-  </p-table>
-
-  <div class="mt-3" [formGroup]="roadForm">
-    <label class="font-semibold"
-      >Segnalaci qui i tuoi voli di arrivo e partenza</label
+  <p-accordion>
+    <ng-container
+      *ngFor="let road of roadsArray.controls; let i = index"
+      [formGroup]="getRoadFG(road)"
     >
-    <textarea
-      rows="3"
-      cols="30"
-      pInputTextarea
-      formControlName="roadNotes"
-      class="mt-2"
-    ></textarea>
-  </div>
+      <p-accordionTab>
+        <ng-template pTemplate="header">
+          <div class="w-full flex align-items-center justify-content-between">
+            <span> {{ road.value.from }} - {{ road.value.to }} </span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="w-full flex justify-content-end">
+            <p-button
+              (onClick)="onAddRoad(road)"
+              icon="pi pi-plus"
+              iconPos="right"
+              styleClass="p-button-rounded"
+              *ngIf="_status === EStatusCart.DRAFT"
+            ></p-button>
+          </div>
+          <div class="my-1">
+            <div formArrayName="roads">
+              <ng-container
+                *ngFor="let roadForm of getRoadFA(road).controls; let i = index"
+                [formGroupName]="i"
+              >
+                <p-panel>
+                  <ng-template pTemplate="header">
+                    <div
+                      class="w-full flex align-items-center justify-content-between"
+                    >
+                      <div class="flex gap-2">
+                        <div class="flex-1">
+                          <label>Giorno</label>
+                          <p-calendar
+                            dateFormat="dd/mm/yy"
+                            formControlName="startDate"
+                          ></p-calendar>
+                        </div>
+                        <div>
+                          <label>Orario</label>
+                          <p-calendar
+                            dateFormat="hh:MM"
+                            formControlName="startDateHour"
+                            [timeOnly]="true"
+                            class="w-5rem flex justify-content-center"
+                          ></p-calendar>
+                        </div>
+                      </div>
+                      <i
+                        class="pi pi-ellipsis-v cursor-pointer"
+                        (click)="
+                          onToggleMenu(roadForm.value.roadId, i, menu, $event)
+                        "
+                        *ngIf="_status === EStatusCart.DRAFT"
+                      ></i>
+                    </div>
+                  </ng-template>
+                  <div [formGroup]="getVeichlesFG(roadForm)">
+                    <div formArrayName="veichles">
+                      <ng-container
+                        *ngFor="
+                          let veichleForm of getVeichlesFA(roadForm).controls;
+                          let i = index
+                        "
+                        [formGroupName]="i"
+                      >
+                        <div
+                          class="flex align-items-center justify-content-between my-2"
+                        >
+                          <p>
+                            {{ veichleForm.value.veichle }}
+                          </p>
+                          <p>
+                            {{
+                              veichleForm.value.price
+                                | currency : "EUR" : "symbol"
+                            }}
+                          </p>
+                          <p-dropdown
+                            [options]="qtaOptions"
+                            formControlName="quantity"
+                            placeholder="Quantità"
+                            appendTo="body"
+                            [style]="{ 'min-width': '150px' }"
+                            [panelStyle]="{ 'min-width': '150px' }"
+                          />
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </p-panel>
+              </ng-container>
+            </div>
+          </div>
+        </ng-template>
+      </p-accordionTab>
+    </ng-container>
+  </p-accordion>
 </div>
 
-<div class="w-full flex justify-content-between mb-3">
-  <p-button
-    label="Indietro"
-    (onClick)="onPrevStep()"
-    icon="pi pi-angle-left"
-    styleClass="p-button-secondary"
-  ></p-button>
-  <p-button
-    label="Avanti"
-    (onClick)="onNextStep()"
-    icon="pi pi-angle-right"
-    iconPos="right"
-    [disabled]="!roadForm.valid"
-  ></p-button>
-</div>
-
-<ng-template #noRoads>
-  <p class="text-sm text-center py-4">Nessuna tratta trovata</p>
-</ng-template>
+<p-menu #menu [model]="items" [popup]="true"></p-menu>

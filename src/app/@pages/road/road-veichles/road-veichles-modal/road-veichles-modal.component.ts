@@ -2,58 +2,54 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
 import { IDropdownFilters } from 'src/app/@core/models/base.model';
-import { ICity } from 'src/app/@core/models/city.model';
-import { IRoad } from 'src/app/@core/models/road.model';
 import { IVeichle } from 'src/app/@core/models/veichle.model';
 
 @Component({
-  selector: 'app-road-modal',
-  templateUrl: './road-modal.component.html',
-  styleUrls: ['./road-modal.component.scss'],
+  selector: 'app-road-veichles-modal',
+  templateUrl: './road-veichles-modal.component.html',
+  styleUrls: ['./road-veichles-modal.component.scss'],
 })
-export class RoadModalComponent {
-  road: Partial<IRoad> = {};
+export class RoadVeichlesModalComponent {
+  roadVeichle: any;
   isEdit: boolean = false;
-  cities: Partial<ICity>[] = [];
+  veichles: Partial<IVeichle>[] = [];
 
-  roadForm: FormGroup = new FormGroup({
-    from: new FormControl('', Validators.required),
-    to: new FormControl('', Validators.required),
-    city: new FormControl(''),
+  roadVeichleForm: FormGroup = new FormGroup({
+    price: new FormControl('', Validators.required),
+    veichle: new FormControl('', Validators.required),
   });
 
-  cities$: Subject<string> = new Subject();
+  veichles$: Subject<string> = new Subject();
   destroy$: Subject<void> = new Subject();
 
   constructor(
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-    private cityApiService: CityApiService
+    private veichleApiService: VeichleApiService
   ) {
     if (this.config.data) {
-      this.road = this.config.data.road;
+      this.roadVeichle = this.config.data.roadVeichle;
       this.isEdit = this.config.data.isEdit;
       if (this.isEdit) {
-        this.roadForm.patchValue(this.road);
-        this.cities.push({ ...this.road.city });
+        this.roadVeichleForm.patchValue(this.roadVeichle);
+        this.veichles.push({ ...this.roadVeichle.veichle });
       }
     }
 
-    this.cities$
+    this.veichles$
       .pipe(
         takeUntil(this.destroy$),
         switchMap((name) =>
-          this.cityApiService.findAll({
+          this.veichleApiService.findAll({
             page: 1,
             take: 50,
             ...(name ? { name } : {}),
           })
         ),
         tap(({ data }) => {
-          this.cities = [...data];
+          this.veichles = [...data];
         })
       )
       .subscribe();
@@ -65,19 +61,19 @@ export class RoadModalComponent {
   }
 
   onSave() {
-    if (this.roadForm.valid) {
-      const road = this.roadForm.value;
-      this.ref.close(road);
+    if (this.roadVeichleForm.valid) {
+      const roadVeichle = this.roadVeichleForm.value;
+      this.ref.close(roadVeichle);
     }
   }
 
-  loadFilteredCities(name: string) {
-    this.cities$.next(name);
+  loadFilteredVeichles(name: string) {
+    this.veichles$.next(name);
   }
 
-  onFilterCities({ filter }: IDropdownFilters) {
+  onFilterVeichles({ filter }: IDropdownFilters) {
     if (filter) {
-      this.loadFilteredCities(filter);
+      this.loadFilteredVeichles(filter);
     }
   }
 }

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { ModalRoadComponent } from './modal-road/modal-road.component';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-cart-create-road',
@@ -15,11 +15,12 @@ export class CartCreateRoadComponent implements OnInit {
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
   searchControl = new FormControl('');
+  qtaOptions = [...Array(21).keys()];
+  coordRoadToDelete: any;
 
   @Input() event: any;
   @Input() activeIndex: number = 0;
   @Input() veichles: any = [];
-  @Input() roads: any = [];
   @Input() roadForm: FormGroup = new FormGroup({});
   @Input() maxPax = 0;
   @Input() set status(value: EStatusCart) {
@@ -27,12 +28,38 @@ export class CartCreateRoadComponent implements OnInit {
       this._status = value;
       if (value !== EStatusCart.DRAFT) {
         this.roadForm.get('roadNotes')?.disable();
+
+        for (const c of this.roadsArray.controls) {
+          const roads = c.get('roads') as FormArray;
+          for (const rc of roads.controls) {
+            rc.get('startDate')?.disable();
+            rc.get('startDateHour')?.disable();
+            const veichles = rc.get('veichles') as FormArray;
+            for (const vc of veichles.controls) {
+              vc.get('quantity')?.disable();
+            }
+          }
+        }
       }
     }
   }
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
+
+  items: MenuItem[] = [
+    {
+      label: 'Elimina',
+      icon: 'pi pi-trash',
+      command: () => {
+        const road = this.roadsArray.value.findIndex(
+          (ar: any) => ar.id === this.coordRoadToDelete.roadId
+        );
+        const array = this.roadsArray.at(road).get('roads') as FormArray;
+        array.removeAt(this.coordRoadToDelete.index);
+      },
+    },
+  ];
 
   get roadsArray(): FormArray {
     return this.roadForm.get('roads') as FormArray;
@@ -58,71 +85,54 @@ export class CartCreateRoadComponent implements OnInit {
     this.prevStep.emit();
   }
 
-  onUpdateRoad(indexRoads: number) {
-    const index = indexRoads + this.firstIndex;
-    const roadToUpdate = this.roadsArray.at(index) as FormGroup;
-
-    this.ref = this.dialogService.open(ModalRoadComponent, {
-      header: 'Aggiorna tratta',
-      width: '700px',
-      contentStyle: { overflow: 'visible' },
-      baseZIndex: 10001,
-      data: {
-        roadForm: roadToUpdate,
-        isEdit: true,
-        index: indexRoads + 1,
-        veichlesList: this.veichles,
-        roadsList: this.roads,
-        maxPax: this.maxPax,
-      },
-    });
-
-    this.ref.onClose.subscribe((road: FormGroup) => {
-      if (road) {
-        this.roadsArray.at(index).setValue({ ...road.value });
-      }
-    });
-  }
-
-  onDeleteRoad(indexRoads: number) {
-    this.roadsArray.removeAt(indexRoads + this.firstIndex);
-  }
-
-  onAddRoad() {
+  onAddRoad(road: any) {
     const startDate = new Date(this.event.date);
     startDate.setDate(startDate.getDate() - 1);
     startDate.setHours(0, 0, 0, 0);
-
     const newRoad = new FormGroup({
       startDate: new FormControl(startDate),
       startDateHour: new FormControl(startDate),
-      veichle: new FormControl(null),
-      quantity: new FormControl(1),
-      id: new FormControl(null),
-      road: new FormControl(null),
-      createdAt: new FormControl(null),
-      updatedAt: new FormControl(null),
+      roadId: new FormControl(road.value.id),
+      veichles: new FormArray([]),
     });
+    const veichlesArray = newRoad.get('veichles') as FormArray;
+    for (const rv of road.value.roadsVeichles) {
+      const group = new FormGroup({
+        veichle: new FormControl(rv.veichle.name),
+        veichleId: new FormControl(rv.veichle.id),
+        roadVeichleId: new FormControl(rv.id),
+        price: new FormControl(rv.price),
+        quantity: new FormControl(0),
+      });
+      veichlesArray.push(group);
+    }
 
-    this.ref = this.dialogService.open(ModalRoadComponent, {
-      header: 'Aggiungi nuova tratta',
-      width: '700px',
-      contentStyle: { overflow: 'visible' },
-      baseZIndex: 10001,
-      data: {
-        isEdit: false,
-        roadForm: newRoad,
-        index: this.roadsArray.length + 1,
-        veichlesList: this.veichles,
-        roadsList: this.roads,
-        maxPax: this.maxPax,
-      },
-    });
+    const roadsArray = road.get('roads') as FormArray;
+    roadsArray.push(newRoad);
+  }
 
-    this.ref.onClose.subscribe((road: FormGroup) => {
-      if (road) {
-        this.roadsArray.push(road);
-      }
-    });
+  getRoads(road: any) {
+    return this.roadsValue.filter((r: any) => r.road.id === road.id);
+  }
+
+  onToggleMenu(roadId: number, index: any, menu: any, event: any) {
+    this.coordRoadToDelete = { roadId, index };
+    menu.toggle(event);
+  }
+
+  getRoadFG(road: any) {
+    return road as FormGroup;
+  }
+
+  getRoadFA(road: any) {
+    return road.get('roads') as FormArray;
+  }
+
+  getVeichlesFG(road: any) {
+    return road as FormGroup;
+  }
+
+  getVeichlesFA(road: any) {
+    return road.get('veichles') as FormArray;
   }
 }

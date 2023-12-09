@@ -8,8 +8,11 @@ export interface IRoad {
   to: string;
   price: number;
   cityId: number;
+  veichleId: number;
   city: ICity;
+  veichle: IVeichle;
   teams: ITeam[];
+  roadsVeichles: any;
 }
 
 export interface IRoadsOnCarts {
@@ -20,4 +23,5 @@ export interface IRoadsOnCarts {
   startDate: string;
   createdAt: string;
   updatedAt: string;
+  roadsVeichles: any;
 }

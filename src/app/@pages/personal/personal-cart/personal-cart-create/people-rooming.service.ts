@@ -17,7 +17,6 @@ export class PeopleRoomingService {
   constructor() {}
 
   initPeople(people: any, room: any) {
-    console.log('room', room);
     this.originalPeople = [...people];
     this.peopleBSub$.next(
       people

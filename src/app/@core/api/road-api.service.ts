@@ -63,4 +63,22 @@ export class RoadApiService {
       `${environment.apiUrl}/roads/${roadId}/remove-team/${roadTeamId}`
     );
   }
+
+  addRoadVeichle(
+    roadId: number,
+    veichleId: number,
+    price: number
+  ): Observable<any> {
+    return this.httpClient.post(`${environment.apiUrl}/roads/veichles`, {
+      roadId,
+      veichleId,
+      price,
+    });
+  }
+
+  removeRoadVeichle(roadVeichleId: any): Observable<any> {
+    return this.httpClient.delete(
+      `${environment.apiUrl}/roads/veichles/${roadVeichleId}`
+    );
+  }
 }

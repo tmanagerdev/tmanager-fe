@@ -216,7 +216,7 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2 text-xl">Bus - Auto - Trasporti</p>
+      <p class="font-semibold mb-2 text-xl">Trasporti</p>
       <ng-container *ngIf="roads && roads.length">
         <p-table [value]="roads">
           <ng-template pTemplate="header">
@@ -232,10 +232,13 @@
             <tr>
               <td>{{ road.startDate | customDate : "showHours" }}</td>
               <td>{{ road.quantity }}</td>
-              <td>{{ road.veichle.name }}</td>
-              <td>{{ road.road.from }} - {{ road.road.to }}</td>
+              <td>{{ road.roadsVeichles.veichle.name }}</td>
+              <td>
+                {{ road.roadsVeichles.road.from }} -
+                {{ road.roadsVeichles.road.to }}
+              </td>
               <td class="text-right">
-                {{ road.road.price | currency : "EUR" : "symbol" }}
+                {{ road.roadsVeichles.price | currency : "EUR" : "symbol" }}
               </td>
             </tr>
           </ng-template>

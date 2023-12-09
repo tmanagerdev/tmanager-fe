@@ -125,7 +125,7 @@ export class PersonalCartViewComponent {
               .join(', ')}`,
           }));
 
-          console.log(this.meals);
+          this.roads = this.cart?.roads;
 
           const totalAccomodation = this.rooms.reduce((acc: any, room: any) => {
             return acc + room.price * room.quantity * 100;
@@ -137,7 +137,7 @@ export class PersonalCartViewComponent {
             0
           );
           const totalRoads = this.cart?.roads.reduce((acc: any, road: any) => {
-            return acc + road.road.price * road.quantity * 100;
+            return acc + road.roadsVeichles.price * road.quantity * 100;
           }, 0);
           const totalMeal = this.meals.reduce((acc: any, meal: any) => {
             return acc + meal.quantity * meal.price * 100;
@@ -149,7 +149,7 @@ export class PersonalCartViewComponent {
             totalRoads / 100 +
             totalMeal / 100;
 
-          this.roads = this.cart?.roads;
+          console.log('this.total', this.total);
         })
       )
       .subscribe();

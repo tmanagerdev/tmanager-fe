@@ -156,9 +156,9 @@ export class RoadListComponent {
 
     this.ref.onClose.subscribe((newRoad: IRoad) => {
       if (newRoad) {
-        const { city, ...roadToSave } = newRoad;
+        const { city, veichle, ...roadToSave } = newRoad;
         this.roadApiService
-          .create({ ...roadToSave, cityId: city.id })
+          .create({ ...roadToSave, cityId: city.id, veichleId: veichle.id })
           .pipe(
             take(1),
             tap(() => {
@@ -188,9 +188,13 @@ export class RoadListComponent {
 
     this.ref.onClose.subscribe((newRoad: IRoad) => {
       if (newRoad) {
-        const { city, ...roadToSave } = newRoad;
+        const { city, veichle, ...roadToSave } = newRoad;
         this.roadApiService
-          .update(road.id, { ...roadToSave, cityId: city.id })
+          .update(road.id, {
+            ...roadToSave,
+            cityId: city.id,
+            veichleId: veichle.id,
+          })
           .pipe(
             take(1),
             tap((data) => {
@@ -254,5 +258,9 @@ export class RoadListComponent {
 
   teams(road: IRoad) {
     this.router.navigate(['road', road.id, 'teams']);
+  }
+
+  veichles(road: IRoad) {
+    this.router.navigate(['road', road.id, 'veichles']);
   }
 }
