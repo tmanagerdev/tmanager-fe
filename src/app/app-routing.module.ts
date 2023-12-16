@@ -66,6 +66,14 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'service',
+        canActivate: [AuthGuard, AdminGuard],
+        loadChildren: () =>
+          import('./@pages/service/service.module').then(
+            (m) => m.ServiceModule
+          ),
+      },
+      {
         path: 'team',
         canActivate: [AuthGuard, AdminGuard],
         loadChildren: () =>

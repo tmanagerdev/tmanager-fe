@@ -102,6 +102,11 @@ export class SidebarComponent implements OnInit {
             routerLink: ['/', 'hotel'],
           },
           {
+            label: 'Servizi',
+            icon: 'hotel_class',
+            routerLink: ['/', 'service'],
+          },
+          {
             label: 'Veicoli',
             icon: 'directions_bus',
             routerLink: ['/', 'veichle'],

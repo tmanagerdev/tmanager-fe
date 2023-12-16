@@ -22,10 +22,21 @@
     </div>
   </div>
   <p-divider></p-divider>
-  <p class="text-sm pb-1">Seleziona l'hotel per questa trasferta</p>
-  <p class="font-semibold text-lg my-2">Hotel disponibili</p>
+  <div class="flex align-items-center justify-content-between">
+    <div>
+      <p class="text-sm pb-1">Seleziona l'hotel per questa trasferta</p>
+      <p class="font-semibold text-lg my-2">Hotel disponibili</p>
+    </div>
+    <p-button
+      [severity]="'secondary'"
+      [outlined]="true"
+      (click)="filters.toggle($event)"
+      icon="pi pi-filter"
+    ></p-button>
+  </div>
+
   <div class="flex flex-wrap gap-2">
-    <ng-container *ngFor="let h of _hotels">
+    <ng-container *ngFor="let h of filteredHotels">
       <div
         class="flex border-1 border-round border-300 px-3 py-2 cursor-pointer align-items-center gap-2"
         [ngClass]="{
@@ -47,7 +58,7 @@
       <ng-template #tooltipContent>
         <div class="flex flex-column">
           <ng-container *ngFor="let s of h.services">
-            <p>- {{ s.name }}</p>
+            <p>- {{ s.service.name }}</p>
           </ng-container>
         </div>
       </ng-template>
@@ -179,3 +190,34 @@
 </ng-template>
 
 <p-menu #menu [model]="items" [popup]="true"></p-menu>
+
+<p-overlayPanel #filters>
+  <ng-template pTemplate="content">
+    <div class="w-full flex flex-column gap-2">
+      <div *ngFor="let service of services" class="field-checkbox">
+        <div class="flex align-items-center gap-1">
+          <p-checkbox
+            name="group"
+            [value]="service"
+            [(ngModel)]="filtersService"
+            [inputId]="service.id"
+          ></p-checkbox>
+          <label [for]="service.id">{{ service.name }}</label>
+        </div>
+      </div>
+    </div>
+    <div class="w-full flex justify-content-edn gap-2 mt-4">
+      <p-button
+        label="Reset"
+        [severity]="'secondary'"
+        [text]="true"
+        (click)="resetFilters()"
+      ></p-button>
+      <p-button
+        label="Applica filtri"
+        [text]="true"
+        (click)="applyFilters()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-overlayPanel>

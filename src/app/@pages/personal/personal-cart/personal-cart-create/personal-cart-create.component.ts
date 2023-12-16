@@ -17,6 +17,7 @@ import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
 import { IEvent } from 'src/app/@core/models/event.model';
 import { RoadApiService } from 'src/app/@core/api/road-api.service';
 import { MealApiService } from 'src/app/@core/api/meal-api.service';
+import { ServiceApiService } from 'src/app/@core/api/service-api.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -52,6 +53,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   event!: Partial<IEvent>;
   city: any;
   hotels: any;
+  services: any;
   veichles: any;
   hotelMeals: any;
   activities: any;
@@ -150,6 +152,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     private cartApiService: CartApiService,
     private eventApiService: EventApiService,
     private hotelApiService: HotelApiService,
+    private serviceApiService: ServiceApiService,
     private veichleApiService: VeichleApiService,
     private roadApiService: RoadApiService,
     private activityApiService: ActivityApiService,
@@ -183,6 +186,12 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                   teams: [this.event.home?.id],
                 })
                 .pipe(map((data) => data.data)),
+              services: this.serviceApiService
+                .findAll({
+                  take: 500,
+                  page: 1,
+                })
+                .pipe(map((data) => data.data)),
               veichles: this.veichleApiService
                 .findAll({ take: 500, page: 1 })
                 .pipe(map((data) => data.data)),
@@ -207,32 +216,35 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                 })
                 .pipe(map((data) => data.data)),
             }).pipe(
-              tap(({ hotels, veichles, roads, activities, meals }) => {
-                this.hotels = [...hotels];
-                this.veichles = [...veichles];
-                this.roads = [...roads];
-                this.activities = [...activities];
-                this.meals = [...meals];
+              tap(
+                ({ hotels, services, veichles, roads, activities, meals }) => {
+                  this.hotels = [...hotels];
+                  this.services = [...services];
+                  this.veichles = [...veichles];
+                  this.roads = [...roads];
+                  this.activities = [...activities];
+                  this.meals = [...meals];
 
-                this.selectedHotel = this.hotels.find(
-                  (h: any) =>
-                    h.id ===
-                    this.accomodationForm.get('hotel')?.get('id')?.value
-                );
+                  this.selectedHotel = this.hotels.find(
+                    (h: any) =>
+                      h.id ===
+                      this.accomodationForm.get('hotel')?.get('id')?.value
+                  );
 
-                for (const r of roads) {
-                  const rGroup = new FormGroup({
-                    id: new FormControl(r.id),
-                    from: new FormControl(r.from),
-                    to: new FormControl(r.to),
-                    roadsVeichles: new FormControl(r.roadsVeichles),
-                    roads: new FormArray([]),
-                  });
-                  this.roadsFormArray.push(rGroup);
+                  for (const r of roads) {
+                    const rGroup = new FormGroup({
+                      id: new FormControl(r.id),
+                      from: new FormControl(r.from),
+                      to: new FormControl(r.to),
+                      roadsVeichles: new FormControl(r.roadsVeichles),
+                      roads: new FormArray([]),
+                    });
+                    this.roadsFormArray.push(rGroup);
+                  }
+
+                  this.patchFormEdit();
                 }
-
-                this.patchFormEdit();
-              })
+              )
             )
           )
         )
@@ -261,6 +273,10 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                   teams: [this.event.home?.id],
                 })
                 .pipe(map((data) => data.data)),
+              services: this.serviceApiService.findAll({
+                take: 500,
+                page: 1,
+              }),
               veichles: this.veichleApiService
                 .findAll({ take: 500, page: 1 })
                 .pipe(map((data) => data.data)),
@@ -285,24 +301,27 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                 })
                 .pipe(map((data) => data.data)),
             }).pipe(
-              tap(({ hotels, veichles, roads, activities, meals }) => {
-                this.hotels = [...hotels];
-                this.veichles = [...veichles];
-                this.roads = [...roads];
-                this.activities = [...activities];
-                this.meals = [...meals];
+              tap(
+                ({ hotels, services, veichles, roads, activities, meals }) => {
+                  this.hotels = [...hotels];
+                  this.services = [...services];
+                  this.veichles = [...veichles];
+                  this.roads = [...roads];
+                  this.activities = [...activities];
+                  this.meals = [...meals];
 
-                for (const r of roads) {
-                  const rGroup = new FormGroup({
-                    id: new FormControl(r.id),
-                    from: new FormControl(r.from),
-                    to: new FormControl(r.to),
-                    roadsVeichles: new FormControl(r.roadsVeichles),
-                    roads: new FormArray([]),
-                  });
-                  this.roadsFormArray.push(rGroup);
+                  for (const r of roads) {
+                    const rGroup = new FormGroup({
+                      id: new FormControl(r.id),
+                      from: new FormControl(r.from),
+                      to: new FormControl(r.to),
+                      roadsVeichles: new FormControl(r.roadsVeichles),
+                      roads: new FormArray([]),
+                    });
+                    this.roadsFormArray.push(rGroup);
+                  }
                 }
-              })
+              )
             )
           )
         )

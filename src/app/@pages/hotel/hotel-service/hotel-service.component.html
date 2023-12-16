@@ -21,7 +21,7 @@
       <button
         pButton
         pRipple
-        label="Crea nuovo servizio"
+        label="Associa servizio"
         class="p-button-primary mr-2"
         (click)="create()"
       ></button>
@@ -51,7 +51,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-service>
       <tr>
-        <td>{{ service.name }}</td>
+        <td>{{ service.service.name }}</td>
         <td>{{ service.createdAt | customDate }}</td>
         <td>
           <p-button

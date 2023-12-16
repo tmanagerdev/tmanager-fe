@@ -72,25 +72,25 @@ export class HotelServiceComponent {
 
   create() {
     this.ref = this.dialogService.open(HotelServiceModalComponent, {
-      header: `Crea nuovo servizio`,
+      header: `Associa servizio`,
       width: '600px',
       contentStyle: { overflow: 'visible' },
       baseZIndex: 10001,
       data: {},
     });
 
-    this.ref.onClose.subscribe((newService: any) => {
-      if (newService) {
+    this.ref.onClose.subscribe((service: any) => {
+      if (service) {
         this.hotelApiService
-          .createService(this.hotelId, newService.name)
+          .createService(this.hotelId, service.id)
           .pipe(
             take(1),
             tap((data) => {
               this.loadHotel();
               this.messageService.add({
                 severity: 'success',
-                summary: 'Stanza creata',
-                detail: newService.name,
+                summary: 'Servizio aggiunto',
+                detail: service.name,
               });
             })
           )
@@ -101,12 +101,12 @@ export class HotelServiceComponent {
 
   remove(service: any) {
     this.confirmationService.confirm({
-      message: 'Sei sicuro di voler eliminare questo servizio?',
+      message: 'Sei sicuro di voler rimuovere questo servizio?',
       header: 'Conferma',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.hotelApiService
-          .deleteService(service.id)
+          .deleteService(this.hotelId, service.id)
           .pipe(
             take(1),
             tap(() => {

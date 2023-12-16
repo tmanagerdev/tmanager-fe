@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -16,6 +17,7 @@ import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/
 import { PeopleRoomingService } from '../people-rooming.service';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-cart-create-accomodations',
@@ -26,11 +28,13 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   _event: any;
   team: number = 0;
   _hotels: any = [];
+  filteredHotels: any = [];
   //selectedHotel: any = null;
   coordRoomToDelete: any;
   ref!: DynamicDialogRef;
   EStatusCart = EStatusCart;
   _status: EStatusCart = EStatusCart.DRAFT;
+  filtersService: any;
 
   @Input() selectedHotel: any = null;
   @Input() accomodationForm: FormGroup = new FormGroup({});
@@ -65,30 +69,17 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   }
   @Input() set hotels(hotels: any) {
     if (hotels && hotels.length) {
-      if (this.isEdit) {
-        this._hotels = hotels;
-
-        // const hotelId = this.accomodationForm.value.hotel.id;
-        // const hotel = this._hotels.find((h: any) => h.id === hotelId);
-        // if (hotel) {
-        //   this.selectedHotel = { ...hotel };
-        //   this.changeSelectedHotel.emit(this.selectedHotel);
-        // }
-      } else {
-        this._hotels = hotels;
-        // if (this.hotel && this.hotel.value && this.hotel.value.id) {
-        //   this.selectedHotel = {
-        //     ...this.hotel.value,
-        //   };
-        //   this.changeSelectedHotel.emit(this.selectedHotel);
-        // }
-      }
+      this._hotels = [...hotels];
+      this.filteredHotels = [...hotels];
     }
   }
+  @Input() services: any = [];
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
   @Output() changeSelectedHotel: EventEmitter<any> = new EventEmitter();
+
+  @ViewChild('filters') filtersPopup!: OverlayPanel;
 
   hotel$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -124,11 +115,8 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-    private hotelApiService: HotelApiService,
-    private cartApiService: CartApiService,
     public dialogService: DialogService,
-    private peopleRoomingService: PeopleRoomingService,
-    private messageService: MessageService
+    private peopleRoomingService: PeopleRoomingService
   ) {}
 
   ngOnInit(): void {}
@@ -224,5 +212,25 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   onToggleMenu(room: any, menu: any, event: any) {
     this.coordRoomToDelete = room;
     menu.toggle(event);
+  }
+
+  applyFilters() {
+    this.selectedHotel = null;
+    this.filtersPopup.hide();
+
+    this.filteredHotels = [
+      ...this._hotels.filter((h: any) =>
+        h.services.some((hs: any) =>
+          this.filtersService.some((fs: any) => fs.id === hs.service.id)
+        )
+      ),
+    ];
+  }
+
+  resetFilters() {
+    this.selectedHotel = null;
+    this.filtersService = null;
+    this.filteredHotels = [...this._hotels];
+    this.filtersPopup.hide();
   }
 }

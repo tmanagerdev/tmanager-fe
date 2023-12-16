@@ -68,7 +68,7 @@ export class HotelApiService {
 
   addTeam(hotelId: number, teamId: number): Observable<any> {
     return this.httpClient.post(
-      `${environment.apiUrl}/hotels/${hotelId}/add-team`,
+      `${environment.apiUrl}/hotels/${hotelId}/team`,
       {
         teamId,
       }
@@ -77,20 +77,22 @@ export class HotelApiService {
 
   removeTeam(hotelId: number, hotelTeamId: any): Observable<any> {
     return this.httpClient.delete(
-      `${environment.apiUrl}/hotels/${hotelId}/remove-team/${hotelTeamId}`
+      `${environment.apiUrl}/hotels/${hotelId}/team/${hotelTeamId}`
     );
   }
 
-  createService(hotelId: number, name: string): Observable<any> {
-    return this.httpClient.post(`${environment.apiUrl}/hotels/service`, {
-      hotelId,
-      name,
-    });
+  createService(hotelId: number, serviceId: number): Observable<any> {
+    return this.httpClient.post(
+      `${environment.apiUrl}/hotels/${hotelId}/service`,
+      {
+        serviceId,
+      }
+    );
   }
 
-  deleteService(serviceId: number): Observable<any> {
+  deleteService(hotelId: number, hotelServiceId: number): Observable<any> {
     return this.httpClient.delete(
-      `${environment.apiUrl}/hotels/service/${serviceId}`
+      `${environment.apiUrl}/hotels/${hotelId}/service/${hotelServiceId}`
     );
   }
 }
