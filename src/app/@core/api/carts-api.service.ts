@@ -68,4 +68,13 @@ export class CartApiService {
       httpOptions
     );
   }
+
+  setBudget(cartId: number, budget: number) {
+    return this.httpClient.post(
+      `${environment.apiUrl}/carts/${cartId}/budget`,
+      {
+        budget,
+      }
+    );
+  }
 }

@@ -49,6 +49,7 @@ import { QuantityDropdownComponent } from '../../../@shared/quantity-dropdown/qu
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TagStatusCartComponent } from '../../../@shared/tag-status-cart/tag-status-cart.component';
+import { BudgetModalComponent } from './personal-cart-list/budget-modal/budget-modal.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { TagStatusCartComponent } from '../../../@shared/tag-status-cart/tag-sta
     CartCreateMealComponent,
     ModalMealComponent,
     ModalActivityComponent,
+    BudgetModalComponent,
   ],
   providers: [DialogService, MessageService, ConfirmationService],
   imports: [

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { EventApiService } from 'src/app/@core/api/events-api.service';
@@ -10,6 +11,7 @@ import { IDropdownFilters } from 'src/app/@core/models/base.model';
 import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { ITeam } from 'src/app/@core/models/team.model';
 import { AuthService } from 'src/app/@core/services/auth.service';
+import { BudgetModalComponent } from './budget-modal/budget-modal.component';
 
 @Component({
   selector: 'app-personal-cart-list',
@@ -38,6 +40,8 @@ export class PersonalCartListComponent implements OnInit {
   teams$: Subject<string> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
 
+  ref!: DynamicDialogRef;
+
   get teamHomeFilterId() {
     return this.teamHomeFilter.value ? this.teamHomeFilter.value.id : null;
   }
@@ -50,7 +54,8 @@ export class PersonalCartListComponent implements OnInit {
     private messageService: MessageService,
     private router: Router,
     private authService: AuthService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    public dialogService: DialogService
   ) {
     this.events$
       .pipe(
@@ -194,5 +199,37 @@ export class PersonalCartListComponent implements OnInit {
 
   onFilterDate(event: any) {
     console.log(event);
+  }
+
+  budget(cart: any) {
+    console.log('budget', cart);
+    this.ref = this.dialogService.open(BudgetModalComponent, {
+      header: `Budget`,
+      width: '600px',
+      contentStyle: { overflow: 'visible' },
+      baseZIndex: 10001,
+      data: {
+        budget: cart.budget.budget,
+        isEdit: Boolean(cart.budget.budget),
+      },
+    });
+
+    this.ref.onClose.subscribe((budget: any) => {
+      if (budget) {
+        this.cartsApiService
+          .setBudget(cart.id, budget.budget)
+          .pipe(
+            take(1),
+            tap((data) => {
+              this.loadCarts();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Budget aggiornato',
+              });
+            })
+          )
+          .subscribe();
+      }
+    });
   }
 }

@@ -78,6 +78,9 @@
       <th>Ospite</th>
       <th>Campionato</th>
       <th>Stato</th>
+      <th>Totale</th>
+      <th>Budget</th>
+      <th>Delta</th>
       <!-- <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th> -->
@@ -114,7 +117,29 @@
           [status]="event.cart?.status"
         ></app-tag-status-cart>
       </td>
-      <!-- <td>{{ event.createdAt | customDate }}</td> -->
+      <td>
+        <ng-container *ngIf="event.cart && event.cart.total; else noTotal">
+          {{ event.cart.total | currency : "EUR" : "symbol" }}
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="event.cart && event.cart.budget; else noTotal">
+          {{ event.cart.budget.budget | currency : "EUR" : "symbol" }}
+        </ng-container>
+      </td>
+      <td>
+        <ng-container
+          *ngIf="
+            event.cart && event.cart.total && event.cart.budget;
+            else noTotal
+          "
+        >
+          {{
+            (event.cart.total / event.cart.budget.budget) * 100 - 100
+              | number : "1.1-2"
+          }}%
+        </ng-container>
+      </td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
@@ -149,6 +174,13 @@
               class="p-button-text p-button-success"
               (click)="complete(event.cart)"
             ></button>
+            <button
+              pButton
+              pRipple
+              label="Modifica budget"
+              class="p-button-text"
+              (click)="budget(event.cart)"
+            ></button>
           </ng-container>
         </p-overlayPanel>
       </td>
@@ -177,3 +209,5 @@
     </tr>
   </ng-template>
 </p-table>
+
+<ng-template #noTotal> - </ng-template>
