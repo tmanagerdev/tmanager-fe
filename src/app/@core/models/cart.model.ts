@@ -50,4 +50,5 @@ export interface ICart {
   team: Partial<ITeam>;
   userId: number;
   people: IPeople[];
+  onlyStatus?: boolean;
 }

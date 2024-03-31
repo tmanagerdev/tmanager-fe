@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { MenuItem } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-cart-create-road',
@@ -12,21 +11,21 @@ import { MenuItem } from 'primeng/api';
 export class CartCreateRoadComponent implements OnInit {
   ref!: DynamicDialogRef;
   firstIndex: number = 0;
-  EStatusCart = EStatusCart;
-  _status: EStatusCart = EStatusCart.DRAFT;
   searchControl = new FormControl('');
   qtaOptions = [...Array(21).keys()];
   coordRoadToDelete: any;
+  _isDisabledCart: boolean = false;
 
   @Input() event: any;
   @Input() activeIndex: number = 0;
   @Input() veichles: any = [];
   @Input() roadForm: FormGroup = new FormGroup({});
   @Input() maxPax = 0;
-  @Input() set status(value: EStatusCart) {
+
+  @Input() set isDisabledCart(value: boolean) {
     if (value) {
-      this._status = value;
-      if (value !== EStatusCart.DRAFT) {
+      this._isDisabledCart = value;
+      if (this._isDisabledCart) {
         this.roadForm.get('roadNotes')?.disable();
 
         for (const c of this.roadsArray.controls) {

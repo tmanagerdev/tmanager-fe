@@ -23,7 +23,7 @@
               icon="pi pi-plus"
               iconPos="right"
               styleClass="p-button-rounded"
-              *ngIf="_status === EStatusCart.DRAFT"
+              *ngIf="!_isDisabledCart"
             ></p-button>
           </div>
           <div class="my-1">
@@ -32,7 +32,7 @@
                 *ngFor="let roadForm of getRoadFA(road).controls; let i = index"
                 [formGroupName]="i"
               >
-                <p-panel>
+                <p-panel styleClass="mb-3">
                   <ng-template pTemplate="header">
                     <div
                       class="w-full flex align-items-center justify-content-between"
@@ -60,7 +60,7 @@
                         (click)="
                           onToggleMenu(roadForm.value.roadId, i, menu, $event)
                         "
-                        *ngIf="_status === EStatusCart.DRAFT"
+                        *ngIf="!isDisabledCart"
                       ></i>
                     </div>
                   </ng-template>
@@ -105,6 +105,21 @@
       </p-accordionTab>
     </ng-container>
   </p-accordion>
+</div>
+
+<div class="w-full flex justify-content-between mb-3">
+  <p-button
+    label="Indietro"
+    (onClick)="onPrevStep()"
+    icon="pi pi-angle-left"
+    styleClass="p-button-secondary"
+  ></p-button>
+  <p-button
+    label="Avanti"
+    (onClick)="onNextStep()"
+    icon="pi pi-angle-right"
+    iconPos="right"
+  ></p-button>
 </div>
 
 <p-menu #menu [model]="items" [popup]="true"></p-menu>

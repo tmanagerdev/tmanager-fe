@@ -1,16 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  UntypedFormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject, debounceTime, map, switchMap, takeUntil, tap } from 'rxjs';
-import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
-import { clearFormArray } from 'src/app/@core/utils';
+import { Subject } from 'rxjs';
 import { ModalActivityComponent } from './modal-activity/modal-activity.component';
 
 @Component({
@@ -27,26 +18,17 @@ export class CartCreateActivityComponent {
   loading: boolean = false;
   selectedActivities: any = [];
   filter: string = '';
-  EStatusCart = EStatusCart;
-  _status: EStatusCart = EStatusCart.DRAFT;
 
   ref!: DynamicDialogRef;
 
   searchFilter = new FormControl('');
-  //_activityForm: UntypedFormGroup = new FormGroup({});
 
   @Input() event: any;
   @Input() cityActivities: any = [];
   @Input() activityForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() maxPax = 0;
-  @Input() set status(value: EStatusCart) {
-    if (value) {
-      this._status = value;
-      if (value !== EStatusCart.DRAFT) {
-      }
-    }
-  }
+  @Input() isDisabledCart: boolean = false;
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();

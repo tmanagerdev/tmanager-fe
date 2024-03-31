@@ -1,23 +1,32 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CartApiService } from 'src/app/@core/api/carts-api.service';
-import { MenuItem, Message, MessageService } from 'primeng/api';
-import { AuthService } from 'src/app/@core/services/auth.service';
-import { EventApiService } from 'src/app/@core/api/events-api.service';
-import { Subject, forkJoin, iif, map, switchMap, takeUntil, tap } from 'rxjs';
-import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { PeopleRoomingService } from './people-rooming.service';
-import { ECategoryPeople, IPeople } from 'src/app/@core/models/people.model';
-import { EStatusCart, ICart } from 'src/app/@core/models/cart.model';
-import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
-import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import {
+  Subject,
+  forkJoin,
+  iif,
+  map,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { ActivityApiService } from 'src/app/@core/api/activity-api.service';
-import { IEvent } from 'src/app/@core/models/event.model';
-import { RoadApiService } from 'src/app/@core/api/road-api.service';
+import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { EventApiService } from 'src/app/@core/api/events-api.service';
+import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
 import { MealApiService } from 'src/app/@core/api/meal-api.service';
+import { RoadApiService } from 'src/app/@core/api/road-api.service';
 import { ServiceApiService } from 'src/app/@core/api/service-api.service';
+import { VeichleApiService } from 'src/app/@core/api/veichle-api.service';
+import { EStatusCart, ICart } from 'src/app/@core/models/cart.model';
+import { IEvent } from 'src/app/@core/models/event.model';
+import { ECategoryPeople, IPeople } from 'src/app/@core/models/people.model';
+import { AuthService } from 'src/app/@core/services/auth.service';
+import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
+import { PeopleRoomingService } from './people-rooming.service';
 
 @Component({
   selector: 'app-personal-cart-create',
@@ -28,6 +37,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   eventId: number = 0;
   cartId: number = 0;
   isEdit: boolean = false;
+  fromBackoffice: boolean = false;
   items: MenuItem[] = [
     {
       label: 'Partecipanti',
@@ -62,7 +72,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   meals: any;
   EStatusCart = EStatusCart;
   status: EStatusCart = EStatusCart.DRAFT;
-  messages: Message[] | undefined;
+  isDisabledCart: boolean = true;
+  isDisabledRooming: boolean = true;
   selectedHotel: any = null;
   people: IPeople[] = [];
   cart!: Partial<ICart>;
@@ -160,9 +171,11 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private messageService: MessageService,
     public dialogService: DialogService,
-    public peopleRoomingService: PeopleRoomingService
+    public peopleRoomingService: PeopleRoomingService,
+    private confirmationService: ConfirmationService
   ) {
     this.isEdit = route.snapshot.data['isEdit'];
+    this.fromBackoffice = route.snapshot.data['fromBackoffice'];
     this.currentUser = this.authService.currentUser;
 
     if (!!this.isEdit) {
@@ -175,6 +188,14 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
             this.cart = { ...cart };
             this.event = { ...cart.event };
             this.status = cart.status!;
+            this.isDisabledCart =
+              this.status !== EStatusCart.DRAFT &&
+              this.currentUser.role !== 'ADMIN';
+            this.isDisabledRooming =
+              this.status !== EStatusCart.DRAFT &&
+              this.status !== EStatusCart.PENDING &&
+              this.currentUser.role !== 'ADMIN';
+
             this.city = { ...this.event.home?.city };
           }),
           switchMap(() =>
@@ -225,11 +246,11 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
                   this.activities = [...activities];
                   this.meals = [...meals];
 
-                  this.selectedHotel = this.hotels.find(
-                    (h: any) =>
-                      h.id ===
-                      this.accomodationForm.get('hotel')?.get('id')?.value
-                  );
+                  if (this.cart.rooms && this.cart.rooms.length) {
+                    this.selectedHotel = this.hotels.find(
+                      (h: any) => h.id === this.cart.rooms![0].room?.hotel.id
+                    );
+                  }
 
                   for (const r of roads) {
                     const rGroup = new FormGroup({
@@ -348,7 +369,10 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
               }),
             100
           );
-          this.router.navigate(['personal', 'carts', cartSaved.id]);
+
+          this.fromBackoffice
+            ? this.router.navigate(['cart', cartSaved.id])
+            : this.router.navigate(['personal', 'carts', cartSaved.id]);
         })
       )
       .subscribe();
@@ -356,15 +380,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     !!this.isEdit ? this.loadCart() : this.loadEvent();
-
-    this.messages = [
-      {
-        severity: 'warn',
-        summary: 'Attezione!',
-        detail:
-          'Questa trasferta è stata presa in carico da TMANAGER, puoi modificare solo gli ospiti delle stanze',
-      },
-    ];
   }
 
   ngOnDestroy(): void {
@@ -625,7 +640,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     if (this.cart.roads && this.cart.roads.length) {
       const roads = this.roadForm.get('roads') as FormArray;
       for (const r of this.cart.roads) {
-        console.log('R', r);
         const roadId = r.roadsVeichles.road.id;
         const road = roads.value.find((road: any) => road.id === roadId);
         const roadIndex = roads.value.findIndex(
@@ -634,11 +648,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
         if (road.roads && road.roads.length) {
           const roadsArray = roads.at(roadIndex).get('roads') as FormArray;
           const roadInThisDate = roadsArray.value.findIndex((ra: any) => {
-            console.log('ra.startDate', ra.startDate);
-            console.log(
-              'new Date(r.startDate as string)',
-              new Date(r.startDate as string)
-            );
             return (
               ra.startDate.getTime() ===
               new Date(r.startDate as string).getTime()
@@ -697,24 +706,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           const roadsArray = roads.at(roadIndex).get('roads') as FormArray;
           roadsArray.push(newRoad);
         }
-        // const road = new FormGroup({
-        //   startDate: new FormControl(new Date(r.startDate!)),
-        //   startDateHour: new FormControl(new Date(r.startDate!)),
-        //   quantity: new FormControl(r.quantity),
-        //   road: new FormGroup({
-        //     price: new FormControl(r.road?.price),
-        //     from: new FormControl(r.road?.from),
-        //     to: new FormControl(r.road?.to),
-        //     id: new FormControl(r.road?.id),
-        //     veichle: new FormGroup({
-        //       id: new FormControl(r.road?.veichle?.id),
-        //       name: new FormControl(r.road?.veichle?.name),
-        //     }),
-        //   }),
-        //   createdAt: new FormControl(r.createdAt!),
-        //   updatedAt: new FormControl(r.updatedAt!),
-        // });
-        // roads.push(road);
       }
     }
 
@@ -861,7 +852,6 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     this.cartForm.get('roadNotes')?.setValue(roadNotes);
     clearFormArray(this.cartForm.get('roads') as FormArray);
     for (const r of roadRoads.value) {
-      console.log('R', r);
       if (r.roads && r.roads.length) {
         for (const road of r.roads) {
           for (const roadVeichle of road.veichles) {
@@ -938,5 +928,50 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
     }
 
     console.log('CREAZIONE CART', this.cartForm.value);
+  }
+
+  updateStatus(status: EStatusCart) {
+    const messages = {
+      [EStatusCart.CANCELLED]:
+        'Sei sicuro di voler annullare questa trasferta?',
+      [EStatusCart.CONFIRMED]:
+        'Sei sicuro di voler confermare questa trasferta?',
+      [EStatusCart.DEPOSIT]:
+        "Sei sicuro di voler confermare il pagamento dell'acconto?",
+      [EStatusCart.COMPLETED]:
+        'Sei sicuro di voler completare questa trasferta?',
+      [EStatusCart.DRAFT]: '',
+      [EStatusCart.PENDING]: '',
+    };
+    this.confirmationService.confirm({
+      message: messages[status],
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.cartApiService
+          .update(this.cartId, { status, onlyStatus: true })
+          .pipe(
+            take(1),
+            tap(() => {
+              setTimeout(
+                () =>
+                  this.messageService.add({
+                    severity: 'success',
+                    summary: 'Operazione completata',
+                  }),
+                100
+              );
+              this.router.navigate(['cart', this.cartId]);
+            })
+          )
+          .subscribe();
+      },
+    });
+  }
+
+  backToCart() {
+    this.fromBackoffice
+      ? this.router.navigate(['cart', this.cartId])
+      : this.router.navigate(['personal', 'carts', this.cartId]);
   }
 }

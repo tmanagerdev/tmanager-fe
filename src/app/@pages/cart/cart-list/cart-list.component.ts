@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  ConfirmationService,
-  LazyLoadEvent,
-  MessageService,
-} from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
@@ -215,7 +211,7 @@ export class CartListComponent {
       [EStatusCart.CONFIRMED]:
         'Sei sicuro di voler confermare questa trasferta?',
       [EStatusCart.DEPOSIT]:
-        "Sei sicuro di voler confermare il pagamento dell' acconto?",
+        "Sei sicuro di voler confermare il pagamento dell'acconto?",
       [EStatusCart.COMPLETED]:
         'Sei sicuro di voler completare questa trasferta?',
       [EStatusCart.DRAFT]: '',
@@ -227,7 +223,7 @@ export class CartListComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cartApiService
-          .update(cart.id!, { status })
+          .update(cart.id!, { status, onlyStatus: true })
           .pipe(
             take(1),
             tap(() => {

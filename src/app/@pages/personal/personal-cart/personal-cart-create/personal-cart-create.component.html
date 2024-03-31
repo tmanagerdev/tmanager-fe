@@ -1,6 +1,14 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
+<div class="flex align-items-center gap-4 mb-4">
+  <i
+    class="pi pi-angle-left cursor-pointer text-4xl"
+    (click)="backToCart()"
+  ></i>
+  <p>Torna a dettaglio</p>
+</div>
+
 <h2>{{ isEdit ? "Aggiorna trasferta" : "Organizza nuova trasferta" }}</h2>
 <ng-container *ngIf="event">
   <div class="my-3">
@@ -11,13 +19,37 @@
       </span>
       del {{ event.date | customDate }}
     </p>
-    <ng-container *ngIf="status !== EStatusCart.DRAFT">
-      <p-messages
-        [(value)]="messages!"
-        [enableService]="false"
-        [closable]="false"
-      ></p-messages>
+    <ng-container *ngIf="status === EStatusCart.PENDING">
+      <ng-container *ngIf="fromBackoffice">
+        <div
+          class="flex w-full tman-shadow px-5 py-3 border-round mt-4 mb-6 align-items-center justify-content-between"
+        >
+          Questa trasferta è in attesa di conferma
+          <div class="flex justify-content-end dialog-buttons">
+            <button
+              pButton
+              pRipple
+              icon="pi pi-check"
+              class="p-button-rounded p-button-outlined p-button-warning"
+              label="Conferma"
+              (click)="updateStatus(EStatusCart.CONFIRMED)"
+              *ngIf="fromBackoffice && cart.status === EStatusCart.PENDING"
+            ></button>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!fromBackoffice">
+        <p-messages severity="warn" styleClass="mb-6">
+          <ng-template pTemplate>
+            <p>
+              <strong>Attenzione!</strong> Questa trasferta è stata presa in
+              carico da TMANAGER
+            </p>
+          </ng-template>
+        </p-messages>
+      </ng-container>
     </ng-container>
+
     <p-steps
       [model]="items"
       [activeIndex]="activeIndex"
@@ -32,7 +64,8 @@
             [activeIndex]="activeIndex"
             [people]="people"
             [event]="event"
-            [status]="status"
+            [isDisabledCart]="isDisabledCart"
+            [isDisabledRooming]="isDisabledRooming"
             [isEdit]="isEdit"
             (addNewPeople)="onAddNewPax($event)"
             (removePeople)="onRemovePax($event)"
@@ -47,7 +80,8 @@
             [activeIndex]="activeIndex"
             [accomodationForm]="accomodationForm"
             [event]="event"
-            [status]="status"
+            [isDisabledCart]="isDisabledCart"
+            [isDisabledRooming]="isDisabledRooming"
             [hotels]="hotels"
             [services]="services"
             [selectedHotel]="selectedHotel"
@@ -62,7 +96,7 @@
             [activeIndex]="activeIndex"
             [meals]="meals"
             [mealForm]="mealForm"
-            [status]="status"
+            [isDisabledCart]="isDisabledCart"
             [isEdit]="isEdit"
             [maxPax]="people.length"
             (nextStep)="onNextStep()"
@@ -75,7 +109,7 @@
             [cityActivities]="activities"
             [activeIndex]="activeIndex"
             [activityForm]="activityForm"
-            [status]="status"
+            [isDisabledCart]="isDisabledCart"
             [maxPax]="people.length"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"
@@ -87,7 +121,7 @@
             [roadForm]="roadForm"
             [event]="event"
             [veichles]="veichles"
-            [status]="status"
+            [isDisabledCart]="isDisabledCart"
             [maxPax]="people.length"
             (nextStep)="onNextStep()"
             (prevStep)="onPrevStep()"

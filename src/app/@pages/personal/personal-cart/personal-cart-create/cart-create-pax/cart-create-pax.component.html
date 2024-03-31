@@ -54,7 +54,7 @@
     <p-button
       (onClick)="onAddPeople()"
       label="Aggiungi partecipante"
-      *ngIf="_status === EStatusCart.DRAFT"
+      *ngIf="!isDisabledRooming"
     ></p-button>
     <p-button
       *ngIf="!isEdit"
@@ -102,7 +102,7 @@
                 icon="pi pi-trash"
                 class="p-button-rounded p-button-outlined p-button-danger"
                 (click)="onDeletePeople(people)"
-                *ngIf="_status === EStatusCart.DRAFT"
+                *ngIf="!isDisabledRooming"
               ></button>
             </td>
           </tr>

@@ -166,7 +166,7 @@ export class PersonalCartListComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.cartsApiService
-          .update(cart.id, { status: EStatusCart.PENDING })
+          .update(cart.id, { status: EStatusCart.PENDING, onlyStatus: true })
           .pipe(
             take(1),
             tap(() => {

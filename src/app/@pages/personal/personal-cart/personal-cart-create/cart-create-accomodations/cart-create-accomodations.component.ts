@@ -8,16 +8,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { Subject } from 'rxjs';
-import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
-import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
-import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/accomodations-people-modal.component';
-import { PeopleRoomingService } from '../people-rooming.service';
-import { CartApiService } from 'src/app/@core/api/carts-api.service';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { OverlayPanel } from 'primeng/overlaypanel';
+import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/@core/services/auth.service';
+import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
+import { PeopleRoomingService } from '../people-rooming.service';
+import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/accomodations-people-modal.component';
 
 @Component({
   selector: 'app-cart-create-accomodations',
@@ -29,28 +27,29 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   team: number = 0;
   _hotels: any = [];
   filteredHotels: any = [];
-  //selectedHotel: any = null;
   coordRoomToDelete: any;
   ref!: DynamicDialogRef;
-  EStatusCart = EStatusCart;
-  _status: EStatusCart = EStatusCart.DRAFT;
+  _isDisabledCart: boolean = false;
   filtersService: any;
 
   @Input() selectedHotel: any = null;
   @Input() accomodationForm: FormGroup = new FormGroup({});
-  //@Input() mealForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() isEdit: boolean = false;
-  @Input() set status(value: EStatusCart) {
+  @Input() services: any = [];
+  @Input() isDisabledRooming: boolean = false;
+
+  @Input() set isDisabledCart(value: boolean) {
     if (value) {
-      this._status = value;
-      if (value !== EStatusCart.DRAFT) {
+      this._isDisabledCart = value;
+      if (this._isDisabledCart) {
         this.accomodationForm.get('startDate')?.disable();
         this.accomodationForm.get('endDate')?.disable();
         this.accomodationForm.get('accomodationNotes')?.disable();
       }
     }
   }
+
   @Input() set event(event: any) {
     this._event = event;
     this.team = event.away.id;
@@ -67,13 +66,13 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
       });
     }
   }
+
   @Input() set hotels(hotels: any) {
     if (hotels && hotels.length) {
       this._hotels = [...hotels];
       this.filteredHotels = [...hotels];
     }
   }
-  @Input() services: any = [];
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
@@ -91,10 +90,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   get roomsValue() {
     return this.accomodationForm.get('rooms')?.value;
   }
-
-  // get hotel() {
-  //   return this.accomodationForm.get('hotel') as FormGroup;
-  // }
 
   items: MenuItem[] = [
     {
@@ -114,10 +109,15 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     },
   ];
 
+  currentUser: any;
+
   constructor(
     public dialogService: DialogService,
-    private peopleRoomingService: PeopleRoomingService
-  ) {}
+    private peopleRoomingService: PeopleRoomingService,
+    private authService: AuthService
+  ) {
+    this.currentUser = this.authService.currentUser;
+  }
 
   ngOnInit(): void {}
 
@@ -139,7 +139,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   }
 
   onSelectHotel(hotel: any) {
-    if (this._status !== EStatusCart.DRAFT) {
+    if (this._isDisabledCart) {
       return;
     }
 
@@ -175,7 +175,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   }
 
   onAddGuest(room: any) {
-    console.log('room', room);
     this.ref = this.dialogService.open(AccomodationsPeopleModalComponent, {
       header: `Aggiungi ospite`,
       width: '800px',
@@ -194,8 +193,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
         const roomGroup = this.rooms.at(roomIndex);
 
         clearFormArray(roomGroup.get('rooming') as FormArray);
-
-        console.log('people', people);
 
         for (const p of people) {
           const newPeople = new FormGroup({

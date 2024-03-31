@@ -1,13 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { combineLatestWith, take, tap } from 'rxjs';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
+import { take, tap } from 'rxjs';
+import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { ECategoryPeople, IPeople } from 'src/app/@core/models/people.model';
 import { TeamPeopleModalComponent } from 'src/app/@pages/team/team-people/team-people-modal/team-people-modal.component';
-import { PeopleRoomingService } from '../people-rooming.service';
-import { CartApiService } from 'src/app/@core/api/carts-api.service';
-import { clearFormArray } from 'src/app/@core/utils';
 
 @Component({
   selector: 'app-cart-create-pax',
@@ -19,14 +16,9 @@ export class CartCreatePaxComponent {
   @Input() event: any;
   @Input() people: IPeople[] = [];
   @Input() isEdit = false;
-  @Input() set status(value: EStatusCart) {
-    if (value) {
-      this._status = value;
-    }
-  }
+  @Input() isDisabledCart: boolean = false;
+  @Input() isDisabledRooming: boolean = false;
 
-  EStatusCart = EStatusCart;
-  _status: EStatusCart = EStatusCart.DRAFT;
   ref!: DynamicDialogRef;
 
   @Output() addNewPeople: EventEmitter<IPeople> = new EventEmitter();
@@ -71,10 +63,8 @@ export class CartCreatePaxComponent {
   }
 
   constructor(
-    private messageService: MessageService,
     private confirmationService: ConfirmationService,
     public dialogService: DialogService,
-    private peopleRoomingService: PeopleRoomingService,
     private cartApiService: CartApiService
   ) {}
 

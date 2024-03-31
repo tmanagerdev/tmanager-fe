@@ -41,7 +41,7 @@
         class="flex border-1 border-round border-300 px-3 py-2 cursor-pointer align-items-center gap-2"
         [ngClass]="{
           'border-primary': selectedHotel && selectedHotel.id === h.id,
-          'cursor-pointer': _status === EStatusCart.DRAFT
+          'cursor-pointer': !_isDisabledCart
         }"
         (click)="onSelectHotel(h)"
         [pTooltip]="tooltipContent"
@@ -108,7 +108,7 @@
                           <i
                             class="pi pi-ellipsis-v cursor-pointer"
                             (click)="onToggleMenu(r, menu, $event)"
-                            *ngIf="_status === EStatusCart.DRAFT"
+                            *ngIf="!_isDisabledCart"
                           ></i>
                         </div>
                       </ng-template>
@@ -125,17 +125,19 @@
                         </div>
                       </ng-container>
                       <div class="p-2 flex justify-content-center">
-                        <p-button
-                          label="Gestisci ospiti"
-                          [text]="true"
-                          icon="pi pi-user-edit"
-                          (click)="onAddGuest(r)"
-                        ></p-button>
+                        <ng-container *ngIf="!isDisabledRooming">
+                          <p-button
+                            label="Gestisci ospiti"
+                            [text]="true"
+                            icon="pi pi-user-edit"
+                            (click)="onAddGuest(r)"
+                          ></p-button>
+                        </ng-container>
                       </div>
                     </p-panel>
                   </div>
                 </ng-container>
-                <ng-container *ngIf="_status === EStatusCart.DRAFT">
+                <ng-container *ngIf="!isDisabledRooming">
                   <div class="col-4">
                     <div
                       class="h-full flex justify-content-center align-items-center border-dashed border-1 new-room text-primary"

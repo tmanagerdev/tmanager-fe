@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
 import { ModalMealComponent } from './modal-meal/modal-meal.component';
 
 @Component({
@@ -11,8 +10,6 @@ import { ModalMealComponent } from './modal-meal/modal-meal.component';
 })
 export class CartCreateMealComponent {
   ref!: DynamicDialogRef;
-  EStatusCart = EStatusCart;
-  _status: EStatusCart = EStatusCart.DRAFT;
 
   @Input() activeIndex: number = 0;
   @Input() event: any;
@@ -20,11 +17,7 @@ export class CartCreateMealComponent {
   @Input() mealForm: FormGroup = new FormGroup({});
   @Input() maxPax = 0;
   @Input() isEdit: boolean = false;
-  @Input() set status(value: EStatusCart) {
-    if (value) {
-      this._status = value;
-    }
-  }
+  @Input() isDisabledCart: boolean = false;
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
