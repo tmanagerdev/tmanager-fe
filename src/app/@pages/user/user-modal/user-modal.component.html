@@ -11,11 +11,11 @@
     </div>
     <div class="flex flex-50 flex-column gap-2">
       <label>Ruolo</label>
-      <p-dropdown
-        [options]="roles"
-        formControlName="role"
-        optionLabel="label"
-      ></p-dropdown>
+      <p-dropdown [options]="roles" formControlName="role">
+        <ng-template let-item pTemplate="selectedItem">
+          {{ item | userRole }}
+        </ng-template>
+      </p-dropdown>
     </div>
   </div>
   <div class="flex gap-2">

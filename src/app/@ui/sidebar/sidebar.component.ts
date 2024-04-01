@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subject, takeUntil, tap } from 'rxjs';
+import { Subject, tap } from 'rxjs';
 import { IMenu } from 'src/app/@core/models/menu.model';
 import { AuthService } from 'src/app/@core/services/auth.service';
 import { NavigationService } from 'src/app/@core/services/navigation.service';
@@ -50,14 +50,14 @@ export class SidebarComponent implements OnInit {
         label: '',
         permissions: ['USER'],
         items: [
+          // {
+          //   label: 'Prossime partite',
+          //   icon: 'event_upcoming',
+          //   routerLink: ['/', 'personal', 'events'],
+          // },
           {
-            label: 'Prossime partite',
-            icon: 'event_upcoming',
-            routerLink: ['/', 'personal', 'events'],
-          },
-          {
-            label: 'Mie trasferte',
-            icon: 'shopping_cart',
+            label: 'Trasferte',
+            icon: 'star',
             routerLink: ['/', 'personal', 'carts'],
           },
         ],
@@ -66,11 +66,11 @@ export class SidebarComponent implements OnInit {
         label: '',
         permissions: ['ADMIN'],
         items: [
-          {
-            label: 'Città',
-            icon: 'location_city',
-            routerLink: ['/', 'city'],
-          },
+          // {
+          //   label: 'Città',
+          //   icon: 'location_city',
+          //   routerLink: ['/', 'city'],
+          // },
           {
             label: 'Campionati',
             icon: 'table_rows',
@@ -102,9 +102,24 @@ export class SidebarComponent implements OnInit {
             routerLink: ['/', 'hotel'],
           },
           {
+            label: 'Servizi',
+            icon: 'hotel_class',
+            routerLink: ['/', 'service'],
+          },
+          {
             label: 'Veicoli',
             icon: 'directions_bus',
             routerLink: ['/', 'veichle'],
+          },
+          {
+            label: 'Tratte',
+            icon: 'explore',
+            routerLink: ['/', 'road'],
+          },
+          {
+            label: 'Pasti',
+            icon: 'restaurant',
+            routerLink: ['/', 'meal'],
           },
           {
             label: 'Trasferte',

@@ -9,6 +9,8 @@ import { tap, take, Subject, debounceTime, takeUntil, switchMap } from 'rxjs';
 import { UserApiService } from 'src/app/@core/api/user-api.service';
 import { UserModalComponent } from '../user-modal/user-modal.component';
 import { FormControl } from '@angular/forms';
+import { TableLazyLoadEvent } from 'primeng/table';
+import { ISort } from 'src/app/@core/models/base.model';
 
 @Component({
   selector: 'app-user-list',
@@ -21,7 +23,7 @@ export class UserListComponent {
   page: number = 0;
   size: number = 10;
   filter: string = '';
-  sort: any = null;
+  sort: ISort | null = null;
   loading: boolean = false;
   items = [
     {
@@ -110,13 +112,13 @@ export class UserListComponent {
     this.users$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;

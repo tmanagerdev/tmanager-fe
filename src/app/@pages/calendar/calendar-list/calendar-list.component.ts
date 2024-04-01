@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { ICalendar } from 'src/app/@core/models/calendar.model';
 import { ISort } from 'src/app/@core/models/base.model';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-calendar-list',
@@ -94,13 +95,13 @@ export class CalendarListComponent {
     this.calendars$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;

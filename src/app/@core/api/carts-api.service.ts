@@ -16,6 +16,7 @@ export class CartApiService {
     take,
     team,
     user,
+    status,
     complete,
     sortField = '',
     sortOrder = 1,
@@ -27,6 +28,7 @@ export class CartApiService {
         ...(team ? { team } : null),
         ...(user ? { user } : null),
         ...(complete ? { complete } : null),
+        ...(status ? { status } : null),
         ...(sortField ? { sortField, sortOrder } : null),
       },
     }) as any;
@@ -49,7 +51,7 @@ export class CartApiService {
   }
 
   copyLastRooming(team: number): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/carts/last-roomings`, {
+    return this.httpClient.get(`${environment.apiUrl}/carts/last-rooming`, {
       params: {
         team,
       },
@@ -64,6 +66,15 @@ export class CartApiService {
     return this.httpClient.get(
       `${environment.apiUrl}/carts/${id}/pdf`,
       httpOptions
+    );
+  }
+
+  setBudget(cartId: number, budget: number) {
+    return this.httpClient.post(
+      `${environment.apiUrl}/carts/${cartId}/budget`,
+      {
+        budget,
+      }
     );
   }
 }

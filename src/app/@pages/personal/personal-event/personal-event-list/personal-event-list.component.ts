@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, switchMap, takeUntil, tap } from 'rxjs';
@@ -28,7 +28,8 @@ export class PersonalEventListComponent implements OnInit, OnDestroy {
   constructor(
     private eventsApiService: EventApiService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cd: ChangeDetectorRef
   ) {
     this.events$
       .pipe(
@@ -37,7 +38,7 @@ export class PersonalEventListComponent implements OnInit, OnDestroy {
           this.eventsApiService.findAll({
             page: this.page + 1,
             take: this.size,
-            ...(this.filter ? { name: this.filter } : {}),
+            ...(this.filter ? { team: this.filter } : {}),
             ...(this.sort && this.sort.field
               ? { sortField: this.sort.field, sortOrder: this.sort.order }
               : {}),
@@ -54,13 +55,15 @@ export class PersonalEventListComponent implements OnInit, OnDestroy {
     this.currentUser = this.authService.currentUser;
   }
 
-  ngOnInit() {
-    this.loadEvents();
-  }
+  ngOnInit() {}
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+  }
+
+  ngAfterViewInit() {
+    this.cd.detectChanges();
   }
 
   loadEvents() {
@@ -74,14 +77,30 @@ export class PersonalEventListComponent implements OnInit, OnDestroy {
   }
 
   openCart(event: any) {
-    this.hasCart(event)
-      ? this.router.navigate(['/personal/carts', event.carts[0].id])
-      : this.router.navigate(['/personal/carts/new', event.id]);
+    // this.hasCart(event)
+    //   ? this.router.navigate(['/personal/carts', event.carts[0].id])
+    //   :
+
+    this.router.navigate(['/personal/carts/new', event.id]);
   }
 
-  onChangePage(event: any) {}
+  onChangePage(event: any) {
+    this.page = event.first! / event.rows! || 0;
+
+    if (event.sortField) {
+      this.sort = {
+        field: event.sortField,
+        order: event.sortOrder,
+      };
+    } else {
+      this.sort = null;
+    }
+
+    this.loadEvents();
+  }
 
   onApplyFilters() {
-    console.log('filter', this.teamsFilter.value);
+    this.filter = this.teamsFilter.value.map((f: any) => f.id);
+    this.loadEvents();
   }
 }

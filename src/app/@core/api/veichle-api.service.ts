@@ -58,13 +58,4 @@ export class VeichleApiService {
   deleteRoad(roadId: any): Observable<any> {
     return this.httpClient.delete(`${environment.apiUrl}/roads/${roadId}`);
   }
-
-  findAllRoad({ search, city }: any): Observable<any> {
-    return this.httpClient.get(`${environment.apiUrl}/veichles/roads`, {
-      params: {
-        ...(search ? { search } : null),
-        ...(city ? { city } : null),
-      },
-    });
-  }
 }

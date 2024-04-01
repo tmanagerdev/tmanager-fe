@@ -18,7 +18,7 @@ export const categoriesPeople = [
 ];
 
 export interface IPeople {
-  id: number;
+  id: number | string;
   name: string;
   surname: string;
   category: string;

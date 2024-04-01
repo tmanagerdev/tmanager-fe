@@ -9,7 +9,7 @@
       icon="pi pi-plus"
       iconPos="right"
       styleClass="p-button-rounded"
-      *ngIf="_status === EStatusCart.DRAFT"
+      *ngIf="!isDisabledCart"
     ></p-button>
   </div>
 
@@ -40,6 +40,7 @@
             {{ activity.description }}
           </p>
         </td>
+        <td>{{ activity.price | currency : "EUR" : "symbol" }}</td>
         <td>
           <button
             pButton
@@ -47,7 +48,7 @@
             icon="pi pi-pencil"
             class="p-button-rounded p-button-outlined mr-2"
             (click)="onUpdateActivity(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
+            *ngIf="!isDisabledCart"
           ></button>
           <button
             pButton
@@ -55,7 +56,7 @@
             icon="pi pi-trash"
             class="p-button-rounded p-button-outlined p-button-danger"
             (click)="onDeleteActivity(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
+            *ngIf="!isDisabledCart"
           ></button>
         </td>
       </tr>
@@ -120,7 +121,7 @@
                 *ngIf="!checkIfSelected(activity.id)"
                 (onClick)="onSelectActivity(activity)"
                 label="Seleziona"
-                styleClass="p-button-text"
+                [text]="true"
               ></p-button>
               <p-button
                 *ngIf="checkIfSelected(activity.id)"

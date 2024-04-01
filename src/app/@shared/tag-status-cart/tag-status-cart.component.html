@@ -1,0 +1,7 @@
+<ng-container *ngIf="status">
+  <p-tag [classList]="status | lowercase" [value]="status | statusCart"></p-tag>
+</ng-container>
+
+<ng-container *ngIf="!status">
+  <p-tag [classList]="'warning'" [value]="'Da organizzare'"></p-tag>
+</ng-container>

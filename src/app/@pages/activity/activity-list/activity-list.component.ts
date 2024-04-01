@@ -14,6 +14,8 @@ import { OverlayPanel } from 'primeng/overlaypanel';
 import { IActivity } from 'src/app/@core/models/activity.model';
 import { ICity } from 'src/app/@core/models/city.model';
 import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
+import { Router } from '@angular/router';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-activity-list',
@@ -63,7 +65,8 @@ export class ActivityListComponent {
     private confirmationService: ConfirmationService,
     private activityApiService: ActivityApiService,
     private cityApiService: CityApiService,
-    public dialogService: DialogService
+    public dialogService: DialogService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -127,13 +130,13 @@ export class ActivityListComponent {
     this.activities$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder || 0,
       };
     } else {
       this.sort = null;
@@ -250,5 +253,9 @@ export class ActivityListComponent {
 
   loadFilteredCities(name: string) {
     this.cities$.next(name);
+  }
+
+  teams(activity: IActivity) {
+    this.router.navigate(['activity', activity.id, 'teams']);
   }
 }

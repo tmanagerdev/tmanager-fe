@@ -108,7 +108,7 @@ export class UserModalComponent implements OnInit, OnDestroy {
     if (this.userForm.valid) {
       const user = {
         ...this.userForm.value,
-        role: this.role.key ?? '',
+        role: this.role ?? '',
         teams: this.teamsArrayValue.map((t) => t.id),
       };
       this.ref.close(user);
@@ -123,7 +123,7 @@ export class UserModalComponent implements OnInit, OnDestroy {
     this.loadFilteredTeams(query);
   }
 
-  onSelectTeam(teamSelected: any) {
+  onSelectTeam({ value: teamSelected }: any) {
     const checkExists = this.teamsArrayValue.find(
       (t) => t.id === teamSelected.id
     );

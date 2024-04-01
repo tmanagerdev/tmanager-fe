@@ -1,0 +1,33 @@
+<div class="flex flex-column gap-3">
+  <div class="flex flex-column gap-2">
+    <label>Servizio</label>
+    <p-dropdown
+      [options]="services"
+      [formControl]="serviceControl"
+      optionLabel="name"
+      [filter]="true"
+      filterBy="name"
+      [showClear]="true"
+      placeholder="Seleziona la squadra"
+      (onShow)="loadFilteredServices('')"
+      (onFilter)="onFilterTeam($event)"
+    >
+    </p-dropdown>
+  </div>
+
+  <div class="flex justify-content-end gap-2 dialog-buttons mt-4">
+    <button
+      pButton
+      type="button"
+      label="Annulla"
+      class="p-button-secondary"
+      (click)="ref.close()"
+    ></button>
+    <button
+      pButton
+      label="Salva"
+      (click)="onSave()"
+      [disabled]="!serviceControl.valid"
+    ></button>
+  </div>
+</div>

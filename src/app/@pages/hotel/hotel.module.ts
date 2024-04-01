@@ -26,8 +26,12 @@ import { HotelRoomsComponent } from './hotel-rooms/hotel-rooms.component';
 import { HotelRoomsModalComponent } from './hotel-rooms/hotel-rooms-modal/hotel-rooms-modal.component';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { RoomNamePipe } from 'src/app/@core/pipes/room-name.pipe';
-import { HotelMealsComponent } from './hotel-meals/hotel-meals.component';
-import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-meals-modal.component';
+import { HotelTeamsComponent } from './hotel-teams/hotel-teams.component';
+import { HotelTeamsModalComponent } from './hotel-teams/hotel-teams-modal/hotel-teams-modal.component';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { TeamLogoComponent } from '../../@shared/team-logo/team-logo.component';
+import { HotelServiceComponent } from './hotel-service/hotel-service.component';
+import { HotelServiceModalComponent } from './hotel-service/hotel-service-modal/hotel-service-modal.component';
 
 @NgModule({
   declarations: [
@@ -35,9 +39,12 @@ import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-
     HotelModalComponent,
     HotelRoomsComponent,
     HotelRoomsModalComponent,
-    HotelMealsComponent,
-    HotelMealsModalComponent,
+    HotelTeamsComponent,
+    HotelTeamsModalComponent,
+    HotelServiceComponent,
+    HotelServiceModalComponent,
   ],
+  providers: [MessageService, ConfirmationService, DialogService],
   imports: [
     CommonModule,
     HotelRoutingModule,
@@ -62,7 +69,8 @@ import { HotelMealsModalComponent } from './hotel-meals/hotel-meals-modal/hotel-
     OverlayPanelModule,
     InputNumberModule,
     RoomNamePipe,
+    ToggleButtonModule,
+    TeamLogoComponent,
   ],
-  providers: [MessageService, ConfirmationService, DialogService],
 })
 export class HotelModule {}

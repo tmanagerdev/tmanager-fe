@@ -1,4 +1,4 @@
-<h2 class="mb-2">Lista Attività</h2>
+<h2 class="mb-2">Attività</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 
@@ -22,12 +22,13 @@
     <div class="w-full flex justify-content-edn gap-2 mt-4">
       <p-button
         label="Reset"
-        styleClass="p-button-secondary p-button-text"
+        [severity]="'secondary'"
+        [text]="true"
         (click)="resetFilters()"
       ></p-button>
       <p-button
         label="Applica filtri"
-        styleClass="p-button-text"
+        [text]="true"
         (click)="applyFilters()"
       ></p-button>
     </div>
@@ -48,7 +49,8 @@
       />
     </span>
     <p-button
-      styleClass="p-button-outlined p-button-secondary"
+      [severity]="'secondary'"
+      [outlined]="true"
       (click)="filters.toggle($event)"
       [icon]="filterIcon"
     ></p-button>
@@ -83,14 +85,9 @@
       <th pSortableColumn="name">
         Name <p-sortIcon field="name"></p-sortIcon>
       </th>
-      <th>Descrizione</th>
+      <th>Squadre</th>
       <th>Città</th>
-      <th pSortableColumn="startDate">
-        Data inizio<p-sortIcon field="startDate"></p-sortIcon>
-      </th>
-      <th pSortableColumn="endDate">
-        Data fine<p-sortIcon field="endDate"></p-sortIcon>
-      </th>
+      <th>Stato</th>
       <th>Prezzo</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
@@ -100,18 +97,43 @@
   </ng-template>
   <ng-template pTemplate="body" let-activity>
     <tr>
-      <td>{{ activity.name }}</td>
-      <td>{{ activity.description }}</td>
+      <td>
+        <p class="font-semibold">
+          {{ activity.name }}
+        </p>
+        <p class="text-sm">
+          {{ activity.description }}
+        </p>
+      </td>
+      <td>
+        <ng-container
+          *ngIf="activity.teams && activity.teams.length; else noTeams"
+        >
+          <ng-container *ngFor="let team of activity.teams; let i = index">
+            <span class="chips chips-primary mr-2">
+              {{ team.team.name }}
+            </span>
+          </ng-container>
+        </ng-container>
+      </td>
       <td>{{ activity.city.name }}</td>
-      <td>{{ activity.startDate | customDate }}</td>
-      <td>{{ activity.endDate | customDate }}</td>
+      <td>
+        <span
+          class="chips"
+          [ngClass]="activity.enabled ? 'chips-success' : 'chips-warning'"
+        >
+          {{ activity.enabled ? "ATTIVO" : "NON ATTIVO" }}
+        </span>
+      </td>
       <td>{{ activity.price | currency : "EUR" : "symbol" }}</td>
       <td>{{ activity.createdAt | customDate }}</td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
           (click)="op.toggle($event)"
-          styleClass="p-button-rounded p-button-secondary p-button-text"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
         ></p-button>
         <p-overlayPanel #op [style]="{ width: '160px' }">
           <button
@@ -120,6 +142,13 @@
             label="Modifica"
             class="p-button-text"
             (click)="update(activity)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Gestisci squadre"
+            class="p-button-text"
+            (click)="teams(activity)"
           ></button>
           <button
             pButton

@@ -21,9 +21,7 @@
   width: 3rem !important;
 }
 
-.p-button {
-  background: var(--primary-color);
-}
+// PEOPLE TAGS
 
 .dirigente {
   .p-tag {
@@ -40,5 +38,61 @@
 .staff {
   .p-tag {
     background-color: #16a085;
+  }
+}
+
+.magazziniere {
+  .p-tag {
+    background-color: #ffc86a;
+  }
+}
+
+.altro {
+  .p-tag {
+    background-color: #4b16a0;
+  }
+}
+
+// CART STATUS TAGS
+
+.draft {
+  .p-tag {
+    background-color: var(--primary-300);
+    color: var(--primary-900);
+  }
+}
+
+.pending {
+  .p-tag {
+    background-color: var(--purple-300);
+    color: var(--purple-900);
+  }
+}
+
+.confirmed {
+  .p-tag {
+    background-color: var(--orange-300);
+    color: var(--orange-900);
+  }
+}
+
+.deposit {
+  .p-tag {
+    background-color: var(--yellow-300);
+    color: var(--yellow-900);
+  }
+}
+
+.completed {
+  .p-tag {
+    background-color: var(--green-300);
+    color: var(--green-900);
+  }
+}
+
+.warning {
+  .p-tag {
+    background-color: var(--yellow-200);
+    color: var(--yellow-900);
   }
 }

@@ -9,6 +9,7 @@ import { DynamicDialogRef, DialogService } from 'primeng/dynamicdialog';
 import { Subject, takeUntil, switchMap, tap, debounceTime, take } from 'rxjs';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
 import { LeagueModalComponent } from '../league-modal/league-modal.component';
+import { TableLazyLoadEvent } from 'primeng/table';
 
 @Component({
   selector: 'app-league-list',
@@ -82,7 +83,7 @@ export class LeagueListComponent {
     this.leagues$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {

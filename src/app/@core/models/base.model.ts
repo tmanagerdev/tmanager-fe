@@ -4,7 +4,7 @@ export interface ApiResponse<T> {
 }
 
 export interface ISort {
-  field?: string;
+  field?: string | string[];
   order?: number;
 }
 

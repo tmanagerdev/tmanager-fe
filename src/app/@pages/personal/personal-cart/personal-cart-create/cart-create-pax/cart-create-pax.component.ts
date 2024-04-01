@@ -1,6 +1,10 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
+import { ConfirmationService } from 'primeng/api';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { take, tap } from 'rxjs';
+import { CartApiService } from 'src/app/@core/api/carts-api.service';
+import { ECategoryPeople, IPeople } from 'src/app/@core/models/people.model';
+import { TeamPeopleModalComponent } from 'src/app/@pages/team/team-people/team-people-modal/team-people-modal.component';
 
 @Component({
   selector: 'app-cart-create-pax',
@@ -10,31 +14,100 @@ import { EStatusCart } from 'src/app/@core/models/cart.model';
 export class CartCreatePaxComponent {
   @Input() activeIndex: number = 0;
   @Input() event: any;
-  @Input() paxForm: FormGroup = new FormGroup({});
-  @Input() set status(value: EStatusCart) {
-    if (value && value !== EStatusCart.DRAFT) {
-      this.paxForm.get('players')?.disable();
-      this.paxForm.get('staffs')?.disable();
-      this.paxForm.get('managers')?.disable();
-      this.paxForm.get('equipments')?.disable();
-      this.paxForm.get('others')?.disable();
-    }
-  }
+  @Input() people: IPeople[] = [];
+  @Input() isEdit = false;
+  @Input() isDisabledCart: boolean = false;
+  @Input() isDisabledRooming: boolean = false;
 
+  ref!: DynamicDialogRef;
+
+  @Output() addNewPeople: EventEmitter<IPeople> = new EventEmitter();
+  @Output() removePeople: EventEmitter<IPeople> = new EventEmitter();
+  @Output() copyRoomings: EventEmitter<IPeople> = new EventEmitter();
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
 
-  get totalPax() {
-    const players = this.paxForm.get('players')?.value ?? 0;
-    const staffs = this.paxForm.get('staffs')?.value ?? 0;
-    const managers = this.paxForm.get('managers')?.value ?? 0;
-    const equipments = this.paxForm.get('equipments')?.value ?? 0;
-    const others = this.paxForm.get('others')?.value ?? 0;
-    return players + staffs + managers + equipments + others;
+  get players() {
+    return (
+      this.people.filter((p) => p.category == ECategoryPeople.PLAYER) ?? []
+    ).length;
   }
 
-  constructor() {}
+  get staffs() {
+    return (
+      this.people.filter((p) => p.category == ECategoryPeople.STAFF) ?? []
+    ).length;
+  }
+
+  get managers() {
+    return (
+      this.people.filter((p) => p.category == ECategoryPeople.MANAGER) ?? []
+    ).length;
+  }
+
+  get equipments() {
+    return (
+      this.people.filter((p) => p.category == ECategoryPeople.EQUIPMENT) ?? []
+    ).length;
+  }
+
+  get others() {
+    return (
+      this.people.filter((p) => p.category == ECategoryPeople.OTHER) ?? []
+    ).length;
+  }
+
+  get totalPax() {
+    return (
+      this.players + this.staffs + this.managers + this.equipments + this.others
+    );
+  }
+
+  constructor(
+    private confirmationService: ConfirmationService,
+    public dialogService: DialogService,
+    private cartApiService: CartApiService
+  ) {}
 
   onNextStep() {
     this.nextStep.emit();
+  }
+
+  onDeletePeople(people: IPeople) {
+    this.confirmationService.confirm({
+      message:
+        'Sei sicuro di voler rimuovere questo partecipante? Sarà rimosso dalla eventuale stanza in cui era stato posizionato.',
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.removePeople.emit(people);
+      },
+    });
+  }
+
+  onAddPeople() {
+    this.ref = this.dialogService.open(TeamPeopleModalComponent, {
+      header: `Aggiungi nuovo membro`,
+      width: '600px',
+      contentStyle: { overflow: 'visible' },
+      baseZIndex: 10001,
+      data: {},
+    });
+    this.ref.onClose.subscribe((newPeople: any) => {
+      if (newPeople) {
+        this.addNewPeople.emit(newPeople);
+      }
+    });
+  }
+
+  onCloneLast() {
+    this.cartApiService
+      .copyLastRooming(this.event.away.id)
+      .pipe(
+        take(1),
+        tap(({ data }) => {
+          this.copyRoomings.emit(data);
+        })
+      )
+      .subscribe();
   }
 }

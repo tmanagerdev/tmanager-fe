@@ -18,7 +18,11 @@
       formControlName="category"
       optionLabel="label"
       optionValue="value"
-    ></p-dropdown>
+    >
+      <ng-template let-item pTemplate="selectedItem">
+        {{ item | peopleRole }}
+      </ng-template>
+    </p-dropdown>
   </div>
   <div class="flex flex-column gap-2">
     <label>Data di nascita</label>
@@ -41,11 +45,7 @@
   </div>
   <div class="flex flex-column gap-2">
     <label>Documento</label>
-    <input
-      pInputText
-      placeholder="Luogo di nascita"
-      formControlName="docNumber"
-    />
+    <input pInputText placeholder="Documento" formControlName="docNumber" />
   </div>
   <div class="flex flex-column gap-2">
     <label>Data di scadenza</label>

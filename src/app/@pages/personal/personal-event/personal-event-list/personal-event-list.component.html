@@ -1,4 +1,4 @@
-<h2 class="mb-2">Elenco prossimi eventi</h2>
+<h2 class="mb-2">Prossime partite</h2>
 
 <div
   class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
@@ -15,13 +15,111 @@
       pButton
       pRipple
       label="Applica filtri"
-      class="p-button-primary mr-2"
+      class="p-button-text"
       (click)="onApplyFilters()"
     ></button>
   </div>
 </div>
 
-<p-dataView
+<p-table
+  #dt
+  [value]="events"
+  [totalRecords]="totalRecords"
+  [rows]="size"
+  [paginator]="true"
+  [lazy]="true"
+  (onLazyLoad)="onChangePage($event)"
+  dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true"
+  [loading]="loading"
+  class="tman-shadow"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="createdAt">
+        Data partita <p-sortIcon field="date"></p-sortIcon>
+      </th>
+      <th pSortableColumn="name">Squadra di casa</th>
+      <th pSortableColumn="name">Squadra ospite</th>
+      <th pSortableColumn="name">Campionato</th>
+      <th pSortableColumn="createdAt">
+        Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+      </th>
+      <th>Azioni</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-event>
+    <tr>
+      <td>{{ event.date | customDate }}</td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="event.home"></app-team-logo>
+          <p>
+            {{ event.home.name }}
+          </p>
+        </div>
+      </td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="event.away"></app-team-logo>
+          <p>
+            {{ event.away.name }}
+          </p>
+        </div>
+      </td>
+      <td>
+        <p class="font-semibold">
+          {{ event.calendar.name }}
+        </p>
+        <p>{{ event.day }}° giornata</p>
+      </td>
+      <td>{{ event.createdAt | customDate }}</td>
+      <td>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <button
+            pButton
+            pRipple
+            label="Organizza"
+            class="p-button-text"
+            (click)="openCart(event)"
+          ></button>
+        </p-overlayPanel>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- <p-dataView
   #dv
   [value]="events"
   [rows]="5"
@@ -84,4 +182,4 @@
       </div>
     </div>
   </ng-template>
-</p-dataView>
+</p-dataView> -->

@@ -9,7 +9,7 @@
       icon="pi pi-plus"
       iconPos="right"
       styleClass="p-button-rounded"
-      *ngIf="_status === EStatusCart.DRAFT"
+      *ngIf="!isDisabledCart"
     ></p-button>
   </div>
   <p-table
@@ -23,6 +23,7 @@
         <th>Data</th>
         <th>Quantità</th>
         <th>Pasto</th>
+        <th>Prezzo</th>
         <th></th>
       </tr>
     </ng-template>
@@ -31,6 +32,7 @@
         <td>{{ meal.startDate | customDate : "showHours" }}</td>
         <td>{{ meal.quantity }}</td>
         <td>{{ meal.name }}</td>
+        <td>{{ meal.price | currency : "EUR" : "symbol" }}</td>
         <td>
           <button
             pButton
@@ -38,7 +40,7 @@
             icon="pi pi-pencil"
             class="p-button-rounded p-button-outlined mr-2"
             (click)="onUpdateMeal(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
+            *ngIf="!isDisabledCart"
           ></button>
           <button
             pButton
@@ -46,7 +48,7 @@
             icon="pi pi-trash"
             class="p-button-rounded p-button-outlined p-button-danger"
             (click)="onDeleteMeal(index)"
-            *ngIf="_status === EStatusCart.DRAFT"
+            *ngIf="!isDisabledCart"
           ></button>
         </td>
       </tr>

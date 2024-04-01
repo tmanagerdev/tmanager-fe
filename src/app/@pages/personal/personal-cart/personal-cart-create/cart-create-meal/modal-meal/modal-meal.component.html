@@ -1,6 +1,11 @@
 <div class="flex flex-column flex-1" [formGroup]="mealForm">
   <div class="flex flex-column my-2">
-    <div class="flex gap-2">
+    <div class="flex gap-2 my-2">
+      <app-quantity-dropdown
+        [control]="mealForm.get('quantity')!"
+        [max]="maxPax"
+        [forPax]="true"
+      />
       <div class="flex-1">
         <label>Giorno</label>
         <p-calendar
@@ -19,48 +24,94 @@
       </div>
     </div>
 
-    <div class="flex gap-2 my-5">
-      <div class="flex flex-column">
-        <label>Quantità</label>
-        <p-inputNumber
-          inputId="integeronly"
-          formControlName="quantity"
-          class="w-5rem"
-        ></p-inputNumber>
-      </div>
-      <div class="flex-1">
-        <label>Pasto</label>
-        <p-dropdown
-          [formControl]="mealControl"
-          [options]="mealsList"
-          [filter]="true"
-          filterBy="name"
-          placeholder="Seleziona pasto"
-        >
-          <ng-template let-meal pTemplate="selectedItem">
-            {{ meal.name }}
-          </ng-template>
-          <ng-template let-meal pTemplate="item">
-            {{ meal.name }}
-          </ng-template>
-        </p-dropdown>
+    <div class="flex flex-column gap-2 my-4">
+      <label> Scegli pasto </label>
+      <div class="flex gap-2">
+        <ng-container *ngFor="let meal of mealsList">
+          <p-radioButton
+            [inputId]="meal.id"
+            name="mealId"
+            [value]="meal.id"
+            formControlName="mealId"
+          ></p-radioButton>
+          <label [for]="meal.id" class="ml-1 mr-4"
+            >{{ meal.name }} ({{
+              meal.price | currency : "EUR" : "symbol"
+            }})</label
+          >
+        </ng-container>
       </div>
     </div>
-  </div>
 
-  <div class="flex justify-content-end gap-2 dialog-buttons">
-    <button
-      pButton
-      type="button"
-      label="Annulla"
-      class="p-button-secondary"
-      (click)="ref.close()"
-    ></button>
-    <button
-      pButton
-      type="submit"
-      [label]="isEdit ? 'Aggiorna' : 'Aggiungi'"
-      (click)="onSave()"
-    ></button>
+    <div
+      *ngIf="selectedMeal && selectedMeal.maxConfigActive === 1"
+      class="flex flex-column gap-2 my-4"
+    >
+      <label> Scegli il tipo </label>
+      <div class="flex my-2">
+        <ng-container *ngFor="let config of selectedMeal.mealConfigs">
+          <p-radioButton
+            [inputId]="config.id"
+            name="configId"
+            [value]="config.id"
+            formControlName="configId"
+          ></p-radioButton>
+          <label [for]="config.id" class="ml-1 mr-4">{{ config.name }}</label>
+        </ng-container>
+      </div>
+    </div>
+
+    <div
+      *ngIf="selectedMeal && selectedMeal.maxConfigActive > 1"
+      class="flex flex-column gap-2 my-4"
+    >
+      <label> Scegli max {{ selectedMeal.maxConfigActive }} tipi</label>
+      <div class="flex flex-column gap-2 my-2">
+        <ng-container *ngFor="let config of selectedMeal.mealConfigs">
+          <div>
+            <p-checkbox
+              [inputId]="config.id"
+              name="group1"
+              [value]="config.id"
+              [formControl]="configIdsControl"
+            ></p-checkbox>
+            <label [for]="config.id" class="ml-1 mr-4">{{ config.name }}</label>
+          </div>
+        </ng-container>
+      </div>
+      <p *ngIf="isConfigIdsError" class="text-sm text-red-500">
+        Attenzione hai selezionato troppi tipi
+      </p>
+    </div>
+
+    <div
+      class="flex flex-column my-2"
+      *ngIf="selectedConfig && selectedConfig.requireDescription"
+    >
+      <label>Descrizione menù</label>
+      <textarea
+        rows="5"
+        cols="30"
+        pInputTextarea
+        formControlName="description"
+      ></textarea>
+    </div>
+
+    <div class="flex justify-content-end gap-2 dialog-buttons mt-3">
+      <button
+        pButton
+        type="button"
+        label="Annulla"
+        class="p-button-secondary"
+        (click)="ref.close()"
+      ></button>
+      <button
+        pButton
+        type="submit"
+        [label]="isEdit ? 'Aggiorna' : 'Aggiungi'"
+        (click)="onSave()"
+        [disabled]="!mealForm.valid || isConfigIdsError"
+      ></button>
+    </div>
   </div>
 </div>

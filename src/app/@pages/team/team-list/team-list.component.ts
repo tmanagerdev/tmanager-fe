@@ -13,6 +13,8 @@ import { LeagueApiService } from 'src/app/@core/api/league-api.service';
 import { OverlayPanel } from 'primeng/overlaypanel';
 import { TeamModalComponent } from '../team-modal/team-modal.component';
 import { Router } from '@angular/router';
+import { TableLazyLoadEvent } from 'primeng/table';
+import { ISort } from 'src/app/@core/models/base.model';
 
 @Component({
   selector: 'app-team-list',
@@ -28,7 +30,7 @@ export class TeamListComponent {
   page: number = 0;
   size: number = 10;
   filter: string = '';
-  sort: any = null;
+  sort: ISort | null = null;
   loading: boolean = false;
 
   searchFilter = new FormControl('');
@@ -153,13 +155,13 @@ export class TeamListComponent {
     this.leagues$.next(name);
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;

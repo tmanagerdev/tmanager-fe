@@ -1,89 +1,213 @@
-<h2 class="mb-2">Le mie prenotazioni</h2>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
 
+<h2 class="mb-2">Trasferte</h2>
 <div
-  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+  class="flex flex-column xl:flex-row xl:justify-content-between w-full tman-shadow px-5 py-3 border-round my-4 dialog-buttons"
 >
-  <p-multiSelect
-    [options]="currentUser.teams"
-    [formControl]="teamsFilter"
-    optionLabel="name"
-    placeholder="Filtra per squadra"
-  ></p-multiSelect>
+  <div class="flex flex-column xl:flex-row gap-2">
+    <div class="flex flex-column">
+      <label class="font-semibold mb-2">Ospitante</label>
+      <p-dropdown
+        [options]="teams"
+        [formControl]="teamHomeFilter"
+        optionLabel="name"
+        [filter]="true"
+        [showClear]="true"
+        placeholder="Squadra ospitante"
+        (onShow)="loadFilteredTeams('')"
+        (onFilter)="onFilterTeam($event)"
+      >
+      </p-dropdown>
+    </div>
+    <div class="flex flex-column">
+      <label class="font-semibold mb-2">Trasferta</label>
+      <p-dropdown
+        [options]="currentUser.teams"
+        [formControl]="teamsFilter"
+        [filter]="true"
+        [showClear]="true"
+        optionLabel="name"
+        placeholder="Squadra in trasferta"
+      ></p-dropdown>
+    </div>
+    <div class="flex flex-column">
+      <label class="font-semibold mb-2">Data trasferta</label>
+      <p-calendar
+        [formControl]="dateFilter"
+        selectionMode="range"
+        dateFormat="dd/mm/yy"
+        [readonlyInput]="true"
+        (onSelect)="onFilterDate($event)"
+        class="range-date"
+      ></p-calendar>
+    </div>
+  </div>
 
-  <div>
+  <div class="flex align-items-center gap-2">
     <button
       pButton
       pRipple
       label="Applica filtri"
-      class="p-button-primary mr-2"
+      class="p-button-text mt-5 lg:mt-0"
       (click)="onApplyFilters()"
     ></button>
   </div>
 </div>
 
-<p-dataView
-  #dv
-  [value]="carts"
-  [rows]="5"
-  [paginator]="true"
+<p-table
+  #dt
+  [value]="events"
   [totalRecords]="totalRecords"
+  [rows]="size"
+  [paginator]="true"
   [lazy]="true"
   (onLazyLoad)="onChangePage($event)"
+  dataKey="id"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [showCurrentPageReport]="true"
+  [loading]="loading"
+  class="tman-shadow"
 >
-  <ng-template let-cart pTemplate="listItem">
-    <div class="col-12">
-      <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-        <div
-          class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
-        >
-          <div
-            class="flex flex-column align-items-center sm:align-items-start gap-3"
-          >
-            <div class="flex align-items-center gap-2">
-              <app-team-logo [team]="cart.event.home"></app-team-logo>
-              <p class="text-xl text-900">
-                {{ cart.event.home.name }}
-              </p>
-              -
-              <p class="text-xl text-900">
-                {{ cart.event.away.name }}
-              </p>
-              <app-team-logo [team]="cart.event.away"></app-team-logo>
-            </div>
-
-            <div class="flex align-items-center gap-3">
-              <span class="flex align-items-center gap-2">
-                <span class="material-symbols-outlined"> table_rows </span>
-                <span
-                  ><span class="font-semibold">{{
-                    cart.event.calendar.name
-                  }}</span>
-                  {{ cart.event.day }}° giornata</span
-                >
-              </span>
-            </div>
-            <div class="flex align-items-center gap-3">
-              <span class="flex align-items-center gap-2">
-                <span class="material-symbols-outlined"> calendar_today </span>
-                <span class="font-semibold">{{
-                  cart.event.date | customDate
-                }}</span>
-              </span>
-            </div>
-          </div>
-          <div
-            class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
-          >
-            <p-button
-              icon="pi pi-arrow-circle-right"
-              label="Visualizza trasferta"
-              class="md:align-self-end mb-2 p-button-rounded"
-              styleClass="p-button-secondary"
-              (click)="openCart(cart)"
-            ></p-button>
-          </div>
-        </div>
-      </div>
-    </div>
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="createdAt">
+        Data partita <p-sortIcon field="date"></p-sortIcon>
+      </th>
+      <th>Ospitante</th>
+      <th>Ospite</th>
+      <th>Campionato</th>
+      <th>Stato</th>
+      <th>Totale</th>
+      <th>Budget</th>
+      <th>Delta</th>
+      <!-- <th pSortableColumn="createdAt">
+        Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
+      </th> -->
+      <th>Azioni</th>
+    </tr>
   </ng-template>
-</p-dataView>
+  <ng-template pTemplate="body" let-event>
+    <tr>
+      <td>{{ event.date | customDate }}</td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="event.home"></app-team-logo>
+          <p>
+            {{ event.home.name }}
+          </p>
+        </div>
+      </td>
+      <td>
+        <div class="flex align-items-center gap-2">
+          <app-team-logo [team]="event.away"></app-team-logo>
+          <p>
+            {{ event.away.name }}
+          </p>
+        </div>
+      </td>
+      <td>
+        <p class="font-semibold">
+          {{ event.calendar.name }}
+        </p>
+        <p>{{ event.day }}° giornata</p>
+      </td>
+      <td>
+        <app-tag-status-cart
+          [status]="event.cart?.status"
+        ></app-tag-status-cart>
+      </td>
+      <td>
+        <ng-container *ngIf="event.cart && event.cart.total; else noTotal">
+          {{ event.cart.total | currency : "EUR" : "symbol" }}
+        </ng-container>
+      </td>
+      <td>
+        <ng-container *ngIf="event.cart && event.cart.budget; else noTotal">
+          {{ event.cart.budget.budget | currency : "EUR" : "symbol" }}
+        </ng-container>
+      </td>
+      <td>
+        <ng-container
+          *ngIf="
+            event.cart && event.cart.total && event.cart.budget;
+            else noTotal
+          "
+        >
+          {{
+            (event.cart.total / event.cart.budget.budget) * 100 - 100
+              | number : "1.1-2"
+          }}%
+        </ng-container>
+      </td>
+      <td>
+        <p-button
+          icon="pi pi-ellipsis-v"
+          (click)="op.toggle($event)"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
+        ></p-button>
+        <p-overlayPanel #op [style]="{ width: '160px' }">
+          <ng-container *ngIf="!event.cart">
+            <button
+              pButton
+              pRipple
+              label="Organizza"
+              class="p-button-text"
+              (click)="openCreateCart(event)"
+            ></button
+          ></ng-container>
+          <ng-container *ngIf="event.cart">
+            <button
+              pButton
+              pRipple
+              label="Visualizza"
+              class="p-button-text"
+              (click)="openViewCart(event.cart)"
+            ></button>
+            <button
+              *ngIf="event.cart.status === EStatusCart.DRAFT"
+              pButton
+              pRipple
+              label="Conferma"
+              class="p-button-text p-button-success"
+              (click)="complete(event.cart)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              label="Modifica budget"
+              class="p-button-text"
+              (click)="budget(event.cart)"
+            ></button>
+          </ng-container>
+        </p-overlayPanel>
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+    <tr>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+      <td><p-skeleton></p-skeleton></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<ng-template #noTotal> - </ng-template>

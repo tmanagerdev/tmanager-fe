@@ -1,0 +1,91 @@
+<p-toast></p-toast>
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
+
+<ng-container *ngIf="road">
+  <div class="flex align-items-center gap-4 mb-2">
+    <i
+      class="pi pi-angle-left cursor-pointer text-4xl"
+      (click)="backToRoads()"
+    ></i>
+    <span>
+      <h2 class="mb-2">
+        Squadre associate alla tratta {{ road.from }} - {{ road.to }}
+      </h2>
+      <p>di {{ road.city?.name }}</p>
+    </span>
+  </div>
+
+  <div
+    class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+  >
+    <span></span>
+    <div>
+      <button
+        pButton
+        pRipple
+        label="Associa squadra"
+        class="p-button-primary mr-2"
+        (click)="create()"
+      ></button>
+    </div>
+  </div>
+
+  <p-table
+    #dt
+    [value]="road.teams ?? []"
+    [totalRecords]="totalRecords"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+    [loading]="loading"
+    class="tman-shadow"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">
+          Nome <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th>Azioni</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-team>
+      <tr>
+        <td>
+          <div class="flex align-items-center gap-2">
+            <app-team-logo [team]="team.team"></app-team-logo>
+            <p>
+              {{ team.team.name }}
+            </p>
+          </div>
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-ellipsis-v"
+            (click)="op.toggle($event)"
+            [text]="true"
+            [rounded]="true"
+            [severity]="'secondary'"
+          ></p-button>
+          <p-overlayPanel #op [style]="{ width: '160px' }">
+            <button
+              pButton
+              pRipple
+              label="Rimuovi"
+              class="p-button-text p-button-danger"
+              (click)="remove(team)"
+            ></button>
+          </p-overlayPanel>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <ng-container *ngFor="let row of rowsArray">
+        <tr>
+          <ng-container *ngFor="let cell of cellsArray">
+            <td><p-skeleton></p-skeleton></td>
+          </ng-container>
+        </tr>
+      </ng-container>
+    </ng-template>
+  </p-table>
+</ng-container>

@@ -21,8 +21,7 @@ export class ActivityModalComponent {
     name: new FormControl('', Validators.required),
     description: new FormControl(''),
     city: new FormControl(''),
-    startDate: new FormControl(new Date()),
-    endDate: new FormControl(new Date()),
+    enabled: new FormControl(false),
     price: new FormControl(null),
   });
 
@@ -38,11 +37,7 @@ export class ActivityModalComponent {
       this.activity = this.config.data.activity;
       this.isEdit = this.config.data.isEdit;
       if (this.isEdit) {
-        this.activityForm.patchValue({
-          ...this.activity,
-          startDate: new Date(this.activity.startDate!),
-          endDate: new Date(this.activity.endDate!),
-        });
+        this.activityForm.patchValue(this.activity);
         this.cities.push({ ...this.activity.city });
       }
     }

@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HotelListComponent } from './hotel-list/hotel-list.component';
 import { HotelRoomsComponent } from './hotel-rooms/hotel-rooms.component';
-import { HotelMealsComponent } from './hotel-meals/hotel-meals.component';
+import { HotelTeamsComponent } from './hotel-teams/hotel-teams.component';
+import { HotelServiceComponent } from './hotel-service/hotel-service.component';
 
 const routes: Routes = [
   {
@@ -13,12 +14,16 @@ const routes: Routes = [
     path: ':id',
     children: [
       {
-        path: '',
+        path: 'rooms',
         component: HotelRoomsComponent,
       },
       {
-        path: 'meals',
-        component: HotelMealsComponent,
+        path: 'teams',
+        component: HotelTeamsComponent,
+      },
+      {
+        path: 'services',
+        component: HotelServiceComponent,
       },
     ],
   },

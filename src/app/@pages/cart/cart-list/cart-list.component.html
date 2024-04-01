@@ -1,12 +1,12 @@
-<h2 class="mb-2">Lista Trasferte</h2>
+<h2 class="mb-2">Trasferte</h2>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>
 <div
-  class="flex justify-content-between w-full tman-shadow px-5 py-3 border-round my-4"
+  class="flex flex-column xl:flex-row xl:justify-content-between w-full tman-shadow px-5 py-3 border-round my-4 dialog-buttons"
 >
-  <div class="flex align-items-center gap-3">
+  <div class="flex flex-column xl:flex-row gap-2">
     <div class="w-full flex flex-column gap-2">
-      <label>Squadra</label>
+      <label>Squadra ospite</label>
       <p-dropdown
         [options]="teams"
         [formControl]="teamFilter"
@@ -33,24 +33,26 @@
       >
       </p-dropdown>
     </div>
-    <!-- <div class="w-full flex flex-column gap-2">
-      <label>Confermata</label>
-      <p-inputSwitch [formControl]="completeFilter"></p-inputSwitch>
-    </div> -->
-  </div>
-  <div>
-    <div class="w-full flex justify-content-edn gap-2 mt-4">
-      <p-button
-        label="Reset"
-        styleClass="p-button-secondary p-button-text"
-        (click)="resetFilters()"
-      ></p-button>
-      <p-button
-        label="Applica filtri"
-        styleClass="p-button-text"
-        (click)="applyFilters()"
-      ></p-button>
+    <div class="w-full flex flex-column gap-2">
+      <label>Stato</label>
+      <p-dropdown
+        [options]="statusCart"
+        [formControl]="statusFilter"
+        optionLabel="label"
+        [showClear]="true"
+        placeholder="Filtra per stato"
+      >
+      </p-dropdown>
     </div>
+  </div>
+  <div class="flex align-items-center gap-2">
+    <p-button
+      label="Reset"
+      [severity]="'secondary'"
+      [text]="true"
+      (click)="resetFilters()"
+    ></p-button>
+    <p-button label="Applica" [text]="true" (click)="applyFilters()"></p-button>
   </div>
 </div>
 
@@ -65,7 +67,6 @@
   dataKey="id"
   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
   [showCurrentPageReport]="true"
-  [loading]="loading"
   class="tman-shadow"
 >
   <ng-template pTemplate="header">
@@ -76,10 +77,11 @@
       <th>Data inizio</th>
       <th>Data fine</th>
       <th>Creata da</th>
-      <th>Confermata</th>
+      <th>Stato</th>
       <th pSortableColumn="createdAt">
         Data creazione <p-sortIcon field="createdAt"></p-sortIcon>
       </th>
+      <th>Totale</th>
       <th>Azioni</th>
     </tr>
   </ng-template>
@@ -90,18 +92,19 @@
       <td>{{ cart.event.away.name }}</td>
       <td>{{ cart.startDate | customDate }}</td>
       <td>{{ cart.endDate | customDate }}</td>
-      <td>{{ cart.user.email }}</td>
+      <td class="text-sm">{{ cart.user.email }}</td>
       <td>
-        <span class="chips" [ngClass]="'chips-' + cart.status">
-          {{ cart.status | statusCart }}
-        </span>
+        <app-tag-status-cart [status]="cart.status"></app-tag-status-cart>
       </td>
       <td>{{ cart.createdAt | customDate }}</td>
+      <td>{{ cart.total | currency : "EUR" : "symbol" }}</td>
       <td>
         <p-button
           icon="pi pi-ellipsis-v"
           (click)="op.toggle($event)"
-          styleClass="p-button-rounded p-button-secondary p-button-text"
+          [text]="true"
+          [rounded]="true"
+          [severity]="'secondary'"
         ></p-button>
         <p-overlayPanel #op [style]="{ width: '160px' }">
           <button
@@ -111,21 +114,70 @@
             class="p-button-text"
             (click)="detail(cart)"
           ></button>
-          <button
-            pButton
-            pRipple
-            label="Modifica"
-            class="p-button-text"
-            (click)="update(cart)"
-          ></button>
-
-          <button
-            pButton
-            pRipple
-            label="Rimuovi"
-            class="p-button-text p-button-danger"
-            (click)="remove(cart)"
-          ></button>
+          <ng-container *ngIf="cart.status === EStatusCart.DRAFT">
+            <button
+              pButton
+              pRipple
+              label="Modifica"
+              class="p-button-text"
+              (click)="update(cart)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              label="Rimuovi"
+              class="p-button-text p-button-danger"
+              (click)="remove(cart)"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="cart.status === EStatusCart.PENDING">
+            <button
+              pButton
+              pRipple
+              label="Conferma"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.CONFIRMED)"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="cart.status === EStatusCart.CONFIRMED">
+            <button
+              pButton
+              pRipple
+              label="Acconto pagato"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.DEPOSIT)"
+            ></button>
+            <button
+              pButton
+              pRipple
+              label="Completa"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.COMPLETED)"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="cart.status === EStatusCart.DEPOSIT">
+            <button
+              pButton
+              pRipple
+              label="Completa"
+              class="p-button-text"
+              (click)="updateStatus(cart, EStatusCart.COMPLETED)"
+            ></button>
+          </ng-container>
+          <ng-container
+            *ngIf="
+              cart.status !== EStatusCart.DRAFT &&
+              cart.status !== EStatusCart.COMPLETED
+            "
+          >
+            <button
+              pButton
+              pRipple
+              label="Annulla"
+              class="p-button-text p-button-danger"
+              (click)="updateStatus(cart, EStatusCart.CANCELLED)"
+            ></button>
+          </ng-container>
         </p-overlayPanel>
       </td>
     </tr>

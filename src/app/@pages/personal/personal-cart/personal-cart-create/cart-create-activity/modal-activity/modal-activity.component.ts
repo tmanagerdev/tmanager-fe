@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { debounceTime, tap } from 'rxjs';
 
@@ -13,7 +13,7 @@ export class ModalActivityComponent {
     startDate: new FormControl(null),
     startDateHour: new FormControl(null),
     quantity: new FormControl(1),
-    id: new FormControl(null),
+    id: new FormControl(null, Validators.required),
     name: new FormControl(null),
     description: new FormControl(null),
     price: new FormControl(null),
@@ -22,6 +22,7 @@ export class ModalActivityComponent {
   index: number = 0;
   activitiesList: any = [];
   displayedActivitiesList: any = [];
+  maxPax: number = 0;
 
   searchControl = new FormControl();
 
@@ -34,12 +35,14 @@ export class ModalActivityComponent {
     public config: DynamicDialogConfig
   ) {
     if (this.config.data) {
-      const { activityForm, activitiesList, index, isEdit } = this.config.data;
-      this.activityForm = activityForm;
+      const { activityForm, activitiesList, index, isEdit, maxPax } =
+        this.config.data;
+      this.activityForm.patchValue({ ...activityForm.value });
       this.activitiesList = activitiesList;
       this.displayedActivitiesList = [...activitiesList];
       this.index = index;
       this.isEdit = isEdit;
+      this.maxPax = maxPax;
 
       if (this.isEdit) {
         const activity = this.activityForm.value;
@@ -49,10 +52,7 @@ export class ModalActivityComponent {
           new Date(activity.startDate).getMinutes()
         );
 
-        this.activityForm.addControl(
-          'startDateHour',
-          new FormControl(startDateHour)
-        );
+        this.activityForm.get('startDateHour')?.setValue(startDateHour);
       }
     }
 
@@ -67,21 +67,27 @@ export class ModalActivityComponent {
   }
 
   onSave() {
-    //const { name, id } = this.mealControl.value;
-
     const activity = this.activityForm.value;
     const startDateHour = new Date(activity.startDateHour).getHours();
     const startDateMinute = new Date(activity.startDateHour).getMinutes();
     const startDate = new Date(activity.startDate);
     startDate.setHours(startDateHour, startDateMinute);
-    this.activityForm.patchValue({ ...activity, startDate });
 
-    console.log(this.activityForm.value);
+    this.activityForm.removeControl('startDateHour');
+    this.activityForm.patchValue({ startDate });
+
     this.ref.close(this.activityForm);
   }
 
   onSelectActivity({ id, name, description, price }: any) {
-    this.activityForm.patchValue({ id, name, description, price });
+    if (this.checkIfSelected(id)) {
+      this.activityForm.get('id')?.setValue(null);
+      this.activityForm.get('name')?.setValue(null);
+      this.activityForm.get('description')?.setValue(null);
+      this.activityForm.get('price')?.setValue(null);
+    } else {
+      this.activityForm.patchValue({ id, name, description, price });
+    }
   }
 
   checkIfSelected(id: number) {

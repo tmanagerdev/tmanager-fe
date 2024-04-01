@@ -17,6 +17,9 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MessagesModule } from 'primeng/messages';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TableModule } from 'primeng/table';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
   declarations: [PersonalEventListComponent],
@@ -31,7 +34,6 @@ import { ToastModule } from 'primeng/toast';
     ReactiveFormsModule,
     InputTextModule,
     MultiSelectModule,
-    TeamLogoComponent,
     DropdownModule,
     DataViewModule,
     InputTextareaModule,
@@ -41,6 +43,9 @@ import { ToastModule } from 'primeng/toast';
     ConfirmDialogModule,
     TagModule,
     TeamLogoComponent,
+    SkeletonModule,
+    TableModule,
+    OverlayPanelModule,
   ],
 })
 export class PersonalEventModule {}

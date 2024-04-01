@@ -22,17 +22,30 @@
     </div>
   </div>
   <p-divider></p-divider>
-  <p class="text-sm pb-1">Seleziona l'hotel per questa trasferta</p>
-  <p class="font-semibold text-lg my-2">Hotel disponibili</p>
+  <div class="flex align-items-center justify-content-between">
+    <div>
+      <p class="text-sm pb-1">Seleziona l'hotel per questa trasferta</p>
+      <p class="font-semibold text-lg my-2">Hotel disponibili</p>
+    </div>
+    <p-button
+      [severity]="'secondary'"
+      [outlined]="true"
+      (click)="filters.toggle($event)"
+      icon="pi pi-filter"
+    ></p-button>
+  </div>
+
   <div class="flex flex-wrap gap-2">
-    <ng-container *ngFor="let h of _hotels">
+    <ng-container *ngFor="let h of filteredHotels">
       <div
         class="flex border-1 border-round border-300 px-3 py-2 cursor-pointer align-items-center gap-2"
         [ngClass]="{
           'border-primary': selectedHotel && selectedHotel.id === h.id,
-          'cursor-pointer': _status === EStatusCart.DRAFT
+          'cursor-pointer': !_isDisabledCart
         }"
         (click)="onSelectHotel(h)"
+        [pTooltip]="tooltipContent"
+        tooltipPosition="top"
       >
         <p class="font-semibold">{{ h.name }}</p>
         <span
@@ -42,6 +55,13 @@
           check_circle
         </span>
       </div>
+      <ng-template #tooltipContent>
+        <div class="flex flex-column">
+          <ng-container *ngFor="let s of h.services">
+            <p>- {{ s.service.name }}</p>
+          </ng-container>
+        </div>
+      </ng-template>
     </ng-container>
   </div>
   <p-divider></p-divider>
@@ -52,12 +72,6 @@
           Gestisci le stanze
           <span class="text-xs">(Tariffa colazione inclusa)</span>
         </p>
-        <p-button
-          *ngIf="!isEdit"
-          (onClick)="onCloneLast()"
-          label="Copia da ultima trasferta"
-          styleClass="p-button-text"
-        ></p-button>
       </div>
       <p-accordion>
         <ng-container *ngFor="let hotelRoom of selectedHotel.rooms">
@@ -94,38 +108,36 @@
                           <i
                             class="pi pi-ellipsis-v cursor-pointer"
                             (click)="onToggleMenu(r, menu, $event)"
-                            *ngIf="_status === EStatusCart.DRAFT"
+                            *ngIf="!_isDisabledCart"
                           ></i>
                         </div>
                       </ng-template>
                       <ng-container *ngFor="let p of r.rooming; let ip = index">
-                        <div class="p-2 flex align-items-center room-user">
-                          <span class="mr-2">
+                        <div
+                          class="p-2 flex flex-column-reverse xl:flex-row xl:align-items-center room-user"
+                        >
+                          <span class="mt-2 mr-0 xl:mt-0 xl:mr-2">
                             <app-tag-role-people
                               [people]="p"
                             ></app-tag-role-people>
                           </span>
-
-                          <ng-container *ngIf="p.people.id">
-                            <p>{{ p.people.name }} {{ p.people.surname }}</p>
-                          </ng-container>
-                          <ng-container *ngIf="!p.people.id">
-                            <p>{{ p.name }} {{ p.surname }}</p>
-                          </ng-container>
+                          <p>{{ p.name }} {{ p.surname }}</p>
                         </div>
                       </ng-container>
                       <div class="p-2 flex justify-content-center">
-                        <p-button
-                          label="Gestisci ospiti"
-                          styleClass="p-button-text"
-                          icon="pi pi-user-edit"
-                          (click)="onAddGuest(r)"
-                        ></p-button>
+                        <ng-container *ngIf="!isDisabledRooming">
+                          <p-button
+                            label="Gestisci ospiti"
+                            [text]="true"
+                            icon="pi pi-user-edit"
+                            (click)="onAddGuest(r)"
+                          ></p-button>
+                        </ng-container>
                       </div>
                     </p-panel>
                   </div>
                 </ng-container>
-                <ng-container *ngIf="_status === EStatusCart.DRAFT">
+                <ng-container *ngIf="!isDisabledRooming">
                   <div class="col-4">
                     <div
                       class="h-full flex justify-content-center align-items-center border-dashed border-1 new-room text-primary"
@@ -180,3 +192,34 @@
 </ng-template>
 
 <p-menu #menu [model]="items" [popup]="true"></p-menu>
+
+<p-overlayPanel #filters>
+  <ng-template pTemplate="content">
+    <div class="w-full flex flex-column gap-2">
+      <div *ngFor="let service of services" class="field-checkbox">
+        <div class="flex align-items-center gap-1">
+          <p-checkbox
+            name="group"
+            [value]="service"
+            [(ngModel)]="filtersService"
+            [inputId]="service.id"
+          ></p-checkbox>
+          <label [for]="service.id">{{ service.name }}</label>
+        </div>
+      </div>
+    </div>
+    <div class="w-full flex justify-content-edn gap-2 mt-4">
+      <p-button
+        label="Reset"
+        [severity]="'secondary'"
+        [text]="true"
+        (click)="resetFilters()"
+      ></p-button>
+      <p-button
+        label="Applica filtri"
+        [text]="true"
+        (click)="applyFilters()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-overlayPanel>

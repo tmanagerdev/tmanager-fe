@@ -5,25 +5,17 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import {
-  Subject,
-  combineLatestWith,
-  map,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-} from 'rxjs';
-import { HotelApiService } from 'src/app/@core/api/hotel-api.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
+import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/@core/services/auth.service';
 import { clearFormArray, uuidv4 } from 'src/app/@core/utils';
+import { PeopleRoomingService } from '../people-rooming.service';
 import { AccomodationsPeopleModalComponent } from './accomodations-people-modal/accomodations-people-modal.component';
-import { CartCreateAccomodationsService } from './cart-create-accomodations.service';
-import { CartApiService } from 'src/app/@core/api/carts-api.service';
-import { EStatusCart } from 'src/app/@core/models/cart.model';
 
 @Component({
   selector: 'app-cart-create-accomodations',
@@ -34,27 +26,30 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   _event: any;
   team: number = 0;
   _hotels: any = [];
-  //selectedHotel: any = null;
+  filteredHotels: any = [];
   coordRoomToDelete: any;
   ref!: DynamicDialogRef;
-  EStatusCart = EStatusCart;
-  _status: EStatusCart = EStatusCart.DRAFT;
+  _isDisabledCart: boolean = false;
+  filtersService: any;
 
   @Input() selectedHotel: any = null;
   @Input() accomodationForm: FormGroup = new FormGroup({});
-  @Input() mealForm: FormGroup = new FormGroup({});
   @Input() activeIndex: number = 0;
   @Input() isEdit: boolean = false;
-  @Input() set status(value: EStatusCart) {
+  @Input() services: any = [];
+  @Input() isDisabledRooming: boolean = false;
+
+  @Input() set isDisabledCart(value: boolean) {
     if (value) {
-      this._status = value;
-      if (value !== EStatusCart.DRAFT) {
+      this._isDisabledCart = value;
+      if (this._isDisabledCart) {
         this.accomodationForm.get('startDate')?.disable();
         this.accomodationForm.get('endDate')?.disable();
         this.accomodationForm.get('accomodationNotes')?.disable();
       }
     }
   }
+
   @Input() set event(event: any) {
     this._event = event;
     this.team = event.away.id;
@@ -71,32 +66,19 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
       });
     }
   }
+
   @Input() set hotels(hotels: any) {
     if (hotels && hotels.length) {
-      if (this.isEdit) {
-        this._hotels = hotels;
-
-        // const hotelId = this.accomodationForm.value.hotel.id;
-        // const hotel = this._hotels.find((h: any) => h.id === hotelId);
-        // if (hotel) {
-        //   this.selectedHotel = { ...hotel };
-        //   this.changeSelectedHotel.emit(this.selectedHotel);
-        // }
-      } else {
-        this._hotels = hotels;
-        // if (this.hotel && this.hotel.value && this.hotel.value.id) {
-        //   this.selectedHotel = {
-        //     ...this.hotel.value,
-        //   };
-        //   this.changeSelectedHotel.emit(this.selectedHotel);
-        // }
-      }
+      this._hotels = [...hotels];
+      this.filteredHotels = [...hotels];
     }
   }
 
   @Output() nextStep: EventEmitter<void> = new EventEmitter();
   @Output() prevStep: EventEmitter<void> = new EventEmitter();
   @Output() changeSelectedHotel: EventEmitter<any> = new EventEmitter();
+
+  @ViewChild('filters') filtersPopup!: OverlayPanel;
 
   hotel$: Subject<void> = new Subject();
   unsubscribe$: Subject<void> = new Subject();
@@ -109,10 +91,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     return this.accomodationForm.get('rooms')?.value;
   }
 
-  // get hotel() {
-  //   return this.accomodationForm.get('hotel') as FormGroup;
-  // }
-
   items: MenuItem[] = [
     {
       label: 'Elimina',
@@ -122,8 +100,8 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
           (r: any) => r.uuid === this.coordRoomToDelete.uuid
         );
         for (const p of this.rooms.at(index).value.rooming) {
-          if (p.people && p.people.id) {
-            this.accomodationService.updatePeple(p.people.id, 'REMOVE');
+          if (p) {
+            this.peopleRoomingService.updateRooming(p, 'REMOVE');
           }
         }
         this.rooms.removeAt(index);
@@ -131,13 +109,15 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     },
   ];
 
+  currentUser: any;
+
   constructor(
-    private hotelApiService: HotelApiService,
-    private cartApiService: CartApiService,
     public dialogService: DialogService,
-    private accomodationService: CartCreateAccomodationsService,
-    private messageService: MessageService
-  ) {}
+    private peopleRoomingService: PeopleRoomingService,
+    private authService: AuthService
+  ) {
+    this.currentUser = this.authService.currentUser;
+  }
 
   ngOnInit(): void {}
 
@@ -159,7 +139,7 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   }
 
   onSelectHotel(hotel: any) {
-    if (this._status !== EStatusCart.DRAFT) {
+    if (this._isDisabledCart) {
       return;
     }
 
@@ -195,7 +175,6 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
   }
 
   onAddGuest(room: any) {
-    console.log('room', room);
     this.ref = this.dialogService.open(AccomodationsPeopleModalComponent, {
       header: `Aggiungi ospite`,
       width: '800px',
@@ -217,15 +196,9 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
 
         for (const p of people) {
           const newPeople = new FormGroup({
-            people: new FormGroup({
-              id: new FormControl(p.id ? p.id : null),
-              name: new FormControl(p.id ? p.name : null),
-              surname: new FormControl(p.id ? p.surname : null),
-              category: new FormControl(p.id ? p.category : null),
-            }),
-            name: new FormControl(!p.id ? p.name : null),
-            surname: new FormControl(!p.id ? p.surname : null),
-            category: new FormControl(!p.id ? p.category : null),
+            name: new FormControl(p.name ?? null),
+            surname: new FormControl(p.surname ?? null),
+            category: new FormControl(p.category ?? null),
           });
           (roomGroup.get('rooming') as FormArray).push(newPeople);
         }
@@ -238,56 +211,23 @@ export class CartCreateAccomodationsComponent implements OnInit, OnDestroy {
     menu.toggle(event);
   }
 
-  onCloneLast() {
-    this.cartApiService
-      .copyLastRooming(this.team)
-      .pipe(
-        take(1),
-        combineLatestWith(this.accomodationService.people$),
-        tap(([{ data }, people]) => {
-          clearFormArray(this.rooms);
-          for (const d of data) {
-            const room = this.selectedHotel.rooms.find(
-              (r: any) => r.name === d.roomName
-            );
-            const newRoom = new FormGroup({
-              id: new FormControl(room.id),
-              hotelId: new FormControl(this.selectedHotel.id),
-              hotelName: new FormControl(this.selectedHotel.name),
-              name: new FormControl(room.name),
-              price: new FormControl(room.price),
-              numPax: new FormControl(room.numPax),
-              rooming: new FormArray([]),
-              uuid: new FormControl(uuidv4()),
-            });
+  applyFilters() {
+    this.selectedHotel = null;
+    this.filtersPopup.hide();
 
-            for (let p of d.people) {
-              if (p.peopleId) {
-                p = people.find((person: any) => person.id === p.peopleId);
-              }
-              const newPeople = new FormGroup({
-                people: new FormGroup({
-                  id: new FormControl(p.id ? p.id : null),
-                  name: new FormControl(p.id ? p.name : null),
-                  surname: new FormControl(p.id ? p.surname : null),
-                  category: new FormControl(p.id ? p.category : null),
-                }),
-                name: new FormControl(!p.id ? p.name : null),
-                surname: new FormControl(!p.id ? p.surname : null),
-                category: new FormControl(!p.id ? p.category : null),
-              });
-              (newRoom.get('rooming') as FormArray).push(newPeople);
-            }
+    this.filteredHotels = [
+      ...this._hotels.filter((h: any) =>
+        h.services.some((hs: any) =>
+          this.filtersService.some((fs: any) => fs.id === hs.service.id)
+        )
+      ),
+    ];
+  }
 
-            this.rooms.push(newRoom);
-          }
-
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Rooming copiata da ultima trasferta',
-          });
-        })
-      )
-      .subscribe();
+  resetFilters() {
+    this.selectedHotel = null;
+    this.filtersService = null;
+    this.filteredHotels = [...this._hotels];
+    this.filtersPopup.hide();
   }
 }

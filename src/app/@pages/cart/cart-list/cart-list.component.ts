@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  ConfirmationService,
-  LazyLoadEvent,
-  MessageService,
-} from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CartApiService } from 'src/app/@core/api/carts-api.service';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { UserApiService } from 'src/app/@core/api/user-api.service';
 import { IDropdownFilters, ISort } from 'src/app/@core/models/base.model';
-import { ICart } from 'src/app/@core/models/cart.model';
+import {
+  EStatusCart,
+  ICart,
+  statusCart,
+} from 'src/app/@core/models/cart.model';
 import { ITeam } from 'src/app/@core/models/team.model';
 import { IUser } from 'src/app/@core/models/user.model';
 
@@ -33,9 +34,12 @@ export class CartListComponent {
   sort: ISort | null = null;
   loading: boolean = false;
   filterActive: boolean = false;
+  statusCart = statusCart;
+  EStatusCart = EStatusCart;
 
   teamFilter = new UntypedFormControl('');
   userFilter = new UntypedFormControl('');
+  statusFilter = new UntypedFormControl('');
   completeFilter = new UntypedFormControl(false);
 
   cities$: Subject<string> = new Subject();
@@ -60,6 +64,10 @@ export class CartListComponent {
 
   get userFilterId() {
     return this.userFilter.value ? this.userFilter.value.id : null;
+  }
+
+  get statusFilterValue() {
+    return this.statusFilter.value ? this.statusFilter.value.value : null;
   }
 
   get filterIcon(): string {
@@ -87,6 +95,9 @@ export class CartListComponent {
             ...(this.filter ? { name: this.filter } : {}),
             ...(this.userFilterId ? { user: this.userFilterId } : {}),
             ...(this.teamFilterId ? { team: this.teamFilterId } : {}),
+            ...(this.statusFilterValue
+              ? { status: this.statusFilterValue }
+              : {}),
             ...(this.completeFilter.value
               ? { complete: this.completeFilter.value }
               : {}),
@@ -147,13 +158,13 @@ export class CartListComponent {
     this.carts$.next();
   }
 
-  onChangePage(event: LazyLoadEvent) {
+  onChangePage(event: TableLazyLoadEvent) {
     this.page = event.first! / event.rows! || 0;
 
     if (event.sortField) {
       this.sort = {
         field: event.sortField,
-        order: event.sortOrder,
+        order: event.sortOrder ?? 0,
       };
     } else {
       this.sort = null;
@@ -168,10 +179,6 @@ export class CartListComponent {
 
   update(cart: Partial<ICart>) {
     this.router.navigate(['cart', 'edit', cart.id]);
-  }
-
-  confirm(cart: Partial<ICart>) {
-    console.log('confirm cart');
   }
 
   remove(cart: Partial<ICart>) {
@@ -189,6 +196,41 @@ export class CartListComponent {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Trasferta eliminata',
+              });
+            })
+          )
+          .subscribe();
+      },
+    });
+  }
+
+  updateStatus(cart: Partial<ICart>, status: EStatusCart) {
+    const messages = {
+      [EStatusCart.CANCELLED]:
+        'Sei sicuro di voler annullare questa trasferta?',
+      [EStatusCart.CONFIRMED]:
+        'Sei sicuro di voler confermare questa trasferta?',
+      [EStatusCart.DEPOSIT]:
+        "Sei sicuro di voler confermare il pagamento dell'acconto?",
+      [EStatusCart.COMPLETED]:
+        'Sei sicuro di voler completare questa trasferta?',
+      [EStatusCart.DRAFT]: '',
+      [EStatusCart.PENDING]: '',
+    };
+    this.confirmationService.confirm({
+      message: messages[status],
+      header: 'Conferma',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.cartApiService
+          .update(cart.id!, { status, onlyStatus: true })
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadCarts();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Operazione completata',
               });
             })
           )

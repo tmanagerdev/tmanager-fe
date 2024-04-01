@@ -31,5 +31,5 @@ export interface IRoomsOnCarts {
   roomId: number;
   cart: ICart;
   room: IRoom;
-  rooming: IRooming;
+  rooming: IRooming[];
 }

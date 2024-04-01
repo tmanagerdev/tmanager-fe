@@ -1,14 +1,35 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
 <ng-container *ngIf="cart">
+  <div class="flex align-items-center gap-4">
+    <i
+      class="pi pi-angle-left cursor-pointer text-4xl"
+      (click)="backToCarts()"
+    ></i>
+    <p>Torna a trasferte</p>
+  </div>
   <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round my-4">
     <div class="flex justify-content-between">
       <div class="flex flex-column">
         <h2>Trasferta a {{ city.name }}</h2>
         <p>del {{ eventDate | customDate }}</p>
         <span class="mt-2">
-          <p-tag severity="Primary" *ngIf="status === EStatusCart.PENDING">
-            <p>Presa in carico il {{ cart.pendingAt | customDate }}</p>
+          <p-tag
+            [classList]="status | lowercase"
+            *ngIf="status !== EStatusCart.DRAFT"
+          >
+            <p *ngIf="status === EStatusCart.PENDING">
+              Presa in carico il {{ cart.pendingAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.CONFIRMED">
+              Confermata il {{ cart.confirmedAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.DEPOSIT">
+              Acconto pagato il {{ cart.depositedAt | customDate }}
+            </p>
+            <p *ngIf="status === EStatusCart.COMPLETED">
+              Completata il {{ cart.completedAt | customDate }}
+            </p>
           </p-tag>
         </span>
       </div>
@@ -18,38 +39,82 @@
     </div>
     <p-divider></p-divider>
     <div class="flex justify-content-end dialog-buttons">
-      <button
-        pButton
-        pRipple
-        icon="pi pi-file-pdf"
-        class="p-button-rounded mr-2"
-        [ngClass]="{ 'p-button-outlined': !isDownloading }"
-        label="PDF"
-        (click)="download()"
-        [loading]="isDownloading"
-        loadingIcon="pi pi-file-pdf"
-      ></button>
+      <ng-container *ngIf="isDownloading">
+        <button
+          pButton
+          pRipple
+          class="p-button-rounded mr-2"
+          label="PDF"
+          [loading]="true"
+        ></button>
+      </ng-container>
+      <ng-container *ngIf="!isDownloading">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-file-pdf"
+          class="p-button-outlined p-button-rounded mr-2"
+          label="PDF"
+          (click)="download()"
+        ></button>
+      </ng-container>
+
       <button
         pButton
         pRipple
         icon="pi pi-pencil"
         class="p-button-rounded p-button-outlined mr-2"
         label="Modifica"
+        *ngIf="
+          cart.status === EStatusCart.DRAFT ||
+          cart.status === EStatusCart.PENDING
+        "
         (click)="update()"
       ></button>
       <button
         pButton
         pRipple
         icon="pi pi-check"
-        class="p-button-rounded p-button-outlined p-button-success"
+        class="p-button-rounded p-button-outlined p-button-success mr-2"
         label="Completa"
         (click)="complete()"
         *ngIf="cart.status === EStatusCart.DRAFT"
       ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-check"
+        class="p-button-rounded p-button-outlined p-button-warning mr-2"
+        label="Conferma"
+        (click)="updateStatus(EStatusCart.CONFIRMED)"
+        *ngIf="fromBackoffice && cart.status === EStatusCart.PENDING"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-check"
+        class="p-button-rounded p-button-outlined p-button-secondary mr-2"
+        label="Acconto pagato"
+        (click)="updateStatus(EStatusCart.DEPOSIT)"
+        *ngIf="fromBackoffice && cart.status === EStatusCart.CONFIRMED"
+      ></button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-check"
+        class="p-button-rounded p-button-outlined p-button-success mr-2"
+        label="Completa"
+        (click)="updateStatus(EStatusCart.COMPLETED)"
+        *ngIf="
+          fromBackoffice &&
+          (cart.status === EStatusCart.CONFIRMED ||
+            cart.status === EStatusCart.DEPOSIT)
+        "
+      ></button>
     </div>
   </div>
 
-  <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round m-4">
+  <div class="flex flex-column w-full tman-shadow px-5 py-3 border-round">
     <div class="flex flex-column mt-5">
       <p class="font-semibold mb-2 text-xl">Partecipanti</p>
       <div class="flex flex-wrap gap-3">
@@ -94,7 +159,7 @@
           <p>Altro</p>
         </div>
         <div
-          class="p-4 border-1 surface-card surface-border border-round flex flex-column align-items-center w-8rem ml-auto"
+          class="p-4 border-1 surface-100 surface-border border-round flex flex-column align-items-center w-8rem"
         >
           <p class="text-5xl font-bold">
             {{ totalPax }}
@@ -140,33 +205,73 @@
     </div>
     <p-divider></p-divider>
     <div class="flex flex-column mt-1">
-      <p class="font-semibold mb-2 text-xl">Bus - Auto - Trasporti</p>
+      <p class="font-semibold mb-2 text-2xl">Pasti</p>
+      <ng-container *ngIf="meals && meals.length">
+        <p-table [value]="meals">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data</th>
+              <th>Quantità</th>
+              <th>Pasto</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-meal>
+            <tr>
+              <td>{{ meal.startDate | customDate : "showHours" }}</td>
+              <td>{{ meal.quantity }}</td>
+              <td>
+                {{ meal.mealName }}
+                <ng-container *ngIf="meal.description">
+                  <i
+                    class="pi pi-info-circle cursor-pointer"
+                    (click)="op.toggle($event)"
+                  ></i>
+                  <p-overlayPanel #op>
+                    {{ meal.description }}
+                  </p-overlayPanel>
+                </ng-container>
+              </td>
+              <td class="text-right">
+                {{ meal.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-container>
+      <ng-container *ngIf="!meals || !meals.length">
+        <p>Nessun pasto selezionato</p>
+      </ng-container>
+    </div>
+    <p-divider></p-divider>
+    <div class="flex flex-column mt-1">
+      <p class="font-semibold mb-2 text-xl">Trasporti</p>
       <ng-container *ngIf="roads && roads.length">
-        <ng-container *ngFor="let r of roads; let i = index">
-          <p-table [value]="r.data">
-            <ng-template pTemplate="caption">
-              <p>{{ r.date | customDate : "showHours" }}</p>
-            </ng-template>
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Quantità</th>
-                <th>Veicolo</th>
-                <th>Tratta</th>
-                <th class="text-right">Prezzo</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-road>
-              <tr>
-                <td>{{ road.quantity }}</td>
-                <td>{{ road.road.veichle.name }}</td>
-                <td>{{ road.road.from }} - {{ road.road.to }}</td>
-                <td class="text-right">
-                  {{ road.road.price | currency : "EUR" : "symbol" }}
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </ng-container>
+        <p-table [value]="roads">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Data</th>
+              <th>Quantità</th>
+              <th>Veicolo</th>
+              <th>Tratta</th>
+              <th class="text-right">Prezzo</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-road>
+            <tr>
+              <td>{{ road.startDate | customDate : "showHours" }}</td>
+              <td>{{ road.quantity }}</td>
+              <td>{{ road.roadsVeichles.veichle.name }}</td>
+              <td>
+                {{ road.roadsVeichles.road.from }} -
+                {{ road.roadsVeichles.road.to }}
+              </td>
+              <td class="text-right">
+                {{ road.roadsVeichles.price | currency : "EUR" : "symbol" }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       </ng-container>
       <ng-container *ngIf="!roads || !roads.length">
         <p>Nessuna tratta selezionata</p>
@@ -204,7 +309,7 @@
     <p-divider></p-divider>
     <div class="flex justify-content-between">
       <p class="font-semibold mb-2 text-xl">TOTALE</p>
-      <p class="text-3xl">{{ total | currency : "EUR" : "symbol" }}</p>
+      <p class="text-3xl">{{ cart.total | currency : "EUR" : "symbol" }}</p>
     </div>
   </div>
 </ng-container>

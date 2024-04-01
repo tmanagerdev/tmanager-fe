@@ -1,6 +1,7 @@
 import { IActivitiesOnCart } from './activity.model';
 import { IEvent } from './event.model';
 import { IMealsOnCarts } from './meal.model';
+import { IPeople } from './people.model';
 import { IRoadsOnCarts } from './road.model';
 import { IRoomsOnCarts } from './room.model';
 import { ITeam } from './team.model';
@@ -11,6 +12,7 @@ export enum EStatusCart {
   CONFIRMED = 'CONFIRMED',
   DEPOSIT = 'DEPOSIT',
   COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
 }
 
 export const statusCart = [
@@ -19,6 +21,7 @@ export const statusCart = [
   { value: EStatusCart.CONFIRMED, label: 'Confermata' },
   { value: EStatusCart.DEPOSIT, label: 'Acconto pagato' },
   { value: EStatusCart.COMPLETED, label: 'Completata' },
+  { value: EStatusCart.CANCELLED, label: 'Annullata' },
 ];
 
 export interface ICart {
@@ -34,7 +37,7 @@ export interface ICart {
   genericNotes: string;
   id: number;
   managers: number;
-  meals: Partial<IMealsOnCarts>;
+  meals: Partial<IMealsOnCarts>[];
   others: number;
   pendingAt: string;
   players: number;
@@ -46,4 +49,6 @@ export interface ICart {
   status: EStatusCart;
   team: Partial<ITeam>;
   userId: number;
+  people: IPeople[];
+  onlyStatus?: boolean;
 }
