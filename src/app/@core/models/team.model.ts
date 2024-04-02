@@ -17,3 +17,11 @@ export interface ITeam {
   carts: ICart[];
   people: IPeople[];
 }
+
+export interface ITeamCopyEntites {
+  from: number;
+  to: number;
+  hotel: boolean;
+  activity: boolean;
+  road: boolean;
+}

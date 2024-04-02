@@ -1,20 +1,17 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormControl, UntypedFormControl } from '@angular/forms';
-import {
-  ConfirmationService,
-  LazyLoadEvent,
-  MessageService,
-} from 'primeng/api';
+import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { OverlayPanel } from 'primeng/overlaypanel';
+import { TableLazyLoadEvent } from 'primeng/table';
 import { Subject, debounceTime, switchMap, take, takeUntil, tap } from 'rxjs';
-import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
-import { OverlayPanel } from 'primeng/overlaypanel';
-import { TeamModalComponent } from '../team-modal/team-modal.component';
-import { Router } from '@angular/router';
-import { TableLazyLoadEvent } from 'primeng/table';
+import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { ISort } from 'src/app/@core/models/base.model';
+import { TeamCopyEntitiesComponent } from '../team-copy-entities/team-copy-entities.component';
+import { TeamModalComponent } from '../team-modal/team-modal.component';
 
 @Component({
   selector: 'app-team-list',
@@ -283,5 +280,44 @@ export class TeamListComponent {
 
   people(team: any) {
     this.router.navigate(['team', team.id]);
+  }
+
+  copyEntities(team: any) {
+    this.ref = this.dialogService.open(TeamCopyEntitiesComponent, {
+      header: `Associazioni ${team.name}`,
+      width: '450px',
+      contentStyle: { overflow: 'visible' },
+      baseZIndex: 10001,
+      data: {
+        team,
+      },
+    });
+
+    this.ref.onClose.subscribe((copyConfig: any) => {
+      if (copyConfig) {
+        this.teams = [];
+        this.loading = true;
+        this.teamApiService
+          .copyEntities({
+            from: copyConfig.team.id,
+            to: team.id,
+            hotel: copyConfig.hotel,
+            activity: copyConfig.activity,
+            road: copyConfig.road,
+          })
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadTeams();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Squadra aggiornata',
+                detail: `Ora ${team.name} ha le associazioni di ${copyConfig.team.name}`,
+              });
+            })
+          )
+          .subscribe();
+      }
+    });
   }
 }

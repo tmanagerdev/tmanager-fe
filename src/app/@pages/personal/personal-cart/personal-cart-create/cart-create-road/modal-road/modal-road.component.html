@@ -44,7 +44,6 @@
           placeholder="Seleziona tratta"
           filterBy="from"
           optionLabel="from"
-          [filter]="true"
         >
           <ng-template let-road pTemplate="selectedItem">
             <p *ngIf="road">{{ road.from }} - {{ road.to }}</p>

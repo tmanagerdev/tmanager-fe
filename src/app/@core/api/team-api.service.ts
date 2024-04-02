@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { environment } from 'src/environments/environment';
 import { ApiResponse } from '../models/base.model';
-import { ITeam } from '../models/team.model';
 import { IPeople } from '../models/people.model';
+import { ITeam, ITeamCopyEntites } from '../models/team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -68,5 +68,12 @@ export class TeamApiService {
 
   deletePeople(id: number): Observable<Partial<IPeople>> {
     return this.httpClient.delete(`${environment.apiUrl}/people/${id}`);
+  }
+
+  copyEntities(team: Partial<ITeamCopyEntites>): Observable<void> {
+    return this.httpClient.post<void>(
+      `${environment.apiUrl}/teams/copy-entities`,
+      team
+    );
   }
 }
