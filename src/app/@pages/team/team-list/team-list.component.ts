@@ -10,7 +10,7 @@ import { CityApiService } from 'src/app/@core/api/city-api.service';
 import { LeagueApiService } from 'src/app/@core/api/league-api.service';
 import { TeamApiService } from 'src/app/@core/api/team-api.service';
 import { ISort } from 'src/app/@core/models/base.model';
-import { TeamCopyLinksComponent } from '../team-copy-links/team-copy-links.component';
+import { TeamCopyEntitiesComponent } from '../team-copy-entities/team-copy-entities.component';
 import { TeamModalComponent } from '../team-modal/team-modal.component';
 
 @Component({
@@ -282,8 +282,8 @@ export class TeamListComponent {
     this.router.navigate(['team', team.id]);
   }
 
-  copyLinks(team: any) {
-    this.ref = this.dialogService.open(TeamCopyLinksComponent, {
+  copyEntities(team: any) {
+    this.ref = this.dialogService.open(TeamCopyEntitiesComponent, {
       header: `Associazioni ${team.name}`,
       width: '450px',
       contentStyle: { overflow: 'visible' },
@@ -295,23 +295,28 @@ export class TeamListComponent {
 
     this.ref.onClose.subscribe((copyConfig: any) => {
       if (copyConfig) {
-        console.log('copyConfig', copyConfig);
-        // this.teams = [];
-        // this.loading = true;
-        // this.teamApiService
-        //   .update(team.id, newTeam)
-        //   .pipe(
-        //     take(1),
-        //     tap(() => {
-        //       this.loadTeams();
-        //       this.messageService.add({
-        //         severity: 'success',
-        //         summary: 'Squadra aggiornata',
-        //         detail: newTeam.name,
-        //       });
-        //     })
-        // )
-        // .subscribe();
+        this.teams = [];
+        this.loading = true;
+        this.teamApiService
+          .copyEntities({
+            from: copyConfig.team.id,
+            to: team.id,
+            hotel: copyConfig.hotel,
+            activity: copyConfig.activity,
+            road: copyConfig.road,
+          })
+          .pipe(
+            take(1),
+            tap(() => {
+              this.loadTeams();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Squadra aggiornata',
+                detail: `Ora ${team.name} ha le associazioni di ${copyConfig.team.name}`,
+              });
+            })
+          )
+          .subscribe();
       }
     });
   }
