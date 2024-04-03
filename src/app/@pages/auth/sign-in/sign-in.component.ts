@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { take, tap } from 'rxjs';
 import { AuthApiService } from 'src/app/@core/api/auth-api.service';
 import { AuthService } from 'src/app/@core/services/auth.service';
@@ -19,12 +19,16 @@ export class SignInComponent {
   });
   credentialError: boolean = false;
   loading: boolean = false;
+  redirectUrl: string = '';
 
   constructor(
     private authApiService: AuthApiService,
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.redirectUrl = this.route.snapshot.queryParams['redirectUrl'];
+  }
 
   get email() {
     return this.signInForm.get('email') as FormControl;
@@ -45,7 +49,9 @@ export class SignInComponent {
           tap((data) => {
             this.loading = true;
             this.authService.setCurrentUser(data);
-            this.router.navigate(['/']);
+            this.redirectUrl
+              ? window.location.replace(this.redirectUrl)
+              : this.router.navigate(['/']);
           })
         )
         .subscribe();
