@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { PeopleRoomingService } from '../../people-rooming.service';
 import { Subject, takeUntil, tap } from 'rxjs';
+import { PeopleRoomingService } from '../../people-rooming.service';
 
 @Component({
   selector: 'app-accomodations-people-modal',
@@ -87,7 +87,12 @@ export class AccomodationsPeopleModalComponent {
   onAddPlaceholder(category: string) {
     this.selectedPeople = [
       ...this.selectedPeople,
-      { name: 'OSPITE DA CONFERMARE', surname: '', category },
+      {
+        name: 'OSPITE',
+        surname: 'DA CONFERMARE',
+        category,
+        isPlaceholder: true,
+      },
     ];
   }
 }

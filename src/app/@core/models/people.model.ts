@@ -29,4 +29,5 @@ export interface IPeople {
   teamId: number;
   team: ITeam;
   rooming: IRooming[];
+  isPlaceholder?: boolean;
 }

@@ -41,13 +41,13 @@ export class PeopleRoomingService {
 
   // Fired when change a rooming
   updateRooming(people: IPeople, action: 'ADD' | 'REMOVE') {
-    if (action === 'ADD') {
+    if (action === 'ADD' && people.isPlaceholder) {
       this.peopleBSub$.next(
         [
           ...this.people.filter((p: any) => !this.checkPaxAreEquals(p, people)),
         ].sort(this.compare)
       );
-    } else if (action === 'REMOVE') {
+    } else if (action === 'REMOVE' && people.isPlaceholder) {
       const p = this.originalPeople.find((p: any) =>
         this.checkPaxAreEquals(p, people)
       );
@@ -61,12 +61,14 @@ export class PeopleRoomingService {
 
   checkPaxAreEquals(pax1: IPeople, pax2: IPeople) {
     return (
+      !pax1.isPlaceholder &&
+      !pax2.isPlaceholder &&
       `${pax1.name.toLocaleLowerCase().trim()}${pax1.surname
         .toLocaleLowerCase()
         .trim()}${pax1.category.toLocaleLowerCase().trim()}` ===
-      `${pax2.name.toLocaleLowerCase().trim()}${pax2.surname
-        .toLocaleLowerCase()
-        .trim()}${pax2.category.toLocaleLowerCase().trim()}`
+        `${pax2.name.toLocaleLowerCase().trim()}${pax2.surname
+          .toLocaleLowerCase()
+          .trim()}${pax2.category.toLocaleLowerCase().trim()}`
     );
   }
 }

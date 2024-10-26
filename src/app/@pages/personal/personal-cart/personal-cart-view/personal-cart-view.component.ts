@@ -252,7 +252,9 @@ export class PersonalCartViewComponent {
           var downloadURL = window.URL.createObjectURL(data);
           var link = document.createElement('a');
           link.href = downloadURL;
-          link.download = `trasferta_${this.city.name}.pdf`;
+          link.download = `Trasferta_${
+            this.city.name
+          }_${new Date().toISOString()}.pdf`;
           link.click();
         })
       )

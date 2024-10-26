@@ -838,9 +838,7 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
           price: new FormControl(r.price),
           rooming: new FormControl(
             r.rooming.map((r: any) => {
-              return r.people && r.people.id
-                ? { peopleId: r.people.id }
-                : { name: r.name, surname: r.surname, category: r.category };
+              return { name: r.name, surname: r.surname, category: r.category };
             })
           ),
           hotelId: new FormControl(r.hotelId),
@@ -974,6 +972,8 @@ export class PersonalCartCreateComponent implements OnInit, OnDestroy {
   backToCart() {
     this.fromBackoffice
       ? this.router.navigate(['cart', this.cartId])
-      : this.router.navigate(['personal', 'carts', this.cartId]);
+      : this.cartId
+      ? this.router.navigate(['personal', 'carts', this.cartId])
+      : this.router.navigate(['personal', 'carts']);
   }
 }
